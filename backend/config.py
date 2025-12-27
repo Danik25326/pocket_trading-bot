@@ -1,35 +1,35 @@
-import os
-from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Отримуємо шлях до кореня проекту
-BASE_DIR = Path(__file__).parent.parent
+import json
+import re
+# ... інші імпорти
 
 class Config:
-    # Pocket Option
-    POCKET_SSID = os.getenv('POCKET_SSID')
-    POCKET_DEMO = os.getenv('POCKET_DEMO', 'true').lower() == 'true'
+    # ... інші змінні ...
     
-    # Groq AI
-    GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama3-70b-8192')
+    @staticmethod
+    def validate_ssid_format(ssid):
+        """Перевіряє чи SSID у правильному форматі"""
+        if not ssid:
+            return False, "SSID порожній"
+        
+        # Перевірка формату
+        pattern = r'^42\["auth",\{.*\}\]$'
+        if not re.match(pattern, ssid):
+            return False, f"Неправильний формат SSID. Має бути: 42[\"auth\",{{\"session\":\"...\",...}}]"
+        
+        return True, "SSID валідний"
     
-    # Сигнали
-    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
-    MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
-    
-    # Актив
-    ASSETS = os.getenv('ASSETS', 'GBP/JPY_otc').split(',')
-    TIMEFRAMES = int(os.getenv('TIMEFRAMES', 120))
-    
-    # Шляхи до файлів (відносно кореня проекту)
-    DATA_DIR = BASE_DIR / 'data'
-    SIGNALS_FILE = DATA_DIR / 'signals.json'
-    HISTORY_FILE = DATA_DIR / 'history.json'
-    ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
-    
-    # Налаштування логування
-    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-    LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
+    @classmethod
+    def get_validated_ssid(cls):
+        """Повертає валідований SSID"""
+        ssid = cls.POCKET_SSID
+        
+        # Якщо SSID не у повному форматі, конвертуємо
+        if ssid and not ssid.startswith('42["auth"'):
+            logger.warning("SSID не у повному форматі, конвертую...")
+            ssid = f'42["auth",{{"session":"{ssid}","isDemo":1,"uid":100000,"platform":1}}]'
+        
+        is_valid, message = cls.validate_ssid_format(ssid)
+        if not is_valid:
+            logger.error(f"Помилка валідації SSID: {message}")
+        
+        return ssid
