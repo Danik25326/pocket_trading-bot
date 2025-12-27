@@ -7,12 +7,19 @@ class PocketOptionClient:
     def __init__(self):
         self.client = None
         
-    async def connect(self):
-        """Підключення до Pocket Option"""
+async def connect(self):
+    """Підключення до Pocket Option"""
+    try:
+        # Отримуємо валідований SSID
+        ssid = Config.get_validated_ssid()
+        
+        logger.info(f"Підключення з форматом SSID: {ssid[:50]}...")
+        
         self.client = AsyncPocketOptionClient(
-            ssid=Config.POCKET_SSID,
+            ssid=ssid,  # Використовуємо вже відформатований SSID
             is_demo=Config.POCKET_DEMO,
-            enable_logging=False
+            enable_logging=True,
+            timeout=30
         )
         await self.client.connect()
         return self
