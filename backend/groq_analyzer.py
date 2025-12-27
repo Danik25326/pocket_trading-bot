@@ -1,17 +1,31 @@
 import json
+import logging
 from groq import Groq
 from datetime import datetime
 from config import Config
 
+logger = logging.getLogger("signal_bot")
+
 class GroqAnalyzer:
     def __init__(self):
-        self.client = Groq(api_key=Config.GROQ_API_KEY)
+        # Перевіряємо наявність API ключа
+        if not Config.GROQ_API_KEY or Config.GROQ_API_KEY == 'your_groq_api_key_here':
+            logger.error("❌ GROQ_API_KEY не налаштовано! Перевірте GitHub Secrets")
+            self.client = None
+        else:
+            self.client = Groq(api_key=Config.GROQ_API_KEY)
+            logger.info(f"✅ Groq AI ініціалізовано (модель: {Config.GROQ_MODEL})")
         
     def analyze_market(self, asset, candles_data):
         """
         Аналіз ринку через Groq AI
         Повертає сигнал та впевненість
         """
+        # Перевіряємо, чи ініціалізовано клієнт
+        if not self.client:
+            logger.error("Groq AI не ініціалізовано. Пропускаємо аналіз.")
+            return None
+            
         # Форматуємо дані для AI
         candles_str = self._format_candles(candles_data)
         
@@ -62,11 +76,14 @@ class GroqAnalyzer:
             return response
             
         except Exception as e:
-            print(f"Groq AI error: {e}")
+            logger.error(f"Groq AI error: {e}")
             return None
     
     def _format_candles(self, candles):
         """Форматування свічок для AI"""
+        if not candles:
+            return "Немає даних"
+            
         formatted = []
         for i, candle in enumerate(candles[-10:]):  # Беремо останні 10 свічок
             formatted.append(f"""
