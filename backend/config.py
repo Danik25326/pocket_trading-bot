@@ -24,3 +24,8 @@ class Config:
     DATA_DIR = 'data'
     SIGNALS_FILE = os.path.join(DATA_DIR, 'signals.json')
     HISTORY_FILE = os.path.join(DATA_DIR, 'history.json')
+    ASSETS_CONFIG_FILE = os.path.join(DATA_DIR, 'assets_config.json')
+    
+    # Налаштування логування
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+    LOG_FILE = 'logs/signals.log'
