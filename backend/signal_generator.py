@@ -12,7 +12,7 @@ current_file = Path(__file__).resolve()
 project_root = current_file.parent.parent
 sys.path.insert(0, str(project_root))
 from utils.validator import Validator
-from utils.logger import Logger
+from utils.logger import logger
 
 
 class SignalGenerator:
