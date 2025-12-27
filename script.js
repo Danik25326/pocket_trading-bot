@@ -1,3 +1,4 @@
+
 class SignalDisplay {
     constructor() {
         // Тепер шлях до даних відносно кореня
