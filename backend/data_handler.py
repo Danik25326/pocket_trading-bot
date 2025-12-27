@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime, timedelta
 from config import Config
+from logger import logger
 
 class DataHandler:
     def __init__(self):
