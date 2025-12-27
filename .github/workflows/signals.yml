@@ -26,7 +26,7 @@ jobs:
       run: |
         pip install -r backend/requirements.txt
     
-    - name: Create data directory
+    - name: Create directories
       run: |
         mkdir -p data
         mkdir -p logs
@@ -41,11 +41,15 @@ jobs:
         POCKET_DEMO: 'true'
         SIGNAL_INTERVAL: '300'
         MIN_CONFIDENCE: '0.7'
-        ASSETS: 'GBP/JPY_otc,EUR/USD_otc'
+        ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
         TIMEFRAMES: '120'
       run: |
         cd backend
         python signal_generator.py
+    
+    - name: Create .nojekyll file (для GitHub Pages)
+      run: |
+        touch .nojekyll
     
     - name: Commit and push changes
       run: |
@@ -53,4 +57,5 @@ jobs:
         git config --global user.email 'actions@github.com'
         git add data/
         git add logs/
+        git add .nojekyll
         git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: New signals generated" && git push origin main)
