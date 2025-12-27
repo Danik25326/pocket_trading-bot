@@ -7,9 +7,9 @@ class PocketOptionClient:
     def __init__(self):
         self.client = None
         
-async def connect(self):
-    """Підключення до Pocket Option"""
-    try:
+    async def connect(self):
+         """Підключення до Pocket Option"""
+        try:
         # Отримуємо валідований SSID
         ssid = Config.get_validated_ssid()
         
