@@ -1,0 +1,17 @@
+{
+  "preferred_assets": [
+    "GBP/JPY_otc",
+    "EUR/USD_otc",
+    "USD/JPY_otc",
+    "EUR/JPY_otc",
+    "GBP/USD_otc"
+  ],
+  "timeframes": {
+    "primary": 120,
+    "secondary": 300
+  },
+  "trading_hours": {
+    "start": "08:00",
+    "end": "22:00"
+  }
+}
