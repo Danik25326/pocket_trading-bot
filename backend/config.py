@@ -1,7 +1,11 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Отримуємо шлях до кореня проекту
+BASE_DIR = Path(__file__).parent.parent
 
 class Config:
     # Pocket Option
@@ -20,12 +24,12 @@ class Config:
     ASSETS = os.getenv('ASSETS', 'GBP/JPY_otc').split(',')
     TIMEFRAMES = int(os.getenv('TIMEFRAMES', 120))
     
-    # Шляхи до файлів
-    DATA_DIR = 'data'
-    SIGNALS_FILE = os.path.join(DATA_DIR, 'signals.json')
-    HISTORY_FILE = os.path.join(DATA_DIR, 'history.json')
-    ASSETS_CONFIG_FILE = os.path.join(DATA_DIR, 'assets_config.json')
+    # Шляхи до файлів (відносно кореня проекту)
+    DATA_DIR = BASE_DIR / 'data'
+    SIGNALS_FILE = DATA_DIR / 'signals.json'
+    HISTORY_FILE = DATA_DIR / 'history.json'
+    ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
     
     # Налаштування логування
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-    LOG_FILE = 'logs/signals.log'
+    LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
