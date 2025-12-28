@@ -18,6 +18,7 @@ load_dotenv()
 
 logger = logging.getLogger("signal_bot")
 
+
 class Config:
     # Корінь проекту
     BASE_DIR = project_root
@@ -109,6 +110,7 @@ class Config:
                 logger.error(error)
             return False
         return True
+
 
 # Перевірка при імпорті
 if __name__ != "__main__":
