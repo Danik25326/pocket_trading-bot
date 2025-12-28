@@ -1,4 +1,3 @@
-
 import os
 import sys
 import json
@@ -50,6 +49,20 @@ class Config:
     HISTORY_FILE = DATA_DIR / 'history.json'
     ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
     LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
+    
+    @staticmethod
+    def disable_proxies():
+        """Відключає проксі для всіх з'єднань"""
+        proxy_vars = [
+            'http_proxy', 'https_proxy', 
+            'HTTP_PROXY', 'HTTPS_PROXY',
+            'all_proxy', 'ALL_PROXY'
+        ]
+        for var in proxy_vars:
+            # Зберігаємо оригінальні значення, якщо вони існують
+            if var in os.environ:
+                logger.info(f"⚠️ Відключаємо проксі змінну: {var}")
+                del os.environ[var]
     
     @staticmethod
     def validate_ssid_format(ssid):
@@ -115,4 +128,6 @@ class Config:
 
 # Перевірка при імпорті
 if __name__ != "__main__":
+    # Відключаємо проксі при імпорті
+    Config.disable_proxies()
     Config.validate()
