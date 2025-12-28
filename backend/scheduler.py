@@ -30,9 +30,6 @@ class Scheduler:
         # Налаштовуємо розклад (кожні 5 хвилин)
         schedule.every(5).minutes.do(self.job)
         
-        # Додатково можна налаштувати різні інтервали
-        # schedule.every(1).hour.do(self.cleanup_job)
-        
         print(f"[SCHEDULER] Планувальник запущено. Наступне оновлення: {schedule.next_run()}")
         
         while self.running:
