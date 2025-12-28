@@ -1,10 +1,8 @@
-
 import asyncio
 import logging
 from config import Config
 
 logger = logging.getLogger("signal_bot")
-
 
 class PocketOptionClient:
     def __init__(self):
@@ -18,9 +16,9 @@ class PocketOptionClient:
         
         try:
             # Отримуємо SSID з конфігурації
-            ssid = Config.POCKET_SSID
+            ssid = Config.get_validated_ssid()  # Використовуємо метод з Config
             if not ssid:
-                logger.error("❌ SSID не знайдено!")
+                logger.error("❌ Не вдалося отримати валідний SSID!")
                 return self
             
             logger.info(f"🔗 Ініціалізація PocketOption клієнта (Demo: {Config.POCKET_DEMO})...")
@@ -33,19 +31,11 @@ class PocketOptionClient:
                 logger.info("ℹ️ Встановіть бібліотеку: pip install pocketoptionapi-async==2.0.1")
                 return self
             
-            # Форматуємо SSID
-            if not ssid.startswith('42["auth"'):
-                logger.info("Форматуємо SSID...")
-                # Для демо режиму
-                is_demo = 1 if Config.POCKET_DEMO else 0
-                ssid = f'42["auth",{{"session":"{ssid}","isDemo":{is_demo},"uid":102582216,"platform":1}}]'
-            
-            logger.debug(f"SSID (перші 100 символів): {ssid[:100]}...")
-            
-            # Створюємо клієнта
+            # Створюємо клієнта з обома параметрами
             self.client = AsyncPocketOptionClient(
                 ssid=ssid,
-                enable_logging=False
+                is_demo=Config.POCKET_DEMO,  # ← ДОДАЙ ЦЕ!
+                enable_logging=True  # ← Увімкнути для діагностики
             )
             
             self._initialized = True
@@ -58,41 +48,47 @@ class PocketOptionClient:
             logger.error(f"Деталі: {traceback.format_exc()}")
             return self
     
-async def connect(self):
-    try:
-        if not self._initialized:
-            await self.initialize()
-
-        if not self.client:
-            logger.error("❌ Клієнт не ініціалізований")
-            return False
-
-        logger.info("🔗 Підключення до PocketOption...")
-        # Скидаємо стан підключення перед спробою
-        self.connected = False
-        await self.client.connected()
-
-        # Чекаємо на підключення трохи довше
-        for i in range(5):
-            await asyncio.sleep(1)
+    async def connect(self):
+        """Виправлений метод підключення"""
+        try:
+            if not self._initialized:
+                await self.initialize()
+            
+            if not self.client:
+                logger.error("❌ Клієнт не ініціалізований")
+                return False
+            
+            logger.info("🔗 Підключення до PocketOption...")
+            connection_result = await self.client.connect()
+            
+            # Чекаємо на підключення
+            await asyncio.sleep(2)
+            
+            # Перевіряємо статус через кілька способів
             if hasattr(self.client, 'connected') and self.client.connected:
                 self.connected = True
                 logger.info("✅ Успішно підключено до PocketOption!")
-                return True
-            else:
-                logger.debug(f"Очікування підключення... {i+1}/5")
-
-        logger.error("❌ Не вдалося підтвердити підключення після 5 секунд очікування.")
-        self.connected = False
-        return False
-
-    except Exception as e:
-        logger.error(f"❌ Помилка підключення: {e}")
-        self.connected = False
-        return False
+                
+                # Тестуємо з'єднання - отримуємо баланс
+                try:
+                    balance = await self.client.get_balance()
+                    logger.info(f"💰 Баланс: {balance.balance} {balance.currency}")
+                    return True
+                except Exception as e:
+                    logger.warning(f"⚠️ Баланс не отримано, але продовжуємо: {e}")
+                    return True
+            
+            logger.error("❌ Не вдалося підтвердити підключення до PocketOption!")
+            self.connected = False
+            return False  # ← Повертаємо False, а не True!
+        
+        except Exception as e:
+            logger.error(f"❌ Помилка підключення: {e}")
+            self.connected = False
+            return False
     
     async def get_candles(self, asset, timeframe, count=30):
-        """Отримання свічок для активу"""
+        """Додамо перевірку даних свічок"""
         try:
             if not self.connected:
                 logger.warning("Не підключено, спробую підключитися...")
@@ -100,34 +96,32 @@ async def connect(self):
                     logger.error("Не вдалося підключитися")
                     return None
             
-            logger.info(f"📊 Запит свічок для {asset} (таймфрейм: {timeframe}с, кількість: {count})")
-            
-            # Отримуємо свічки
+            logger.info(f"📊 Запит свічок для {asset}...")
             candles = await self.client.get_candles(
                 asset=asset,
                 timeframe=timeframe,
                 count=count
             )
             
-            if candles:
-                logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
-                return candles
-            else:
+            if not candles:
                 logger.warning(f"⚠️ Не отримано свічок для {asset}")
                 return None
-        
+            
+            # Перевіряємо, чи свічки містять реальні дані
+            if len(candles) > 0:
+                first_candle = candles[0]
+                if hasattr(first_candle, 'close'):
+                    if first_candle.close == 0 or first_candle.open == 0:
+                        logger.warning(f"⚠️ Отримані нульові дані для {asset}")
+                        return None
+            
+            logger.info(f"✅ Отримано {len(candles)} коректних свічок для {asset}")
+            return candles
+            
         except Exception as e:
-            logger.error(f"❌ Помилка отримання свічок для {asset}: {e}")
+            logger.error(f"❌ Помилка отримання свічок: {e}")
             return None
     
     async def disconnect(self):
-        try:
-            if self.client and self.connected:
-                await self.client.disconnect()
-                self.connected = False
-                logger.info("✅ Відключено від PocketOption")
-                return True
-            return False
-        except Exception as e:
-            logger.warning(f"Помилка відключення: {e}")
-            return False
+        # Залишити без змін
+        pass
