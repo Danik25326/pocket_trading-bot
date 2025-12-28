@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 from datetime import datetime
@@ -129,34 +128,34 @@ class SignalGenerator:
             logger.error(f"Трейс: {traceback.format_exc()}")
             return []
 
-    async def main():
-        """Головна функція з циклом"""
-        while True:
-            try:
-                print("\n" + "="*60)
-                print(f"🔄 НОВА ІТЕРАЦІЯ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
-                print("="*60)
+async def main():
+    """Головна функція з циклом"""
+    while True:
+        try:
+            print("\n" + "="*60)
+            print(f"🔄 НОВА ІТЕРАЦІЯ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
+            print("="*60)
             
-                generator = SignalGenerator()
-                signals = await generator.generate_all_signals()
+            generator = SignalGenerator()
+            signals = await generator.generate_all_signals()
             
-                if signals:
-                    print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ:")
-                    for signal in signals:
-                        print(f"   • {signal['asset']}: {signal['direction']} ({signal.get('confidence', 0)*100:.1f}%)")
-                else:
-                    print("\n⚠️  СИГНАЛІВ НЕ ЗНАЙДЕНО")
+            if signals:
+                print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ:")
+                for signal in signals:
+                    print(f"   • {signal['asset']}: {signal['direction']} ({signal.get('confidence', 0)*100:.1f}%)")
+            else:
+                print("\n⚠️  СИГНАЛІВ НЕ ЗНАЙДЕНО")
             
-                # Чекаємо 5 хвилин до наступної перевірки
-                print(f"\n⏳ Очікую 5 хвилин до наступної перевірки...")
-                await asyncio.sleep(300)  # 300 секунд = 5 хвилин
+            # Чекаємо 5 хвилин до наступної перевірки
+            print(f"\n⏳ Очікую 5 хвилин до наступної перевірки...")
+            await asyncio.sleep(300)  # 300 секунд = 5 хвилин
             
-            except KeyboardInterrupt:
-                print("\n\n🛑 Бот зупинено користувачем")
-                break
-            except Exception as e:
-                print(f"💥 Помилка в головному циклі: {e}")
-                await asyncio.sleep(300)  # Чекаємо 5 хвилин навіть при помилці
+        except KeyboardInterrupt:
+            print("\n\n🛑 Бот зупинено користувачем")
+            break
+        except Exception as e:
+            print(f"💥 Помилка в головному циклі: {e}")
+            await asyncio.sleep(300)  # Чекаємо 5 хвилин навіть при помилці
 
 if __name__ == "__main__":
     asyncio.run(main())
