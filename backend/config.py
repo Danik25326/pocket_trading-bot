@@ -1,72 +1,80 @@
 import os
 import sys
+import re
 import logging
 from pathlib import Path
 from dotenv import load_dotenv
+import pytz
 
-# Додаємо шляхи для імпортів
+# Додаємо шляхи для коректних імпортів
+sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 load_dotenv()
 
 logger = logging.getLogger("signal_bot")
-BASE_DIR = Path(__file__).parent.parent
 
 class Config:
+    # Корінь проекту
+    BASE_DIR = Path(__file__).parent.parent
+    
+    # Часовий пояс (Київ)
+    TIMEZONE = pytz.timezone('Europe/Kiev')
+    
     # Pocket Option
     POCKET_SSID = os.getenv('POCKET_SSID')
     POCKET_DEMO = os.getenv('POCKET_DEMO', 'true').lower() == 'true'
-    POCKET_UID = int(os.getenv('POCKET_UID', '102582216'))
     
-    # Groq AI
+    # Groq AI - Використовуємо найкращу модель
     GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = 'llama-3.3-70b-versatile'  # Найкраща модель з вашого списку
+    GROQ_MODEL = os.getenv('GROQ_MODEL', 'meta-llama/llama-4-maverick-17b-128e-instruct')
     
     # Сигнали
-    SIGNAL_INTERVAL = 300  # 5 хвилин
-    MIN_CONFIDENCE = 0.7  # 70%
-    MAX_ACTIVE_SIGNALS = 3
-    SIGNAL_LIFETIME_MINUTES = 10
+    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
+    MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
     
-    # Актив
-    ASSETS = ['GBPJPY_otc', 'EURUSD_otc', 'USDJPY_otc']
-    TIMEFRAMES = 120  # 2 хвилини
+    # Актив - ФОРМАТ БЕЗ СЛЕШІВ
+    ASSETS_RAW = os.getenv('ASSETS', 'GBPJPY_otc,EURUSD_otc,USDJPY_otc')
+    ASSETS = [asset.strip() for asset in ASSETS_RAW.split(',')]
+    TIMEFRAMES = int(os.getenv('TIMEFRAMES', 120))
+    
+    # Логування
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
     
     # Шляхи до файлів
     DATA_DIR = BASE_DIR / 'data'
     SIGNALS_FILE = DATA_DIR / 'signals.json'
     HISTORY_FILE = DATA_DIR / 'history.json'
+    ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
+    LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
     
-    # Часовий пояс
-    TIMEZONE = 'Europe/Kiev'
+    @classmethod
+    def get_kyiv_time(cls):
+        """Повертає поточний час в Києві"""
+        from datetime import datetime
+        return datetime.now(cls.TIMEZONE)
     
     @classmethod
     def validate_config(cls):
         """Перевірка конфігурації"""
         errors = []
         
+        # Перевірка API ключів
         if not cls.POCKET_SSID:
-            errors.append("❌ POCKET_SSID не знайдено")
+            errors.append("❌ POCKET_SSID не встановлено")
+        
         if not cls.GROQ_API_KEY or cls.GROQ_API_KEY == 'your_groq_api_key_here':
-            errors.append("❌ GROQ_API_KEY не налаштовано")
+            errors.append("❌ GROQ_API_KEY не встановлено")
+        elif len(cls.GROQ_API_KEY) < 30:
+            errors.append("❌ GROQ_API_KEY має бути довший за 30 символів")
         
-        if errors:
-            for error in errors:
-                logger.error(error)
-            return False
+        # Перевірка активів
+        if not cls.ASSETS:
+            errors.append("❌ Не вказано активи")
         
-        logger.info("✅ Конфігурація валідна")
-        return True
-    
-    @classmethod
-    def get_formatted_ssid(cls):
-        """Форматування SSID"""
-        if not cls.POCKET_SSID:
-            return None
+        # Перевірка SSID формату
+        if cls.POCKET_SSID:
+            if not cls.POCKET_SSID.startswith('42["auth"'):
+                logger.warning("⚠️ SSID не у повному форматі. Буде спроба конвертації.")
         
-        ssid = cls.POCKET_SSID
-        if not ssid.startswith('42["auth"'):
-            # Конвертація у повний формат
-            ssid = f'42["auth",{{"session":"{ssid}","isDemo":1,"uid":{cls.POCKET_UID},"platform":1}}]'
-        
-        return ssid
+        return errors
