@@ -60,6 +60,13 @@ jobs:
     
     - name: Generate trading signals
       env:
+        # Вимкнути проксі
+        HTTP_PROXY: ""
+        HTTPS_PROXY: ""
+        http_proxy: ""
+        https_proxy: ""
+        NO_PROXY: "*"
+        
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
@@ -68,12 +75,17 @@ jobs:
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
-        GROQ_MODEL: 'meta-llama/llama-4-maverick-17b-128e-instruct'
+        GROQ_MODEL: 'llama-3.3-70b-versatile'
+        TZ: 'Europe/Kiev'
       run: |
         echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
-        echo "🎯 Мінімальна впевненість: 70%"
+        echo "🌍 Часова зона: Київ (UTC+2)"
+        echo "🔧 Вимкнено використання проксі"
+        
+        # Встановлюємо київську часову зону
+        export TZ='Europe/Kiev'
         
         # Додаємо шляхи Python
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)
@@ -98,7 +110,7 @@ jobs:
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Авто-оновлення: Нові сигнали $(date +'%Y-%m-%d %H:%M') [skip ci]"
+          git commit -m "🤖 Авто-оновлення: Нові сигнали $(date +'%Y-%m-%d %H:%M') Київ [skip ci]"
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
         fi
