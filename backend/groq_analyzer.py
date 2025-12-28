@@ -19,47 +19,11 @@ class GroqAnalyzer:
                 logger.error("❌ GROQ_API_KEY не знайдено!")
                 return
             
-            # Фікс для проксі: явно відключаємо проксі
-            self.client = Groq(
-                api_key=Config.GROQ_API_KEY,
-                # Додаємо параметр, щоб відключити автоматичне використання проксі
-                http_client=None  # Не передаємо http_client, щоб використати стандартний
-            )
+            # Проста ініціалізація без зайвих параметрів
+            self.client = Groq(api_key=Config.GROQ_API_KEY)
             logger.info(f"✅ Groq AI ініціалізовано (модель: {Config.GROQ_MODEL})")
         except Exception as e:
             logger.error(f"❌ Помилка ініціалізації Groq: {e}")
-            # Альтернативний спосіб ініціалізації через видалення змінних проксі з оточення
-            self._initialize_without_proxy()
-    
-    def _initialize_without_proxy(self):
-        """Альтернативна ініціалізація без проксі"""
-        try:
-            import os
-            
-            # Тимчасово видаляємо змінні проксі з оточення
-            proxy_vars = [
-                'http_proxy', 'https_proxy', 
-                'HTTP_PROXY', 'HTTPS_PROXY',
-                'all_proxy', 'ALL_PROXY'
-            ]
-            saved_proxies = {}
-            
-            for var in proxy_vars:
-                if var in os.environ:
-                    saved_proxies[var] = os.environ[var]
-                    del os.environ[var]
-            
-            # Ініціалізуємо клієнта без проксі
-            self.client = Groq(api_key=Config.GROQ_API_KEY)
-            
-            # Відновлюємо змінні оточення (якщо потрібно)
-            for var, value in saved_proxies.items():
-                os.environ[var] = value
-                
-            logger.info(f"✅ Groq AI ініціалізовано (без проксі, модель: {Config.GROQ_MODEL})")
-        except Exception as e:
-            logger.error(f"❌ Альтернативна ініціалізація також не вдалася: {e}")
-            logger.error("⚠️ Перевірте налаштування середовища та змінні проксі")
     
     def analyze_market(self, asset, candles_data):
         """Аналіз ринку через Groq AI"""
