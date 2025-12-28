@@ -1,4 +1,3 @@
-
 import json
 import logging
 from groq import Groq
@@ -19,19 +18,16 @@ class GroqAnalyzer:
                 logger.error("❌ GROQ_API_KEY не знайдено!")
                 return
             
-            # Ініціалізація Groq БЕЗ зайвих параметрів
+            # Проста ініціалізація без зайвих параметрів
             self.client = Groq(api_key=Config.GROQ_API_KEY)
             logger.info(f"✅ Groq AI ініціалізовано (модель: {Config.GROQ_MODEL})")
         except Exception as e:
             logger.error(f"❌ Помилка ініціалізації Groq: {e}")
-            # Додаємо додаткову інформацію для налагодження
-            import traceback
-            logger.error(f"Деталі помилки: {traceback.format_exc()}")
     
     def analyze_market(self, asset, candles_data):
         """Аналіз ринку через Groq AI"""
         if not self.client:
-            logger.error("❌ Groq AI не ініціалізовано")
+            logger.error("Groq AI не ініціалізовано")
             return None
         
         # Форматуємо дані
