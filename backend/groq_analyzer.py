@@ -18,13 +18,14 @@ class GroqAnalyzer:
                 logger.error("❌ GROQ_API_KEY не знайдено!")
                 return
             
+            # Створюємо клієнта БЕЗ зайвих параметрів
             self.client = Groq(api_key=Config.GROQ_API_KEY)
             logger.info(f"✅ Groq AI ініціалізовано (модель: {Config.GROQ_MODEL})")
         except Exception as e:
             logger.error(f"❌ Помилка ініціалізації Groq: {e}")
     
     def analyze_market(self, asset, candles_data):
-        """Аналіз ринку через Groq AI з покращеним промптом"""
+        """Аналіз ринку через Groq AI"""
         if not self.client:
             logger.error("Groq AI не ініціалізовано")
             return None
@@ -36,7 +37,6 @@ class GroqAnalyzer:
         kyiv_tz = pytz.timezone('Europe/Kiev')
         now_kyiv = datetime.now(kyiv_tz)
         
-        # ПОКРАЩЕНИЙ ПРОМПТ для кращого аналізу
         prompt = f"""
         Ти - професійний трейдер бінарних опціонів з 10-річним досвідом.
         
@@ -52,32 +52,27 @@ class GroqAnalyzer:
         ПРОАНАЛІЗУЙ:
         1. ТРЕНД: Визнач загальний тренд (вгору/вниз/флет)
         2. КЛЮЧОВІ РІВНІ: Знайди рівні підтримки та опору
-        3. ТЕХНІЧНІ ІНДИКАТОРИ (уявні):
-           - RSI: перекупленість/перепроданість
-           - MACD: перетин сигнальної лінії
-           - Stochastic: позиція в діапазоні
-           - Об'єми: активність покупців/продавців
+        3. ТЕХНІЧНІ ІНДИКАТОРИ: RSI, MACD, Stochastic
         4. ПАТЕРНИ: Шукай японські свічкові паттерни
         5. ВОЛАТИЛЬНІСТЬ: Оціни амплітуду коливань
         
         ДАЙ СИГНАЛ:
         - Напрямок: ТОЛЬКИ "UP" або "DOWN"
         - Впевненість: від 70 до 95% (десятичний дріб)
-        - Час входу: поточний час + 1 хвилина (формат HH:MM)
-        - Тривалість: 2 або 5 хвилин (обери оптимальну)
-        - Причина: коротке обґрунтування (2-3 речення)
+        - Час входу: поточний час + 1-2 хвилини (формат HH:MM)
+        - Тривалість: 2 або 5 хвилин
+        - Причина: коротке обґрунтування
         
         ВАЖЛИВО:
         - Якщо тренд неясний - не давай сигнал
         - Мінімальна впевненість: 70%
-        - Час входу має бути в майбутньому відносно поточного часу
         
         ФОРМАТ ВІДПОВІДІ (JSON):
         {{
             "asset": "{asset}",
             "direction": "UP",
             "confidence": 0.85,
-            "entry_time": "14:25",
+            "entry_time": "{now_kyiv.strftime('%H:%M')}",
             "duration": 2,
             "reason": "Чіткий паттерн поглинання на рівні підтримки. RSI показує перепроданість з розворотом вгору.",
             "timestamp": "{now_kyiv.strftime('%Y-%m-%d %H:%M:%S')}"
@@ -92,23 +87,27 @@ class GroqAnalyzer:
                 messages=[
                     {
                         "role": "system",
-                        "content": "Ти експертний трейдер бінарних опціонів. Даєш тільки чіткі, обґрунтовані сигнали. Якщо ринок неясний - не даєш сигнал."
+                        "content": "Ти експертний трейдер бінарних опціонів. Даєш тільки чіткі, обґрунтовані сигнали."
                     },
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.2,  # Низька температура для більш консервативних прогнозів
+                temperature=0.2,
                 max_tokens=500,
                 response_format={"type": "json_object"}
             )
             
             response = json.loads(completion.choices[0].message.content)
             
-            # Перевірка відповіді
-            if self._validate_signal_response(response):
+            # Додаємо asset, якщо його немає
+            if 'asset' not in response:
+                response['asset'] = asset
+            
+            # Перевіряємо впевненість
+            if response.get('confidence', 0) >= Config.MIN_CONFIDENCE:
                 logger.info(f"✅ Отримано сигнал для {asset}: {response['direction']} ({response['confidence']*100:.1f}%)")
                 return response
             else:
-                logger.warning(f"⚠️ Сигнал для {asset} не пройшов валідацію")
+                logger.warning(f"⚠️ Сигнал для {asset} має низьку впевненість: {response.get('confidence', 0)*100:.1f}%")
                 return None
             
         except Exception as e:
@@ -124,7 +123,7 @@ class GroqAnalyzer:
         # Беремо останні 20 свічок для аналізу
         for i, candle in enumerate(candles[-20:]):
             try:
-                # Отримуємо дані зі свічки
+                # Обробляємо різні формати свічок
                 if hasattr(candle, 'close'):
                     close = candle.close
                     open_price = candle.open
@@ -132,15 +131,21 @@ class GroqAnalyzer:
                     low = candle.low
                     timestamp = getattr(candle, 'timestamp', 'N/A')
                 elif isinstance(candle, dict):
-                    close = candle.get('close', 'N/A')
-                    open_price = candle.get('open', 'N/A')
-                    high = candle.get('high', 'N/A')
-                    low = candle.get('low', 'N/A')
+                    close = candle.get('close', 0)
+                    open_price = candle.get('open', 0)
+                    high = candle.get('high', 0)
+                    low = candle.get('low', 0)
                     timestamp = candle.get('timestamp', 'N/A')
+                elif isinstance(candle, (list, tuple)) and len(candle) >= 5:
+                    timestamp = candle[0]
+                    open_price = candle[1]
+                    high = candle[2]
+                    low = candle[3]
+                    close = candle[4]
                 else:
                     continue
                 
-                # Форматуємо для читабельності
+                # Форматуємо
                 formatted.append(
                     f"{i+1:2d}. {timestamp} | "
                     f"O:{float(open_price):.5f} "
@@ -148,37 +153,7 @@ class GroqAnalyzer:
                     f"L:{float(low):.5f} "
                     f"C:{float(close):.5f}"
                 )
-            except Exception as e:
+            except Exception:
                 continue
         
         return "\n".join(formatted) if formatted else "Немає коректних даних свічок"
-    
-    def _validate_signal_response(self, response):
-        """Валідація відповіді від AI"""
-        required_fields = ['asset', 'direction', 'confidence', 'entry_time', 'reason']
-        
-        # Перевірка наявності полів
-        for field in required_fields:
-            if field not in response:
-                logger.warning(f"Відсутнє поле: {field}")
-                return False
-        
-        # Перевірка напрямку
-        if response['direction'] not in ['UP', 'DOWN']:
-            logger.warning(f"Невірний напрямок: {response['direction']}")
-            return False
-        
-        # Перевірка впевненості
-        if not 0.7 <= response['confidence'] <= 0.95:
-            logger.warning(f"Впевненість поза діапазоном: {response['confidence']}")
-            return False
-        
-        # Перевірка часу
-        try:
-            from datetime import datetime
-            datetime.strptime(response['entry_time'], '%H:%M')
-        except ValueError:
-            logger.warning(f"Невірний формат часу: {response['entry_time']}")
-            return False
-        
-        return True
