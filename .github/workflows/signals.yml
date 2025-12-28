@@ -1,4 +1,4 @@
-name: Generate Trading Signals
+name: Generate Trading Signals and Deploy
 
 on:
   schedule:
@@ -6,9 +6,18 @@ on:
   workflow_dispatch:  # Ручний запуск
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'data/**'
+      - 'logs/**'
+      - '*.md'
+      - '*.css'
+      - '*.js'
+      - '*.html'
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   generate-signals:
@@ -17,47 +26,128 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
     
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     
-    - name: Install dependencies
+    - name: Clear all caches
+      run: |
+        echo "🧹 Очищення кешу..."
+        pip cache purge
+        rm -rf ~/.cache/pip
+        rm -rf ~/.cache/apt
+        sudo apt-get clean
+        echo "✅ Кеш очищено"
+    
+    - name: Upgrade pip and install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r backend/requirements.txt
+        pip install --upgrade setuptools wheel
+        pip install --no-cache-dir -r backend/requirements.txt
     
-    - name: Create directories
+    - name: Create necessary directories
       run: |
         mkdir -p data
         mkdir -p logs
         touch .nojekyll
         
+        # Створюємо початкові файли, якщо їх немає
         if [ ! -f data/signals.json ]; then 
-          echo '{"last_update": null, "signals": []}' > data/signals.json
+          echo '{"last_update": null, "signals": [], "timezone": "Europe/Kiev (UTC+2)"}' > data/signals.json
         fi
         if [ ! -f data/history.json ]; then 
           echo '[]' > data/history.json
         fi
+        if [ ! -f data/assets_config.json ]; then 
+          echo '{"preferred_assets": ["GBPJPY_otc", "EURUSD_otc", "USDJPY_otc"]}' > data/assets_config.json
+        fi
     
-    - name: Generate signals
+    - name: Generate trading signals
       env:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
+        SIGNAL_INTERVAL: '300'
         MIN_CONFIDENCE: '0.7'
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
-        GROQ_MODEL: 'llama-3.3-70b-versatile'
+        TIMEFRAMES: '120'
+        LOG_LEVEL: 'INFO'
+        GROQ_MODEL: 'meta-llama/llama-4-maverick-17b-128e-instruct'
       run: |
-        echo "🚀 Запуск генерації сигналів..."
+        echo "🚀 Початок генерації сигналів..."
+        echo "📊 Активи: $ASSETS"
+        echo "🧠 Модель AI: $GROQ_MODEL"
+        echo "🎯 Мінімальна впевненість: 70%"
+        echo "⏰ Часовий пояс: Київ (UTC+2)"
+        
+        echo "🧪 Тест імпортів Python..."
+        python -c "
+        import sys
+        sys.path.insert(0, 'backend')
+        sys.path.insert(0, 'utils')
+        try:
+            from config import Config
+            print('✅ config.py завантажено')
+            print('GROQ_MODEL:', Config.GROQ_MODEL)
+        except Exception as e:
+            print(f'❌ Помилка завантаження config.py: {e}')
+            import traceback
+            print(traceback.format_exc())
+        "
+        
+        # Додаємо шляхи Python
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
+        
+        # Запускаємо генератор сигналів
         cd backend
         python signal_generator.py
+        
+        echo "✅ Генерація сигналів завершена"
     
-    - name: Commit and push
+    - name: Commit and push generated data
       run: |
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
+        
+        # Додаємо змінені файли
         git add data/
-        git commit -m "🤖 Оновлення сигналів" || echo "Немає змін"
-        git push origin main
+        git add logs/
+        git add .nojekyll
+        
+        # Перевіряємо, чи є зміни для коміту
+        if git diff --staged --quiet; then
+          echo "⚠️ Немає змін для коміту"
+        else
+          git commit -m "🤖 Авто-оновлення: Нові сигнали $(date +'%Y-%m-%d %H:%M') [skip ci]"
+          git push origin main
+          echo "✅ Зміни закомічено та відправлено"
+        fi
+
+  deploy:
+    needs: generate-signals
+    if: success()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
