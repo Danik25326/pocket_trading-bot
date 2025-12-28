@@ -1,5 +1,5 @@
 pocketoptionapi-async==2.0.1
-groq==0.10.0
+groq==0.9.0
 websockets==12.0
 aiohttp==3.9.5
 pandas==2.2.1
