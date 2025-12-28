@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime, timedelta
-import pytz
 from config import Config
 
 class DataHandler:
@@ -42,15 +41,14 @@ class DataHandler:
                 print("⚠️ Немає сигналів з достатньою впевненістю для збереження")
                 return False
             
-            # Додаємо час генерації
-            kyiv_tz = pytz.timezone('Europe/Kiev')
+            # Додаємо час генерації (Київ)
             for signal in valid_signals:
                 if 'generated_at' not in signal:
-                    signal['generated_at'] = datetime.now(kyiv_tz).isoformat()
+                    signal['generated_at'] = Config.get_kyiv_time().isoformat()
             
             # Оновлюємо дані
             data = {
-                "last_update": datetime.now(kyiv_tz).isoformat(),
+                "last_update": Config.get_kyiv_time().isoformat(),
                 "signals": valid_signals
             }
             
@@ -80,10 +78,9 @@ class DataHandler:
                 with open(self.history_file, 'r', encoding='utf-8') as f:
                     history = json.load(f)
             
-            kyiv_tz = pytz.timezone('Europe/Kiev')
             for signal in signals:
                 history_entry = signal.copy()
-                history_entry['saved_at'] = datetime.now(kyiv_tz).isoformat()
+                history_entry['saved_at'] = Config.get_kyiv_time().isoformat()
                 history.append(history_entry)
             
             # Обмежуємо історію 1000 записами
@@ -103,8 +100,7 @@ class DataHandler:
             if not data.get("signals"):
                 return
             
-            kyiv_tz = pytz.timezone('Europe/Kiev')
-            current_time = datetime.now(kyiv_tz)
+            current_time = Config.get_kyiv_time()
             
             filtered_signals = []
             for signal in data["signals"]:
@@ -115,7 +111,7 @@ class DataHandler:
                 try:
                     signal_time = datetime.fromisoformat(signal_time_str)
                     if signal_time.tzinfo is None:
-                        signal_time = kyiv_tz.localize(signal_time)
+                        signal_time = Config.TIMEZONE.localize(signal_time)
                     
                     # Залишаємо сигнали не старіші ніж hours годин
                     if current_time - signal_time <= timedelta(hours=hours):
@@ -140,8 +136,7 @@ class DataHandler:
             if not signals:
                 return []
             
-            kyiv_tz = pytz.timezone('Europe/Kiev')
-            current_time = datetime.now(kyiv_tz)
+            current_time = Config.get_kyiv_time()
             
             active_signals = []
             for signal in signals:
@@ -153,7 +148,7 @@ class DataHandler:
                     # Парсимо час входу (HH:MM)
                     entry_time = datetime.strptime(entry_time_str, "%H:%M").time()
                     today = current_time.date()
-                    entry_datetime = kyiv_tz.localize(datetime.combine(today, entry_time))
+                    entry_datetime = Config.TIMEZONE.localize(datetime.combine(today, entry_time))
                     
                     # Розраховуємо різницю
                     time_diff = current_time - entry_datetime
@@ -208,6 +203,9 @@ class DataHandler:
             if not timestamp:
                 return False
             signal_time = datetime.fromisoformat(timestamp)
-            return (datetime.now() - signal_time).total_seconds() <= hours * 3600
+            if signal_time.tzinfo is None:
+                signal_time = Config.TIMEZONE.localize(signal_time)
+            current_time = Config.get_kyiv_time()
+            return (current_time - signal_time).total_seconds() <= hours * 3600
         except Exception:
             return False
