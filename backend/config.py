@@ -1,11 +1,12 @@
 import os
 import sys
-import re
 import logging
 from pathlib import Path
 from dotenv import load_dotenv
+import pytz
+from datetime import datetime
 
-# Додаємо шляхи для коректних імпортів у GitHub Actions
+# Додаємо шляхи для коректних імпортів
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -17,19 +18,22 @@ class Config:
     # Корінь проекту
     BASE_DIR = Path(__file__).parent.parent
     
+    # Часовий пояс (Київ)
+    TIMEZONE = pytz.timezone('Europe/Kiev')
+    
     # Pocket Option
     POCKET_SSID = os.getenv('POCKET_SSID')
     POCKET_DEMO = os.getenv('POCKET_DEMO', 'true').lower() == 'true'
     
-    # Groq AI - ОНОВЛЕНА МОДЕЛЬ
+    # Groq AI
     GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = os.getenv('GROQ_MODEL', 'meta-llama/llama-4-maverick-17b-128e-instruct')
+    GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
     
     # Сигнали
     SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
     MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
     
-    # Актив - ВИПРАВЛЕНО ФОРМАТ
+    # Актив
     ASSETS_RAW = os.getenv('ASSETS', 'GBPJPY_otc,EURUSD_otc,USDJPY_otc')
     ASSETS = [asset.strip() for asset in ASSETS_RAW.split(',')]
     TIMEFRAMES = int(os.getenv('TIMEFRAMES', 120))
@@ -44,18 +48,29 @@ class Config:
     ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
     LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
     
-    @staticmethod
-    def validate():
+    @classmethod
+    def get_kyiv_time(cls):
+        """Повертає поточний час в Києві"""
+        return datetime.now(cls.TIMEZONE)
+    
+    @classmethod
+    def validate_config(cls):
         """Перевірка конфігурації"""
         errors = []
         
-        if not Config.POCKET_SSID:
+        # Перевірка API ключів
+        if not cls.POCKET_SSID:
             errors.append("❌ POCKET_SSID не встановлено")
         
-        if not Config.GROQ_API_KEY or Config.GROQ_API_KEY == 'your_groq_api_key_here':
+        if not cls.GROQ_API_KEY or cls.GROQ_API_KEY == 'your_groq_api_key_here':
             errors.append("❌ GROQ_API_KEY не встановлено")
+        elif len(cls.GROQ_API_KEY) < 30:
+            errors.append("❌ GROQ_API_KEY має бути довший за 30 символів")
+        elif not cls.GROQ_API_KEY.startswith('gsk_'):
+            logger.warning("⚠️ GROQ_API_KEY може бути у невірному форматі")
         
-        if not Config.ASSETS:
+        # Перевірка активів
+        if not cls.ASSETS:
             errors.append("❌ Не вказано активи")
         
         return errors
