@@ -83,15 +83,17 @@ class SignalGenerator:
             logger.info(f"  - Мін. впевненість: {Config.MIN_CONFIDENCE*100}%")
             logger.info(f"  - Часовий пояс: Київ (UTC+2)")
             
-            # Підключаємося
-            logger.info("🔗 Підключення до PocketOption...")
-            await self.pocket_client.connected()
+    try:
+        # Підключення
+        logger.info("🔗 Підключення до PocketOption...")
+        if not await self.pocket_client.connect():
+            logger.error("❌ Не вдалося підключитися до PocketOption")
+            logger.info("⏸️ Пропускаю генерацію сигналів...")
+            return []  # ← Повертаємо порожній список
+        
+        # Продовжуємо тільки якщо підключення успішне
+        logger.info("✅ Підключення успішне, генерую сигнали...")
 
-            if not self.pocket_client.connected:
-                logger.error("❌ Не вдалося підключитися до PocketOption")
-                return []
-            
-            logger.info("✅ Успішно підключено!")
             
             valid_signals = []
             for asset in Config.ASSETS:
