@@ -60,11 +60,9 @@ jobs:
     
     - name: Generate trading signals (ТІЛЬКИ AI)
       env:
-        # Вимкнути проксі ПОВНІСТЮ
+        # Вимкнути проксі ПОВНІСТЮ (тільки один раз!)
         HTTP_PROXY: ""
         HTTPS_PROXY: ""
-        http_proxy: ""
-        https_proxy: ""
         NO_PROXY: "*"
         # Вимкнути попередження про HTTPS
         PYTHONWARNINGS: "ignore:Unverified HTTPS request"
