@@ -16,7 +16,7 @@ class PocketOptionClient:
         
         try:
             # Отримуємо SSID з конфігурації
-            ssid = Config.get_validated_ssid()  # Використовуємо метод з Config
+            ssid = Config.get_validated_ssid()
             if not ssid:
                 logger.error("❌ Не вдалося отримати валідний SSID!")
                 return self
@@ -31,11 +31,11 @@ class PocketOptionClient:
                 logger.info("ℹ️ Встановіть бібліотеку: pip install pocketoptionapi-async==2.0.1")
                 return self
             
-            # Створюємо клієнта з обома параметрами
+            # Створюємо клієнта
             self.client = AsyncPocketOptionClient(
                 ssid=ssid,
-                is_demo=Config.POCKET_DEMO,  # ← ДОДАЙ ЦЕ!
-                enable_logging=True  # ← Увімкнути для діагностики
+                is_demo=Config.POCKET_DEMO,
+                enable_logging=True
             )
             
             self._initialized = True
@@ -49,7 +49,7 @@ class PocketOptionClient:
             return self
     
     async def connect(self):
-        """Виправлений метод підключення"""
+        """ВИПРАВЛЕНИЙ метод підключення"""
         try:
             if not self._initialized:
                 await self.initialize()
@@ -59,31 +59,50 @@ class PocketOptionClient:
                 return False
             
             logger.info("🔗 Підключення до PocketOption...")
-            connection_result = await self.client.connect()
             
-            # Чекаємо на підключення
-            await asyncio.sleep(2)
+            # Спробуємо підключитися
+            try:
+                await self.client.connect()
+                logger.info("✅ Виклик connect() успішний")
+            except Exception as e:
+                logger.error(f"❌ Помилка при виклику connect(): {e}")
+                return False
             
-            # Перевіряємо статус через кілька способів
-            if hasattr(self.client, 'connected') and self.client.connected:
-                self.connected = True
-                logger.info("✅ Успішно підключено до PocketOption!")
-                
-                # Тестуємо з'єднання - отримуємо баланс
-                try:
-                    balance = await self.client.get_balance()
+            # Чекаємо на підключення - БІЛЬШЕ ЧАСУ!
+            await asyncio.sleep(5)  # Збільшив до 5 секунд
+            
+            # Спробуємо отримати баланс - це найкраща перевірка підключення
+            try:
+                logger.info("🔄 Перевірка підключення через баланс...")
+                balance = await self.client.get_balance()
+                if balance and hasattr(balance, 'balance'):
+                    self.connected = True
+                    logger.info(f"✅ Успішно підключено до PocketOption!")
                     logger.info(f"💰 Баланс: {balance.balance} {balance.currency}")
                     return True
-                except Exception as e:
-                    logger.warning(f"⚠️ Баланс не отримано, але продовжуємо: {e}")
-                    return True
-            
-            logger.error("❌ Не вдалося підтвердити підключення до PocketOption!")
-            self.connected = False
-            return False  # ← Повертаємо False, а не True!
+                else:
+                    logger.error("❌ Баланс не отримано або неправильний формат")
+                    return False
+            except Exception as e:
+                logger.error(f"❌ Не вдалося отримати баланс: {e}")
+                
+                # Альтернативна перевірка - спробуємо отримати ассети
+                try:
+                    logger.info("🔄 Альтернативна перевірка - запит ассетів...")
+                    assets = await self.client.get_assets()
+                    if assets:
+                        self.connected = True
+                        logger.info(f"✅ Підключення підтверджено через ассети (отримано: {len(assets)})")
+                        return True
+                except Exception as e2:
+                    logger.error(f"❌ Альтернативна перевірка теж не вдалася: {e2}")
+                
+                return False
         
         except Exception as e:
             logger.error(f"❌ Помилка підключення: {e}")
+            import traceback
+            logger.error(f"Трейс: {traceback.format_exc()}")
             self.connected = False
             return False
     
@@ -123,7 +142,12 @@ class PocketOptionClient:
             return None
     
     async def disconnect(self):
-        if self.client and hasattr(self.client, 'connected') and self.client.connected:
-            await self.client.disconnect()
-            self.connected = False
-            logger.info("✅ Відключено від PocketOption")
+        if self.client and hasattr(self.client, 'connected'):
+            try:
+                await self.client.disconnect()
+                self.connected = False
+                logger.info("✅ Відключено від PocketOption")
+            except:
+                pass
+        else:
+            logger.info("ℹ️ Не було активного підключення")
