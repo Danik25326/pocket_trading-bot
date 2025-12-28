@@ -27,6 +27,12 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
     
+    - name: Clear pip and system cache
+      run: |
+        pip cache purge || true
+        sudo apt-get clean || true
+        sudo rm -rf /var/lib/apt/lists/* || true
+    
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
@@ -35,7 +41,14 @@ jobs:
     - name: Upgrade pip and install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install -r backend/requirements.txt
+        # Видаляємо можливі конфліктні пакети
+        pip uninstall -y pocketoptionapi-async groq websockets aiohttp pandas python-dotenv schedule numpy requests || true
+        # Встановлюємо з requirements.txt, ігноруючи кеш
+        pip install -r backend/requirements.txt --no-cache-dir --force-reinstall
+    
+    - name: Verify installations
+      run: |
+        pip list | grep -E "pocketoptionapi|groq|websockets|aiohttp|pandas"
     
     - name: Create directories
       run: |
@@ -59,13 +72,18 @@ jobs:
       run: |
         echo "🧪 Тест імпортів Python..."
         python -c "
-        import sys
-        sys.path.insert(0, '.')
-        sys.path.insert(0, 'backend')
-        from config import Config
-        print('✅ Config завантажено')
-        print(f'SSID присутній: {\"✅\" if Config.POCKET_SSID else \"❌\"}')
-        print(f'GROQ_API_KEY присутній: {\"✅\" if Config.GROQ_API_KEY else \"❌\"}')
+import sys
+sys.path.insert(0, '.')
+sys.path.insert(0, 'backend')
+try:
+    from config import Config
+    print('✅ Config завантажено')
+    print(f'SSID присутній: {\"✅\" if Config.POCKET_SSID else \"❌\"}')
+    print(f'GROQ_API_KEY присутній: {\"✅\" if Config.GROQ_API_KEY else \"❌\"}')
+    print(f'GROQ_MODEL: {Config.GROQ_MODEL}')
+except Exception as e:
+    print(f'❌ Помилка імпорту: {e}')
+    sys.exit(1)
         "
         
         echo "🚀 Запуск генератора сигналів..."
@@ -87,7 +105,7 @@ jobs:
         if git diff --quiet && git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Auto-update: New signals generated $(date +'%Y-%m-%d %H:%M') [skip ci]"
+          git commit -m "🤖 Auto-update: New signals generated $(date +'%Y-%m-%d %H:%M UTC') [skip ci]"
           git push origin main
           echo "✅ Зміни закомічено та запушено"
         fi
