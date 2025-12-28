@@ -77,7 +77,7 @@ jobs:
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
-        GROQ_MODEL: 'llama3-70b-8192'
+        GROQ_MODEL: 'llama-3.3-70b-versatile'
       run: |
         echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
