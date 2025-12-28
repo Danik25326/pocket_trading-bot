@@ -1,6 +1,6 @@
-
 import json
 import logging
+import os  # ДОДАВ ІМПОРТ OS
 from groq import Groq
 from datetime import datetime, timedelta
 import pytz
@@ -18,6 +18,11 @@ class GroqAnalyzer:
             if not Config.GROQ_API_KEY:
                 logger.error("❌ GROQ_API_KEY не знайдено!")
                 return
+            
+            # ФІКС: Видаляємо змінні проксі
+            proxy_vars = ['http_proxy', 'https_proxy', 'HTTP_PROXY', 'HTTPS_PROXY']
+            for var in proxy_vars:
+                os.environ.pop(var, None)
             
             # ПРОСТА ІНІЦІАЛІЗАЦІЯ БЕЗ ЖОДНИХ ДОДАТКОВИХ ПАРАМЕТРІВ
             self.client = Groq(api_key=Config.GROQ_API_KEY)
