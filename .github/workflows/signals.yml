@@ -1,8 +1,50 @@
+name: Generate Trading Signals and Deploy
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'data/**'
+      - 'logs/**'
+      - '*.md'
+      - '*.css'
+      - '*.js'
+      - '*.html'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  generate-signals:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      
+    - name: Upgrade pip and install dependencies
+      run: |
+        # commands here
+      
+    - name: Create necessary directories
+      run: |
+        # commands here
+    
     - name: Generate trading signals (ТІЛЬКИ AI)
       env:
-        # НІЯКИХ ПРОКСІ ЗМІННИХ - ВИДАЛЯЄМО ПОВНІСТЮ
-        # Просто не визначаємо їх взагалі
-        
+        # ТІЛЬКИ ОДИН НАБІР ЗМІННИХ!
+        HTTP_PROXY: ""
+        HTTPS_PROXY: ""
+        NO_PROXY: "*"
+        PYTHONWARNINGS: "ignore:Unverified HTTPS request"
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
@@ -14,24 +56,30 @@
         GROQ_MODEL: 'llama-3.3-70b-versatile'
         TZ: 'Europe/Kiev'
       run: |
-        echo "🚀 ПОЧАТОК ГЕНЕРАЦІЇ AI СИГНАЛІВ"
-        echo "📊 Активи: $ASSETS"
-        echo "🧠 Модель AI: $GROQ_MODEL"
-        echo "🎯 Мін. впевненість: 75%"
-        echo "🌍 Часова зона: Київ (UTC+2)"
-        echo "⚡ Режим: ТІЛЬКИ AI (без резервів)"
-        
-        # Встановлюємо київську часову зону
-        export TZ='Europe/Kiev'
-        
-        # Явно видаляємо всі змінні проксі в середині скрипта
-        unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
-        
-        # Додаємо шляхи Python
-        export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)
-        
-        # Запускаємо генератор сигналів (ТІЛЬКИ AI)
-        cd backend
-        python signal_generator.py
-        
-        echo "✅ Генерація AI сигналів завершена"
+        # commands here
+    
+    - name: Commit and push generated data
+      run: |
+        # commands here
+
+  deploy:
+    needs: generate-signals
+    if: success()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
