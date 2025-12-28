@@ -65,11 +65,6 @@ jobs:
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'meta-llama/llama-4-maverick-17b-128e-instruct'
-        # Видаляємо змінні проксі
-        http_proxy: ''
-        https_proxy: ''
-        HTTP_PROXY: ''
-        HTTPS_PROXY: ''
       run: |
         echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
@@ -80,18 +75,9 @@ jobs:
         # Додаємо шляхи Python
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)
         
-        # Тестуємо імпорти
+        # Простий тест імпортів Python (без багаторядкового коду)
         echo "🧪 Тест імпортів Python..."
-        python3 -c "
-import sys
-sys.path.append('backend')
-sys.path.append('.')
-try:
-    from groq import Groq
-    print('✅ Groq доступний')
-except Exception as e:
-    print(f'❌ Помилка Groq: {e}')
-        "
+        python3 -c "import sys; sys.path.append('backend'); sys.path.append('.'); from groq import Groq; print('✅ Groq доступний')" || echo "❌ Помилка Groq"
         
         # Запускаємо генератор сигналів
         cd backend
