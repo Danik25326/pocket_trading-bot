@@ -3,6 +3,7 @@ import logging
 import sys
 from pathlib import Path
 from datetime import datetime
+import pytz
 
 # Додаємо шляхи для імпортів
 sys.path.insert(0, str(Path(__file__).parent))
@@ -17,7 +18,8 @@ from data_handler import DataHandler
 # Налаштування логування
 logging.basicConfig(
     level=getattr(logging, Config.LOG_LEVEL),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
 logger = logging.getLogger("signal_bot")
 
@@ -26,6 +28,14 @@ class SignalGenerator:
         self.pocket_client = PocketOptionClient()
         self.analyzer = GroqAnalyzer()
         self.data_handler = DataHandler()
+        
+        # Встановлюємо часовий пояс для всіх операцій
+        self.kyiv_tz = pytz.timezone('Europe/Kiev')
+    
+    def get_current_time_str(self):
+        """Повертає поточний час у Києві як рядок"""
+        now = datetime.now(self.kyiv_tz)
+        return now.strftime('%Y-%m-%d %H:%M:%S')
     
     async def generate_signal_for_asset(self, asset):
         """Генерація сигналу для одного активу"""
@@ -44,7 +54,7 @@ class SignalGenerator:
             candles = await self.pocket_client.get_candles(
                 asset=asset,
                 timeframe=Config.TIMEFRAMES,
-                count=30  # Зменшимо кількість для швидкості
+                count=50
             )
             
             if not candles:
@@ -62,29 +72,29 @@ class SignalGenerator:
             signal = self.analyzer.analyze_market(asset, candles)
             
             if signal:
-                # Додаємо час генерації
-                import pytz
-                kyiv_tz = pytz.timezone('Europe/Kiev')
-                signal['generated_at'] = datetime.now(kyiv_tz).isoformat()
+                # Додаємо час генерації (Київський час)
+                signal['generated_at'] = datetime.now(self.kyiv_tz).isoformat()
                 signal['asset'] = asset
+                signal['timezone'] = 'Europe/Kiev (UTC+2)'
                 
+                # Логуємо сигнал
                 logger.info(f"✅ Сигнал для {asset}: {signal['direction']} (впевненість: {signal['confidence']*100:.1f}%)")
+                logger.info(f"   ⏰ Час входу: {signal.get('entry_time', 'N/A')} (Київ)")
+                
                 return signal
             else:
                 logger.warning(f"AI не повернув сигнал для {asset}")
                 return None
             
         except Exception as e:
-            logger.error(f"❌ Помилка генерації сигналу для {asset}: {e}")
-            import traceback
-            logger.error(f"Деталі помилки: {traceback.format_exc()}")
+            logger.error(f"❌ Помилка генерації сигналу для {asset}: {str(e)}")
             return None
     
     async def generate_all_signals(self):
         """Генерація сигналів для всіх активів"""
         logger.info("=" * 60)
         logger.info(f"🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ")
-        logger.info(f"📅 Час: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"⏰ Час запуску: {self.get_current_time_str()} (Київ)")
         logger.info(f"⚙️ Конфігурація:")
         logger.info(f"  • Активи: {', '.join(Config.ASSETS)}")
         logger.info(f"  • Модель AI: {Config.GROQ_MODEL}")
@@ -92,16 +102,23 @@ class SignalGenerator:
         logger.info(f"  • Таймфрейм: {Config.TIMEFRAMES} секунд")
         logger.info("=" * 60)
         
+        # Перевіряємо конфігурацію
+        errors = Config.validate_config()
+        if errors:
+            for error in errors:
+                logger.error(error)
+            return []
+        
         all_signals = []
         
         try:
             # Підключення
             logger.info("🔗 Підключення до PocketOption...")
             if not await self.pocket_client.connect():
-                logger.error("❌ Критична помилка: Не вдалося підключитися до PocketOption")
-                logger.info("🔄 Продовжую без підключення до PocketOption...")
-                # Можемо продовжити з мок-даними або повернути порожній список
+                logger.error("❌ Не вдалося підключитися до PocketOption")
                 return []
+            
+            logger.info("✅ Успішно підключено до PocketOption")
             
             # Генерація сигналів для кожного активу
             for asset in Config.ASSETS:
@@ -128,15 +145,16 @@ class SignalGenerator:
                         logger.info(
                             f"   • {signal['asset']}: {signal['direction']} "
                             f"({signal['confidence']*100:.1f}%) "
-                            f"о {signal.get('entry_time', 'N/A')}"
+                            f"о {signal.get('entry_time', 'N/A')} (Київ)"
                         )
                 else:
                     logger.error("❌ Не вдалося зберегти сигнали")
             else:
-                logger.warning("⚠️  Не створено жодного сигналу")
+                logger.warning("⚠️ Не створено жодного сигналу")
             
             # Відключення
             await self.pocket_client.disconnect()
+            logger.info("✅ Відключено від PocketOption")
             
             # Статистика
             stats = self.data_handler.get_statistics()
@@ -145,7 +163,7 @@ class SignalGenerator:
             return all_signals
             
         except Exception as e:
-            logger.error(f"💥 КРИТИЧНА ПОМИЛКА: {e}")
+            logger.error(f"💥 КРИТИЧНА ПОМИЛКА: {str(e)}")
             import traceback
             logger.error(f"Трейс помилки: {traceback.format_exc()}")
             
@@ -160,14 +178,22 @@ class SignalGenerator:
 async def main():
     """Головна функція"""
     generator = SignalGenerator()
+    
+    # Перевіряємо, чи Groq API доступний
+    if not generator.analyzer.client:
+        print("❌ Groq AI не ініціалізовано. Перевірте GROQ_API_KEY.")
+        return []
+    
     signals = await generator.generate_all_signals()
     
+    current_time = datetime.now(pytz.timezone('Europe/Kiev')).strftime('%H:%M:%S')
+    
     if signals:
-        print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ:")
+        print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ ({current_time} Київ):")
         for signal in signals:
             print(f"   • {signal['asset']}: {signal['direction']} ({signal['confidence']*100:.1f}%) - {signal.get('entry_time', 'N/A')}")
     else:
-        print("\n⚠️  СИГНАЛІВ НЕ ЗНАЙДЕНО")
+        print(f"\n⚠️  СИГНАЛІВ НЕ ЗНАЙДЕНО ({current_time} Київ)")
     
     return signals
 
