@@ -49,39 +49,39 @@ class PocketOptionClient:
             return self
     
     async def connect(self):
-        """Виправлений метод підключення"""
+    """Виправлений метод підключення"""
         try:
             if not self._initialized:
                 await self.initialize()
-            
+        
             if not self.client:
                 logger.error("❌ Клієнт не ініціалізований")
                 return False
-            
-            logger.info("🔗 Підключення до PocketOption...")
-            connection_result = await self.client.connect()
-            
-            # Чекаємо на підключення
-            await asyncio.sleep(2)
-            
-            # Перевіряємо статус через кілька способів
-            if hasattr(self.client, 'connected') and self.client.connected:
-                self.connected = True
-                logger.info("✅ Успішно підключено до PocketOption!")
-                
-                # Тестуємо з'єднання - отримуємо баланс
-                try:
-                    balance = await self.client.get_balance()
-                    logger.info(f"💰 Баланс: {balance.balance} {balance.currency}")
-                    return True
-                except Exception as e:
-                    logger.warning(f"⚠️ Баланс не отримано, але продовжуємо: {e}")
-                    return True
-            
-            logger.error("❌ Не вдалося підтвердити підключення до PocketOption!")
-            self.connected = False
-            return False  # ← Повертаємо False, а не True!
         
+            logger.info("🔗 Підключення до PocketOption...")
+        
+            # Тут connect() повертає кортеж (ws, session), а не True/False
+            connection_result = await self.client.connect()
+        
+            # Чекаємо на ініціалізацію
+            await asyncio.sleep(2)
+        
+            # Основна перевірка - спробуємо отримати баланс
+            try:
+                balance = await self.client.get_balance()
+                if balance and hasattr(balance, 'balance'):
+                    self.connected = True
+                    logger.info(f"✅ Успішно підключено до PocketOption! Баланс: {balance.balance} {balance.currency}")
+                    return True
+                else:
+                    logger.error("❌ Не вдалося отримати баланс після підключення")
+                    self.connected = False
+                    return False
+            except Exception as e:
+                logger.error(f"❌ Помилка при отриманні балансу: {e}")
+                self.connected = False
+                return False
+    
         except Exception as e:
             logger.error(f"❌ Помилка підключення: {e}")
             self.connected = False
