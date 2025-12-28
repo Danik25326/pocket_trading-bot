@@ -58,34 +58,38 @@ class PocketOptionClient:
             logger.error(f"Деталі: {traceback.format_exc()}")
             return self
     
-    async def connect(self):
-        try:
-            if not self._initialized:
-                await self.initialize()
-            
-            if not self.client:
-                logger.error("❌ Клієнт не ініціалізований")
-                return False
-            
-            logger.info("🔗 Підключення до PocketOption...")
-            await self.client.connect()
-            
-            # Чекаємо на підключення
-            await asyncio.sleep(2)
-            
-            # Перевіряємо статус
+async def connect(self):
+    try:
+        if not self._initialized:
+            await self.initialize()
+
+        if not self.client:
+            logger.error("❌ Клієнт не ініціалізований")
+            return False
+
+        logger.info("🔗 Підключення до PocketOption...")
+        # Скидаємо стан підключення перед спробою
+        self.connected = False
+        await self.client.connect()
+
+        # Чекаємо на підключення трохи довше
+        for i in range(5):
+            await asyncio.sleep(1)
             if hasattr(self.client, 'connected') and self.client.connected:
                 self.connected = True
                 logger.info("✅ Успішно підключено до PocketOption!")
                 return True
             else:
-                logger.warning("⚠️ Не вдалося підтвердити підключення, але продовжуємо...")
-                return True
-        
-        except Exception as e:
-            logger.error(f"❌ Помилка підключення: {e}")
-            self.connected = False
-            return False
+                logger.debug(f"Очікування підключення... {i+1}/5")
+
+        logger.error("❌ Не вдалося підтвердити підключення після 5 секунд очікування.")
+        self.connected = False
+        return False
+
+    except Exception as e:
+        logger.error(f"❌ Помилка підключення: {e}")
+        self.connected = False
+        return False
     
     async def get_candles(self, asset, timeframe, count=30):
         """Отримання свічок для активу"""
