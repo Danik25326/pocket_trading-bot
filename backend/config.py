@@ -29,7 +29,7 @@ class Config:
     
     # Groq AI - ОНОВЛЕНО НА МОДЕЛЬ ЯКА ПРАЦЮЄ
     GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')  # Твоя робоча модель!
+    GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama3-70b-8192')  # Твоя робоча модель!
     
     # Сигнали
     SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
