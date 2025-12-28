@@ -3,7 +3,6 @@ import time
 import asyncio
 import threading
 from datetime import datetime
-from config import Config
 from signal_generator import SignalGenerator
 
 class Scheduler:
@@ -14,24 +13,25 @@ class Scheduler:
     
     def job(self):
         """Завдання для планувальника"""
-        kyiv_time = Config.get_kyiv_time()
-        print(f"[{kyiv_time.strftime('%Y-%m-%d %H:%M:%S')} Київ] Запуск генерації сигналів за розкладом")
+        print(f"[{datetime.now()}] Запуск генерації сигналів за розкладом")
         try:
             asyncio.run(self.generator.generate_all_signals())
         except Exception as e:
-            print(f"Помилка в запланованому завданні: {e}")
+            print(f"Error in scheduled job: {e}")
     
     def run_scheduler(self):
         """Запуск планувальника в окремому потоці"""
         self.running = True
         
         # Запускаємо одразу при старті
-        kyiv_time = Config.get_kyiv_time()
-        print(f"[INIT] Перший запуск генерації сигналів о {kyiv_time.strftime('%H:%M:%S')} Київ...")
+        print("[INIT] Перший запуск генерації сигналів...")
         self.job()
         
         # Налаштовуємо розклад (кожні 5 хвилин)
         schedule.every(5).minutes.do(self.job)
+        
+        # Додатково можна налаштувати різні інтервали
+        # schedule.every(1).hour.do(self.cleanup_job)
         
         print(f"[SCHEDULER] Планувальник запущено. Наступне оновлення: {schedule.next_run()}")
         
