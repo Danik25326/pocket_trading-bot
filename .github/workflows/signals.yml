@@ -128,7 +128,7 @@ jobs:
         ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
-        GROQ_MODEL: 'llama-3.3-70b-versatile'
+        GROQ_MODEL: 'openai/gpt-oss-120b'
       run: |
         echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
