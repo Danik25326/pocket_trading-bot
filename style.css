@@ -10,6 +10,7 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     color: #333;
+    overflow-x: hidden;
 }
 
 .container {
@@ -28,7 +29,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    position: relative;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-content {
+    flex: 1;
+    min-width: 300px;
 }
 
 .header-content h1 {
@@ -67,6 +74,39 @@ body {
     gap: 8px;
 }
 
+.header-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.language-switcher {
+    display: flex;
+    gap: 10px;
+}
+
+.lang-btn {
+    padding: 8px 16px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.lang-btn:hover {
+    background: #f7fafc;
+}
+
+.lang-btn.active {
+    background: #667eea;
+    color: white;
+}
+
 .refresh-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -80,6 +120,7 @@ body {
     gap: 10px;
     transition: all 0.3s;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    font-weight: 500;
 }
 
 .refresh-btn:hover {
@@ -165,6 +206,8 @@ body {
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid #edf2f7;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .section-header h2 {
@@ -181,6 +224,7 @@ body {
     border-radius: 50px;
     color: #4a5568;
     font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 #server-time {
@@ -242,6 +286,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .asset-info {
@@ -275,6 +321,7 @@ body {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .up .direction-badge {
@@ -328,6 +375,62 @@ body {
 .confidence-medium { background: #fed7d7; color: #742a2a; }
 .confidence-low { background: #feebc8; color: #744210; }
 
+.signal-timer {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+    display: none;
+}
+
+.timer-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #856404;
+    text-align: center;
+}
+
+.signal-feedback {
+    background: #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+}
+
+.signal-feedback p {
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.feedback-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.feedback-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+    min-width: 120px;
+    transition: all 0.3s;
+}
+
+.feedback-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.feedback-yes { background: #28a745; color: white; }
+.feedback-no { background: #dc3545; color: white; }
+.feedback-skip { background: #6c757d; color: white; }
+
 .signal-reason {
     background: white;
     padding: 20px;
@@ -358,6 +461,8 @@ body {
     justify-content: space-between;
     color: #a0aec0;
     font-size: 0.85rem;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 /* Empty State */
@@ -400,7 +505,7 @@ body {
     color: #2d3748;
     margin-bottom: 20px;
     display: flex;
-   align-items: center;
+    align-items: center;
     gap: 10px;
 }
 
@@ -474,14 +579,30 @@ footer p {
     .main-header {
         flex-direction: column;
         gap: 20px;
+        padding: 20px;
     }
     
     .header-content h1 {
         font-size: 2rem;
     }
     
+    .header-controls {
+        width: 100%;
+        align-items: stretch;
+    }
+    
+    .language-switcher {
+        justify-content: center;
+    }
+    
+    .refresh-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
     
     .signal-details {
@@ -492,5 +613,35 @@ footer p {
         flex-direction: column;
         gap: 15px;
         text-align: center;
+    }
+    
+    .feedback-buttons {
+        flex-direction: column;
+    }
+    
+    .signal-footer {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stat-badge {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .signal-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .direction-badge {
+        align-self: center;
     }
 }
