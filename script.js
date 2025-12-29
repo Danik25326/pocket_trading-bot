@@ -1,3 +1,4 @@
+
 class SignalDisplay {
     constructor() {
         this.currentLang = 'uk';
