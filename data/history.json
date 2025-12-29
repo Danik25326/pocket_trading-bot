@@ -538,5 +538,29 @@
     "generated_at": "2025-12-29T17:39:58.195315+02:00",
     "id": "USDJPY_otc_20251229173958",
     "saved_at": "2025-12-29T17:39:58.196278+02:00"
+  },
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "UP",
+    "confidence": 0.82,
+    "entry_time": "17:56",
+    "duration": 2,
+    "reason": "Короткостроковий висхідний тренд: ціна піднялася з 238.88 до 240.28 за 10 свічок, більшість останніх свічок – бичі з підвищеним закриттям. Обсяг незначний, волатильність стабільна (~0.2). Відсутні ознаки розвороту, тому ймовірність продовження зростання висока.",
+    "timestamp": "2025-12-29 17:54:01",
+    "generated_at": "2025-12-29T17:54:02.542857+02:00",
+    "id": "GBPJPY_otc_20251229175406",
+    "saved_at": "2025-12-29T17:54:06.948605+02:00"
+  },
+  {
+    "asset": "USDJPY_otc",
+    "direction": "UP",
+    "confidence": 0.73,
+    "entry_time": "17:56",
+    "duration": 2,
+    "reason": "Short‑term uptrend: price rose from 154.719 to 154.86 over the last 20 min, recent bullish candles and price testing the recent high at 154.872. Low volatility and support around 154.70 suggest room for a modest rise.",
+    "timestamp": "2025-12-29 17:54:05",
+    "generated_at": "2025-12-29T17:54:06.947547+02:00",
+    "id": "USDJPY_otc_20251229175406",
+    "saved_at": "2025-12-29T17:54:06.948605+02:00"
   }
 ]
