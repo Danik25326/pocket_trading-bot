@@ -1,10 +1,7 @@
-
-name: Generate Trading Signals and Deploy
+name: Generate Trading Signals
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'  # Кожні 5 хвилин
-  workflow_dispatch:  # Ручний запуск
+  workflow_dispatch:  # ТІЛЬКИ ручний запуск
   push:
     branches: [ main ]
     paths-ignore:
@@ -89,30 +86,16 @@ jobs:
         except:
             signals_data = {'last_update': None, 'signals': [], 'timezone': 'Europe/Kiev (UTC+2)'}
         
-        # Фільтруємо старі сигнали (більше 5 хвилин)
-        valid_signals = []
-        for signal in signals_data.get('signals', []):
-            try:
-                gen_time = datetime.fromisoformat(signal.get('generated_at', ''))
-                if now - gen_time <= timedelta(minutes=5):
-                    valid_signals.append(signal)
-            except:
-                continue
-        
-        # Обмежуємо кількість (максимум 3)
-        if len(valid_signals) > 3:
-            valid_signals = valid_signals[:3]
-        
-        # Оновлюємо дані
-        signals_data['signals'] = valid_signals
-        signals_data['active_signals'] = len(valid_signals)
-        signals_data['total_signals'] = len(valid_signals)
+        # Видаляємо ВСІ старі сигнали перед новою генерацією
+        print('🗑️ Видаляю всі старі сигнали...')
+        signals_data['signals'] = []
+        signals_data['last_update'] = None
         
         # Зберігаємо
         with open('data/signals.json', 'w', encoding='utf-8') as f:
             json.dump(signals_data, f, indent=2, ensure_ascii=False)
         
-        print(f'✅ Залишено {len(valid_signals)} актуальних сигналів')
+        print('✅ Всі старі сигнали видалено')
         "
     
     - name: Generate trading signals
@@ -120,38 +103,21 @@ jobs:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
-        SIGNAL_INTERVAL: '300'
+        SIGNAL_INTERVAL: '0'  # Вимикаємо інтервал, бо тепер тільки ручний запуск
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
         SIGNAL_VALIDITY_MINUTES: '5'
-        SIGNAL_CLEANUP_COUNT: '9'
         ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'openai/gpt-oss-120b'
       run: |
-        echo "🚀 Початок генерації сигналів..."
+        echo "🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ ВРУЧНУ"
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
         echo "🎯 Мінімальна впевненість: 70%"
         echo "⏰ Максимальна тривалість: 5 хв"
         echo "🕐 Часовий пояс: Київ (UTC+2)"
-        
-        echo "🧪 Тест імпортів Python..."
-        python -c "
-        import sys
-        sys.path.insert(0, 'backend')
-        sys.path.insert(0, 'utils')
-        try:
-            from config import Config
-            print('✅ config.py завантажено')
-            print('GROQ_MODEL:', Config.GROQ_MODEL)
-            print('MAX_DURATION:', Config.MAX_DURATION)
-        except Exception as e:
-            print(f'❌ Помилка завантаження config.py: {e}')
-            import traceback
-            print(traceback.format_exc())
-        "
         
         # Додаємо шляхи Python
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
@@ -176,7 +142,7 @@ jobs:
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Авто-оновлення: Нові сигнали $(date +'%Y-%m-%d %H:%M') [skip ci]"
+          git commit -m "🤖 Ручна генерація: Нові сигнали $(date +'%Y-%m-%d %H:%M')"
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
         fi
@@ -197,7 +163,7 @@ jobs:
       uses: actions/configure-pages@v4
       
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@3
       with:
         path: '.'
         
