@@ -31,9 +31,9 @@ class Config:
     # Сигнали
     SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
     MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
-    MAX_DURATION = float(os.getenv('MAX_DURATION', 5.0))  # Максимальна тривалість
+    MAX_DURATION = float(os.getenv('MAX_DURATION', 5.0))
     MAX_SIGNALS_HISTORY = int(os.getenv('MAX_SIGNALS_HISTORY', 100))
-    ACTIVE_SIGNAL_TIMEOUT = int(os.getenv('ACTIVE_SIGNAL_TIMEOUT', 5))  # хвилин
+    ACTIVE_SIGNAL_TIMEOUT = int(os.getenv('ACTIVE_SIGNAL_TIMEOUT', 5))
     
     # Актив
     # Конвертуємо формат з слешами на формат без слешів
@@ -44,6 +44,7 @@ class Config:
     
     # Навчання
     FEEDBACK_ENABLED = os.getenv('FEEDBACK_ENABLED', 'true').lower() == 'true'
+    CLEANUP_COUNT = 9  # Очищення після 9 сигналів
     
     # Шляхи до файлів
     DATA_DIR = BASE_DIR / 'data'
@@ -51,6 +52,7 @@ class Config:
     HISTORY_FILE = DATA_DIR / 'history.json'
     FEEDBACK_FILE = DATA_DIR / 'feedback.json'
     ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
+    LESSONS_FILE = DATA_DIR / 'lessons.json'  # Додано цей рядок!
     
     # Налаштування логування
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
