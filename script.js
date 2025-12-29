@@ -1,7 +1,7 @@
 class SignalDisplay {
     constructor() {
-        this.signalsUrl = 'data/signals.json';
-        this.historyUrl = 'data/history.json';
+        this.signalsUrl = 'signals.json'; 
+        this.historyUrl = 'history.json';
         this.updateInterval = 5000; // Перевірка кожні 5 секунд
         this.kyivOffset = 2; // UTC+2 для Києва (але використовуємо API)
         this.language = localStorage.getItem('language') || 'uk';
