@@ -12,7 +12,7 @@
     <div class="container">
         <header class="main-header">
             <div class="header-content">
-                <h1><i class="fas fa-robot"></i> AI Trading Signals</h1>
+                <h1><i class="fas fa-robot"></i> <span data-translate="title">AI Trading Signals</span></h1>
                 <p class="subtitle" data-translate="subtitle">Автоматичні сигнали для бінарних опціонів з використанням Llama 4 AI</p>
                 <div class="header-stats">
                     <span class="stat-badge"><i class="fas fa-sync-alt"></i> <span data-translate="updateEvery">Оновлення:</span> кожні 5 хв</span>
@@ -42,7 +42,7 @@
                     <div class="stat-info">
                         <h3 data-translate="lastUpdate">Останнє оновлення</h3>
                         <p id="last-update" class="stat-value">--:--:--</p>
-                        <small id="update-ago"></small>
+                        <small data-translate="kievTime">(Київський час)</small>
                     </div>
                 </div>
                 
@@ -84,7 +84,7 @@
                 <div class="section-header">
                     <h2><i class="fas fa-bell"></i> <span data-translate="currentSignals">Актуальні сигнали</span></h2>
                     <div class="time-info">
-                        <i class="fas fa-globe-europe"></i> <span data-translate="serverTime">Час сервера:</span> <span id="server-time">--:--</span> (Київ)
+                        <i class="fas fa-globe-europe"></i> <span data-translate="serverTime">Поточний час:</span> <span id="server-time">--:--</span> (Київ)
                     </div>
                 </div>
                 
@@ -94,15 +94,15 @@
                             <i class="fas fa-spinner fa-spin"></i>
                         </div>
                         <p data-translate="loadingSignals">Завантаження сигналів...</p>
-                        <small data-translate="autoUpdate">Сигнали оновлюються автоматично кожні 10 секунд</small>
+                        <small data-translate="autoUpdate">Сигнали оновлюються автоматично</small>
                     </div>
                 </div>
                 
                 <div class="no-signals" id="no-signals" style="display: none;">
                     <div class="empty-state">
                         <i class="fas fa-chart-line"></i>
-                        <h3 data-translate="noSignalsNow">Наразі немає сигналів</h3>
-                        <p data-translate="waitForUpdate">Очікуйте наступного оновлення (кожні 5 хвилин)</p>
+                        <h3 data-translate="noSignalsNow">Наразі немає актуальних сигналів</h3>
+                        <p data-translate="waitForUpdate">Очікуйте наступного оновлення</p>
                     </div>
                 </div>
             </div>
@@ -111,24 +111,37 @@
                 <div class="info-card">
                     <h3><i class="fas fa-info-circle"></i> <span data-translate="howItWorks">Як працює система</span></h3>
                     <ul>
-                        <li><strong data-translate="aiAnalysis">AI Аналіз:</strong> <span data-translate="aiAnalysisDesc">Використовується Llama 4 Maverick для технічного аналізу</span></li>
+                        <li><strong data-translate="aiAnalysis">AI Аналіз:</strong> <span data-translate="aiAnalysisDesc">Llama 4 для технічного аналізу</span></li>
                         <li><strong data-translate="realTimeData">Дані в реальному часі:</strong> <span data-translate="realTimeDataDesc">Отримання з PocketOption API</span></li>
-                        <li><strong data-translate="filtering">Фільтрація:</strong> <span data-translate="filteringDesc">Показуються тільки сигнали з впевненістю >70%</span></li>
-                        <li><strong data-translate="updates">Оновлення:</strong> <span data-translate="updatesDesc">Автоматичне оновлення кожні 5 хвилин</span></li>
+                        <li><strong data-translate="filtering">Фільтрація:</strong> <span data-translate="filteringDesc">Тільки сигнали >70% та не старіші 5 хв</span></li>
+                        <li><strong data-translate="updates">Оновлення:</strong> <span data-translate="updatesDesc">Кожні 5 хвилин для нових сигналів</span></li>
                     </ul>
                 </div>
                 
                 <div class="warning-card">
                     <h3><i class="fas fa-exclamation-triangle"></i> <span data-translate="important">Важливо!</span></h3>
-                    <p data-translate="disclaimer">Це навчальний проект. Торгівля бінарними опціонами містить високі ризики втрати коштів. Сигнали не є фінансовою рекомендацією.</p>
+                    <p data-translate="disclaimer">Торгівля містить високі ризики. Сигнали не є фінансовою рекомендацією.</p>
                 </div>
             </div>
         </div>
 
         <footer>
             <p>© 2025 AI Trading Signals | <span data-translate="createdWith">Створено з використанням</span> Groq Cloud & PocketOption API</p>
-            <p class="tech-info"><span data-translate="technologies">Технології:</span> Llama 4 Maverick 17B • Python • GitHub Actions • Real-time WebSocket</p>
+            <p class="tech-info"><span data-translate="technologies">Технології:</span> Llama 4 Maverick • Python • GitHub Actions</p>
         </footer>
+    </div>
+
+    <!-- Модальне вікно для фідбеку -->
+    <div id="feedback-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 data-translate="feedbackQuestion">Сигнал був вірний?</h3>
+            <p id="feedback-asset"></p>
+            <div class="feedback-buttons">
+                <button class="feedback-btn feedback-yes" data-translate="feedbackYes">Так</button>
+                <button class="feedback-btn feedback-no" data-translate="feedbackNo">Ні</button>
+                <button class="feedback-btn feedback-skip" data-translate="feedbackSkip">Я не перевіряв</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
