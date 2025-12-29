@@ -1,16 +1,12 @@
-name: Generate Trading Signals
+name: Generate Trading Signals and Deploy
 
 on:
   workflow_dispatch:  # ТІЛЬКИ ручний запуск
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - 'data/**'
-      - 'logs/**'
-      - '*.md'
-      - '*.css'
-      - '*.js'
-      - '*.html'
+    inputs:
+      manual_trigger:
+        description: 'Manual signal generation'
+        required: false
+        default: 'true'
 
 permissions:
   contents: write
@@ -54,7 +50,6 @@ jobs:
         mkdir -p logs
         touch .nojekyll
         
-        # Створюємо початкові файли, якщо їх немає
         if [ ! -f data/signals.json ]; then 
           echo '{"last_update": null, "signals": [], "timezone": "Europe/Kiev (UTC+2)"}' > data/signals.json
         fi
@@ -68,61 +63,30 @@ jobs:
           echo '[]' > data/lessons.json
         fi
     
-    - name: Clean old signals
-      run: |
-        echo "🧹 Очищення старих сигналів..."
-        python -c "
-        import json
-        from datetime import datetime, timedelta
-        import pytz
-        
-        kyiv_tz = pytz.timezone('Europe/Kiev')
-        now = datetime.now(kyiv_tz)
-        
-        # Завантажуємо сигнали
-        try:
-            with open('data/signals.json', 'r', encoding='utf-8') as f:
-                signals_data = json.load(f)
-        except:
-            signals_data = {'last_update': None, 'signals': [], 'timezone': 'Europe/Kiev (UTC+2)'}
-        
-        # Видаляємо ВСІ старі сигнали перед новою генерацією
-        print('🗑️ Видаляю всі старі сигнали...')
-        signals_data['signals'] = []
-        signals_data['last_update'] = None
-        
-        # Зберігаємо
-        with open('data/signals.json', 'w', encoding='utf-8') as f:
-            json.dump(signals_data, f, indent=2, ensure_ascii=False)
-        
-        print('✅ Всі старі сигнали видалено')
-        "
-    
     - name: Generate trading signals
       env:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
-        SIGNAL_INTERVAL: '0'  # Вимикаємо інтервал, бо тепер тільки ручний запуск
+        SIGNAL_INTERVAL: '300'
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
         SIGNAL_VALIDITY_MINUTES: '5'
+        SIGNAL_CLEANUP_COUNT: '9'
         ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
-        GROQ_MODEL: 'openai/gpt-oss-120b'
+        GROQ_MODEL: 'llama-3.3-70b-versatile'
       run: |
-        echo "🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ ВРУЧНУ"
+        echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
         echo "🎯 Мінімальна впевненість: 70%"
         echo "⏰ Максимальна тривалість: 5 хв"
         echo "🕐 Часовий пояс: Київ (UTC+2)"
         
-        # Додаємо шляхи Python
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
         
-        # Запускаємо генератор сигналів
         cd backend
         python signal_generator.py
         
@@ -133,16 +97,14 @@ jobs:
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
         
-        # Додаємо змінені файли
         git add data/
         git add logs/
         git add .nojekyll
         
-        # Перевіряємо, чи є зміни для коміту
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Ручна генерація: Нові сигнали $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "🤖 Ручна генерація: Нові сигнали $(date +'%Y-%m-%d %H:%M') [skip ci]"
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
         fi
@@ -163,7 +125,7 @@ jobs:
       uses: actions/configure-pages@v4
       
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3  # ВИПРАВЛЕНО: @v3 замість @3
+      uses: actions/upload-pages-artifact@v3
       with:
         path: '.'
         
