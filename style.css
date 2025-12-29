@@ -1128,3 +1128,198 @@ footer p {
         font-size: 1.3rem;
     }
 }
+/* GitHub Setup Styles */
+.github-setup {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f6f8fa 0%, #e1e4e8 100%);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border-left: 5px solid #6e5494;
+}
+
+.github-setup i {
+    font-size: 3.5rem;
+    color: #6e5494;
+    margin-bottom: 20px;
+}
+
+.github-setup h3 {
+    color: #24292e;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.github-setup p {
+    color: #586069;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+.token-input-group {
+    max-width: 500px;
+    margin: 0 auto 25px;
+    text-align: left;
+}
+
+.input-field {
+    margin-bottom: 20px;
+}
+
+.input-field label {
+    display: block;
+    color: #24292e;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #d1d5da;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s;
+}
+
+.input-field input:focus {
+    outline: none;
+    border-color: #0366d6;
+    box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+}
+
+.github-setup small {
+    color: #6a737d;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 15px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.github-setup a {
+    color: #0366d6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.github-setup a:hover {
+    text-decoration: underline;
+}
+
+/* Generation Status */
+.generation-status {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border-left: 5px solid #38b2ac;
+}
+
+.generation-status .spinner {
+    font-size: 3rem;
+    color: #38b2ac;
+    margin-bottom: 20px;
+}
+
+.generation-status h3 {
+    color: #234e52;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.generation-status p {
+    color: #4a5568;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Error State */
+.error-state {
+    text-align: center;
+    padding: 50px 20px;
+    background: #fff5f5;
+    border-radius: 12px;
+    border-left: 5px solid #f56565;
+}
+
+.error-state i {
+    font-size: 3rem;
+    color: #f56565;
+    margin-bottom: 20px;
+}
+
+.error-state h3 {
+    color: #742a2a;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.error-state p {
+    color: #744210;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Signal Timer Colors */
+.signal-timer.waiting {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border-left: 4px solid #17a2b8;
+}
+
+.signal-timer.active {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #ffc107;
+    animation: pulse 2s infinite;
+}
+
+.signal-timer.expired {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left: 4px solid #dc3545;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .github-setup {
+        padding: 30px 15px;
+    }
+    
+    .github-setup i {
+        font-size: 2.5rem;
+    }
+    
+    .github-setup h3 {
+        font-size: 1.3rem;
+    }
+    
+    .token-input-group {
+        max-width: 100%;
+    }
+    
+    .generation-status {
+        padding: 40px 15px;
+    }
+    
+    .generation-status h3 {
+        font-size: 1.3rem;
+    }
+}
