@@ -29,18 +29,17 @@ class Config:
     GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
     
     # Сигнали
-    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))  # 5 хвилин у секундах
+    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
     MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
+    MAX_DURATION = float(os.getenv('MAX_DURATION', 5.0))  # Максимальна тривалість
     MAX_SIGNALS_HISTORY = int(os.getenv('MAX_SIGNALS_HISTORY', 100))
     ACTIVE_SIGNAL_TIMEOUT = int(os.getenv('ACTIVE_SIGNAL_TIMEOUT', 5))  # хвилин
     
-    # Нові налаштування
-    MAX_DURATION = float(os.getenv('MAX_DURATION', 5.0))  # Максимальна тривалість угоди (хвилин)
-    SIGNAL_VALIDITY_MINUTES = int(os.getenv('SIGNAL_VALIDITY_MINUTES', 5))  # Актуальність сигналу
-    SIGNAL_CLEANUP_COUNT = int(os.getenv('SIGNAL_CLEANUP_COUNT', 9))  # Очищення історії після N сигналів
-    
     # Актив
-    ASSETS = [asset.strip() for asset in os.getenv('ASSETS', 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc').split(',')]
+    # Конвертуємо формат з слешами на формат без слешів
+    ASSETS_RAW = [asset.strip() for asset in os.getenv('ASSETS', 'GBPJPY_otc,EURUSD_otc,USDJPY_otc').split(',')]
+    ASSETS = [asset.replace('/', '') for asset in ASSETS_RAW]  # Видаляємо слеші
+    
     TIMEFRAMES = int(os.getenv('TIMEFRAMES', 120))
     
     # Навчання
@@ -52,7 +51,6 @@ class Config:
     HISTORY_FILE = DATA_DIR / 'history.json'
     FEEDBACK_FILE = DATA_DIR / 'feedback.json'
     ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
-    LESSONS_FILE = DATA_DIR / 'lessons.json'
     
     # Налаштування логування
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
