@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🤖 PocketOption AI Trading Signals</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,24 +13,16 @@
         <header class="main-header">
             <div class="header-content">
                 <h1><i class="fas fa-robot"></i> AI Trading Signals</h1>
-                <p class="subtitle" data-translate="subtitle">Автоматичні сигнали для бінарних опціонів з використанням Llama 4 AI</p>
+                <p class="subtitle">Автоматичні сигнали для бінарних опціонів з використанням Llama 4 AI</p>
                 <div class="header-stats">
-                    <span class="stat-badge"><i class="fas fa-sync-alt"></i> <span data-translate="updateEvery">Оновлення:</span> кожні 5 хв</span>
-                    <span class="stat-badge"><i class="fas fa-bullseye"></i> <span data-translate="minAccuracy">Мін. точність:</span> 70%</span>
-                    <span class="stat-badge"><i class="fas fa-chart-line"></i> <span data-translate="model">Модель:</span> Llama 4 Maverick</span>
+                    <span class="stat-badge"><i class="fas fa-sync-alt"></i> Оновлення: кожні 5 хв</span>
+                    <span class="stat-badge"><i class="fas fa-bullseye"></i> Мін. точність: 70%</span>
+                    <span class="stat-badge"><i class="fas fa-chart-line"></i> Модель: Llama 4 Maverick</span>
                 </div>
             </div>
-            
-            <div class="header-controls">
-                <div class="language-switcher">
-                    <button id="lang-uk" class="lang-btn active" data-lang="uk">🇺🇦 Українська</button>
-                    <button id="lang-ru" class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
-                </div>
-                
-                <button id="refresh-btn" class="refresh-btn">
-                    <i class="fas fa-redo"></i> <span class="btn-text" data-translate="updateBtn">Оновити</span>
-                </button>
-            </div>
+            <button id="refresh-btn" class="refresh-btn">
+                <i class="fas fa-redo"></i> Оновити
+            </button>
         </header>
 
         <div class="dashboard">
@@ -40,7 +32,7 @@
                         <i class="fas fa-clock"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 data-translate="lastUpdate">Останнє оновлення</h3>
+                        <h3>Останнє оновлення</h3>
                         <p id="last-update" class="stat-value">--:--:--</p>
                         <small id="update-ago"></small>
                     </div>
@@ -51,9 +43,9 @@
                         <i class="fas fa-bolt"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 data-translate="activeSignals">Активних сигналів</h3>
+                        <h3>Активних сигналів</h3>
                         <p id="active-signals" class="stat-value">0</p>
-                        <small data-translate="withConfidence">з впевненістю >70%</small>
+                        <small>з впевненістю >70%</small>
                     </div>
                 </div>
                 
@@ -62,9 +54,9 @@
                         <i class="fas fa-chart-bar"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 data-translate="totalStats">Загальна статистика</h3>
+                        <h3>Загальна статистика</h3>
                         <p id="total-signals" class="stat-value">0</p>
-                        <small data-translate="signalsInHistory">сигналів в історії</small>
+                        <small>сигналів в історії</small>
                     </div>
                 </div>
                 
@@ -73,18 +65,18 @@
                         <i class="fas fa-percentage"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 data-translate="successRate">Успішність</h3>
+                        <h3>Успішність</h3>
                         <p id="success-rate" class="stat-value">0%</p>
-                        <small data-translate="historicalAccuracy">історична точність</small>
+                        <small>історична точність</small>
                     </div>
                 </div>
             </div>
 
             <div class="signals-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-bell"></i> <span data-translate="currentSignals">Актуальні сигнали</span></h2>
+                    <h2><i class="fas fa-bell"></i> Актуальні сигнали</h2>
                     <div class="time-info">
-                        <i class="fas fa-globe-europe"></i> <span data-translate="serverTime">Час сервера:</span> <span id="server-time">--:--</span> (Київ)
+                        <i class="fas fa-globe-europe"></i> Час сервера: <span id="server-time">--:--</span> (Київ)
                     </div>
                 </div>
                 
@@ -93,41 +85,41 @@
                         <div class="spinner">
                             <i class="fas fa-spinner fa-spin"></i>
                         </div>
-                        <p data-translate="loadingSignals">Завантаження сигналів...</p>
-                        <small data-translate="autoUpdate">Сигнали оновлюються автоматично кожні 10 секунд</small>
+                        <p>Завантаження сигналів...</p>
+                        <small>Сигнали оновлюються автоматично кожні 10 секунд</small>
                     </div>
                 </div>
                 
                 <div class="no-signals" id="no-signals" style="display: none;">
                     <div class="empty-state">
                         <i class="fas fa-chart-line"></i>
-                        <h3 data-translate="noSignalsNow">Наразі немає сигналів</h3>
-                        <p data-translate="waitForUpdate">Очікуйте наступного оновлення (кожні 5 хвилин)</p>
+                        <h3>Наразі немає сигналів</h3>
+                        <p>Очікуйте наступного оновлення (кожні 5 хвилин)</p>
                     </div>
                 </div>
             </div>
             
             <div class="info-section">
                 <div class="info-card">
-                    <h3><i class="fas fa-info-circle"></i> <span data-translate="howItWorks">Як працює система</span></h3>
+                    <h3><i class="fas fa-info-circle"></i> Як працює система</h3>
                     <ul>
-                        <li><strong data-translate="aiAnalysis">AI Аналіз:</strong> <span data-translate="aiAnalysisDesc">Використовується Llama 4 Maverick для технічного аналізу</span></li>
-                        <li><strong data-translate="realTimeData">Дані в реальному часі:</strong> <span data-translate="realTimeDataDesc">Отримання з PocketOption API</span></li>
-                        <li><strong data-translate="filtering">Фільтрація:</strong> <span data-translate="filteringDesc">Показуються тільки сигнали з впевненістю >70%</span></li>
-                        <li><strong data-translate="updates">Оновлення:</strong> <span data-translate="updatesDesc">Автоматичне оновлення кожні 5 хвилин</span></li>
+                        <li><strong>AI Аналіз:</strong> Використовується Llama 4 Maverick для технічного аналізу</li>
+                        <li><strong>Дані в реальному часі:</strong> Отримання з PocketOption API</li>
+                        <li><strong>Фільтрація:</strong> Показуються тільки сигнали з впевненістю >70%</li>
+                        <li><strong>Оновлення:</strong> Автоматичне оновлення кожні 5 хвилин</li>
                     </ul>
                 </div>
                 
                 <div class="warning-card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> <span data-translate="important">Важливо!</span></h3>
-                    <p data-translate="disclaimer">Це навчальний проект. Торгівля бінарними опціонами містить високі ризики втрати коштів. Сигнали не є фінансовою рекомендацією.</p>
+                    <h3><i class="fas fa-exclamation-triangle"></i> Важливо!</h3>
+                    <p>Це навчальний проект. Торгівля бінарними опціонами містить високі ризики втрати коштів. Сигнали не є фінансовою рекомендацією.</p>
                 </div>
             </div>
         </div>
 
         <footer>
-            <p>© 2025 AI Trading Signals | <span data-translate="createdWith">Створено з використанням</span> Groq Cloud & PocketOption API</p>
-            <p class="tech-info"><span data-translate="technologies">Технології:</span> Llama 4 Maverick 17B • Python • GitHub Actions • Real-time WebSocket</p>
+            <p>© 2025 AI Trading Signals | Створено з використанням Groq Cloud & PocketOption API</p>
+            <p class="tech-info">Технології: Llama 4 Maverick 17B • Python • GitHub Actions • Real-time WebSocket</p>
         </footer>
     </div>
 
