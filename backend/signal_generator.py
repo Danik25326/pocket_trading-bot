@@ -17,7 +17,7 @@ class SignalGenerator:
         self.signals = []
 
     async def generate_signal(self, asset):
-        """Генерація одного сигналу"""
+        """Генерація одного сигналу з використанням актуальних даних"""
         try:
             logger.info(f"📈 Аналіз активу: {asset}")
             
@@ -37,7 +37,7 @@ class SignalGenerator:
             candles = await self.pocket_client.get_candles(
                 asset=asset,
                 timeframe=Config.TIMEFRAMES,
-                count=50
+                count=30  # Останні 30 свічок для аналізу
             )
             
             if not candles:
@@ -49,23 +49,21 @@ class SignalGenerator:
 
             logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
             
-            # Перевірка актуальності останньої свічки (виправлена версія)
+            # Перевірка актуальності останньої свічки
             if hasattr(candles[-1], 'timestamp'):
                 last_candle_time = candles[-1].timestamp
                 current_time = Config.get_kyiv_time()
                 
-                # Конвертуємо час свічки в offset-aware, якщо він offset-naive
+                # Конвертуємо час свічки в offset-aware
                 if last_candle_time.tzinfo is None:
-                    # Припускаємо, що час свічок в UTC
                     import pytz
                     last_candle_time = last_candle_time.replace(tzinfo=pytz.UTC)
-                    # Конвертуємо в Київський час
                     last_candle_time = last_candle_time.astimezone(Config.KYIV_TZ)
                 
                 time_diff = (current_time - last_candle_time).total_seconds()
                 
-                if time_diff > 300:  # 5 хвилин
-                    logger.warning(f"⚠️ Остання свічка застаріла: {time_diff:.0f} сек тому")
+                if time_diff > 180:  # 3 хвилини
+                    logger.warning(f"⚠️ Дані застаріли: {time_diff:.0f} сек тому")
                     logger.warning(f"   Час свічки: {last_candle_time.strftime('%H:%M:%S')}")
                     logger.warning(f"   Поточний час: {current_time.strftime('%H:%M:%S')}")
                 else:
@@ -83,52 +81,56 @@ class SignalGenerator:
                     # Перевірка тривалості (не більше MAX_DURATION)
                     duration = signal.get('duration', 0)
                     if duration > Config.MAX_DURATION:
-                        logger.warning(f"⚠️ Сигнал для {asset} має завелику тривалість: {duration} > {Config.MAX_DURATION}")
-                        return None
+                        duration = Config.MAX_DURATION
+                        signal['duration'] = duration
+                    elif duration < 1:
+                        duration = 1
+                        signal['duration'] = duration
                     
                     # Перевірка часу входу
                     entry_time = signal.get('entry_time', '')
                     now_kyiv = Config.get_kyiv_time()
-                    entry_datetime_kyiv = None
-                    
                     try:
                         if ':' in entry_time:
                             hour, minute = map(int, entry_time.split(':'))
-                            entry_datetime_kyiv = now_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                            entry_datetime = now_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
                             
                             # Якщо час вже минув сьогодні, додаємо день
-                            if entry_datetime_kyiv < now_kyiv:
-                                entry_datetime_kyiv = entry_datetime_kyiv + timedelta(days=1)
+                            if entry_datetime < now_kyiv:
+                                entry_datetime += timedelta(days=1)
                             
-                            time_to_entry = (entry_datetime_kyiv - now_kyiv).total_seconds() / 60
+                            time_to_entry = (entry_datetime - now_kyiv).total_seconds() / 60
+                            
+                            # Час входу повинен бути в майбутньому (1-10 хвилин)
                             if time_to_entry < 0:
-                                logger.warning(f"⚠️ Час входу в минулому: {entry_time}")
-                                return None
+                                # Якщо час в минулому, змінюємо на +2 хвилини
+                                entry_datetime = now_kyiv + timedelta(minutes=2)
+                                signal['entry_time'] = entry_datetime.strftime('%H:%M')
+                                logger.warning(f"⚠️ Час входу в минулому, змінено на: {signal['entry_time']}")
                             elif time_to_entry > 10:  # Не більше 10 хвилин вперед
-                                logger.warning(f"⚠️ Час входу занадто далеко: {time_to_entry:.1f} хв")
-                                return None
-                            
-                            logger.info(f"⏰ Час входу: {entry_time} (через {time_to_entry:.1f} хв)")
-                            
-                            # Конвертуємо час входу з київського в UTC
-                            import pytz
-                            entry_datetime_utc = entry_datetime_kyiv.astimezone(pytz.UTC)
-                            signal['entry_time_utc'] = entry_datetime_utc.isoformat()
-                            signal['entry_time_kyiv'] = entry_time
-                            
+                                # Обмежуємо до 10 хвилин
+                                entry_datetime = now_kyiv + timedelta(minutes=10)
+                                signal['entry_time'] = entry_datetime.strftime('%H:%M')
+                                logger.warning(f"⚠️ Час входу занадто далеко, змінено на: {signal['entry_time']}")
+                            else:
+                                logger.info(f"⏰ Час входу: {entry_time} (через {time_to_entry:.1f} хв)")
                     except Exception as e:
                         logger.warning(f"⚠️ Помилка перевірки часу входу: {e}")
-                        signal['entry_time_utc'] = None
-                        signal['entry_time_kyiv'] = entry_time
+                        # Встановлюємо час входу через 2 хвилини за замовчуванням
+                        entry_datetime = now_kyiv + timedelta(minutes=2)
+                        signal['entry_time'] = entry_datetime.strftime('%H:%M')
                     
+                    # Додаємо інформацію про генерацію
                     signal['generated_at'] = now_kyiv.isoformat()
                     signal['asset'] = asset
                     signal['id'] = f"{asset}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
                     
-                    logger.info(f"✅ Створено сигнал для {asset}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
-                    logger.info(f"   📅 Вхід: {entry_time}, Тривалість: {duration} хв")
-                    logger.info(f"   ⌚ Київський час: {entry_time}, UTC: {signal.get('entry_time_utc', 'N/A')}")
+                    # Додаємо часовий пояс
+                    signal['timezone'] = 'Europe/Kiev (UTC+2)'
                     
+                    logger.info(f"✅ Створено сигнал для {asset}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
+                    logger.info(f"   📅 Вхід: {signal.get('entry_time', 'N/A')}, Тривалість: {duration} хв")
+                    logger.info(f"   🕐 Час генерації: {now_kyiv.strftime('%H:%M:%S')}")
                     return signal
                 else:
                     logger.warning(f"⚠️ Сигнал для {asset} має низьку впевненість: {signal.get('confidence', 0)*100:.1f}%")
@@ -143,9 +145,10 @@ class SignalGenerator:
         return None
 
     async def generate_all_signals(self):
-        """Генерація сигналів для всіх активів - ТІЛЬКИ ОДИН РАЗ"""
+        """Генерація сигналів для всіх активів"""
         logger.info("=" * 50)
-        logger.info(f"🚀 Початок генерації сигналів - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')} (Київ)")
+        logger.info(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')} (Київ)")
+        logger.info("=" * 50)
 
         try:
             # Виводимо конфігурацію
@@ -157,23 +160,12 @@ class SignalGenerator:
             logger.info(f"  - Макс. тривалість: {Config.MAX_DURATION} хв")
             logger.info(f"  - Часовий пояс: Київ (UTC+2)")
             
-            # Перевірка останнього оновлення
-            existing_data = self.data_handler.load_signals()
-            last_update = existing_data.get('last_update')
-            
-            if last_update:
-                last_time = datetime.fromisoformat(last_update)
-                time_diff = (Config.get_kyiv_time() - last_time).total_seconds()
-                if time_diff < Config.SIGNAL_INTERVAL:
-                    logger.info(f"⏳ Ще не пройшло 5 хвилин з останньої генерації ({time_diff:.0f} сек)")
-                    logger.info(f"   Останнє оновлення: {last_time.strftime('%H:%M:%S')}")
-                    logger.info(f"   Наступне оновлення через: {Config.SIGNAL_INTERVAL - time_diff:.0f} сек")
-                    return []  # Повертаємо порожній список
+            # Очищуємо попередні сигнали
+            self.signals = []
             
             # ДЕТАЛЬНЕ ПІДКЛЮЧЕННЯ
             logger.info("🔗 Підключення до PocketOption...")
             logger.info(f"   Режим: {'DEMO' if Config.POCKET_DEMO else 'REAL'}")
-            logger.info(f"   SSID наявний: {'✅ ТАК' if Config.POCKET_SSID else '❌ НІ'}")
             
             if not Config.POCKET_SSID:
                 logger.error("❌ SSID не знайдено! Перевірте .env або GitHub Secrets")
@@ -220,7 +212,7 @@ class SignalGenerator:
                     logger.info(f"\n🎯 ЗГЕНЕРОВАНО {len(valid_signals)} СИГНАЛІВ:")
                     for i, signal in enumerate(valid_signals, 1):
                         logger.info(f"   {i}. {signal['asset']}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
-                        logger.info(f"      Вхід: {signal.get('entry_time_kyiv', signal.get('entry_time', 'N/A'))}, Тривалість: {signal.get('duration', 'N/A')} хв")
+                        logger.info(f"      Вхід: {signal.get('entry_time', 'N/A')}, Тривалість: {signal.get('duration', 'N/A')} хв")
                         logger.info(f"      ID: {signal.get('id', 'N/A')}")
                 else:
                     logger.error("❌ Помилка збереження сигналів")
@@ -248,7 +240,7 @@ class SignalGenerator:
             return []
 
 async def main():
-    """Головна функція - запускається ТІЛЬКИ ОДИН РАЗ"""
+    """Головна функція - запускається при виклику"""
     print("\n" + "="*60)
     print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*60)
@@ -266,7 +258,7 @@ async def main():
     if signals:
         print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ:")
         for signal in signals:
-            print(f"   • {signal['asset']}: {signal['direction']} ({signal.get('confidence', 0)*100:.1f}%) - Вхід: {signal.get('entry_time_kyiv', signal.get('entry_time', 'N/A'))}")
+            print(f"   • {signal['asset']}: {signal['direction']} ({signal.get('confidence', 0)*100:.1f}%) - {signal.get('entry_time', 'N/A')} (тривалість: {signal.get('duration', 'N/A')} хв)")
     else:
         print("\n⚠️  СИГНАЛІВ НЕ ЗНАЙДЕНО")
     
