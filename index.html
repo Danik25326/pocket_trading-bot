@@ -13,11 +13,11 @@
         <header class="main-header">
             <div class="header-content">
                 <h1><i class="fas fa-robot"></i> <span data-translate="title">AI Trading Signals</span></h1>
-                <p class="subtitle" data-translate="subtitle">Автоматичні сигнали для бінарних опціонів з використанням GPT OSS 120B AI</p>
+                <p class="subtitle" data-translate="subtitle">Автоматичні сигнали для бінарних опціонів з використанням GPT-OSS-120b</p>
                 <div class="header-stats">
-                    <span class="stat-badge"><i class="fas fa-hand-pointer"></i> <span data-translate="generationType">Генерація:</span> <span data-translate="manualOnly">тільки вручну</span></span>
+                    <span class="stat-badge"><i class="fas fa-sync-alt"></i> <span data-translate="updateMode">Режим:</span> <span data-translate="onDemand">За запитом</span></span>
                     <span class="stat-badge"><i class="fas fa-bullseye"></i> <span data-translate="minAccuracy">Мін. точність:</span> 70%</span>
-                    <span class="stat-badge"><i class="fas fa-chart-line"></i> <span data-translate="model">Модель:</span> GPT OSS 120B</span>
+                    <span class="stat-badge"><i class="fas fa-chart-line"></i> <span data-translate="model">Модель:</span> GPT-OSS-120b</span>
                 </div>
             </div>
             
@@ -28,12 +28,13 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <button id="search-signals-btn" class="action-btn primary-btn">
-                        <i class="fas fa-search"></i> <span class="btn-text" data-translate="searchSignalsBtn">Пошук сигналів</span>
+                    <button id="search-btn" class="search-btn">
+                        <i class="fas fa-search"></i> <span class="btn-text" data-translate="searchBtn">Пошук сигналів</span>
                     </button>
-                    <button id="refresh-btn" class="action-btn secondary-btn" disabled>
-                        <i class="fas fa-redo"></i> <span class="btn-text" data-translate="regenerateBtn">Перегенерувати</span>
-                        <span class="timer-badge" id="refresh-timer">5:00</span>
+                    
+                    <button id="refresh-btn" class="refresh-btn" style="display: none;" disabled>
+                        <i class="fas fa-redo"></i> <span class="btn-text" data-translate="updateBtn">Оновити</span>
+                        <span id="cooldown-timer"></span>
                     </button>
                 </div>
             </div>
@@ -62,40 +63,6 @@
                         <small data-translate="withConfidence">з впевненістю >70%</small>
                     </div>
                 </div>
-                
-                <div class="stat-card warning">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 data-translate="totalStats">Загальна статистика</h3>
-                        <p id="total-signals" class="stat-value">0</p>
-                        <small data-translate="signalsInHistory">сигналів в історії</small>
-                    </div>
-                </div>
-                
-                <div class="stat-card info">
-                    <div class="stat-icon">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 data-translate="successRate">Успішність</h3>
-                        <p id="success-rate" class="stat-value">0%</p>
-                        <small data-translate="historicalAccuracy">історична точність</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-info-card">
-                <div class="info-icon">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="info-content">
-                    <h3 data-translate="howToStart">Як почати роботу?</h3>
-                    <p data-translate="instructionText">
-                        Натисніть кнопку "Пошук сигналів" для генерації нових сигналів. Після генерації ви зможете перегенерувати сигнали через 5 хвилин.
-                    </p>
-                </div>
             </div>
 
             <div class="signals-section">
@@ -106,13 +73,18 @@
                     </div>
                 </div>
                 
-                <div class="signals-container" id="signals-container">
+                <div id="initial-state" class="empty-state">
+                    <i class="fas fa-search-dollar" style="font-size: 3rem; color: #667eea; margin-bottom: 20px;"></i>
+                    <h3 data-translate="pressSearch">Натисніть "Пошук сигналів"</h3>
+                    <p data-translate="searchDesc">Системи проаналізують ринок та знайдуть найкращі точки входу</p>
+                </div>
+
+                <div class="signals-container" id="signals-container" style="display: none;">
                     <div class="loading-state">
                         <div class="spinner">
                             <i class="fas fa-spinner fa-spin"></i>
                         </div>
-                        <p data-translate="noSignalsYet">Сигналів ще немає</p>
-                        <small data-translate="clickSearchToStart">Натисніть "Пошук сигналів" для початку</small>
+                        <p data-translate="loadingSignals">Аналіз графіків...</p>
                     </div>
                 </div>
                 
@@ -120,36 +92,18 @@
                     <div class="empty-state">
                         <i class="fas fa-chart-line"></i>
                         <h3 data-translate="noSignalsNow">Наразі немає актуальних сигналів</h3>
-                        <p data-translate="searchNewSignals">Знайдіть нові сигнали або зачекайте завершення поточних</p>
+                        <p data-translate="waitForUpdate">Спробуйте пізніше або змініть актив</p>
                     </div>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <div class="info-card">
-                    <h3><i class="fas fa-info-circle"></i> <span data-translate="howItWorks">Як працює система</span></h3>
-                    <ul>
-                        <li><strong data-translate="aiAnalysis">AI Аналіз:</strong> <span data-translate="aiAnalysisDesc">GPT OSS 120B для технічного аналізу</span></li>
-                        <li><strong data-translate="realTimeData">Дані в реальному часі:</strong> <span data-translate="realTimeDataDesc">Отримання з PocketOption API</span></li>
-                        <li><strong data-translate="volatilityBased">Тривалість угоди:</strong> <span data-translate="volatilityBasedDesc">1-5 хв на основі волатильності</span></li>
-                        <li><strong data-translate="manualControl">Контроль:</strong> <span data-translate="manualControlDesc">Тільки ручна генерація сигналів</span></li>
-                    </ul>
-                </div>
-                
-                <div class="warning-card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> <span data-translate="important">Важливо!</span></h3>
-                    <p data-translate="disclaimer">Торгівля містить високі ризики. Сигнали не є фінансовою рекомендацією.</p>
                 </div>
             </div>
         </div>
 
         <footer>
             <p>© 2025 AI Trading Signals | <span data-translate="createdWith">Створено з використанням</span> Groq Cloud & PocketOption API</p>
-            <p class="tech-info"><span data-translate="technologies">Технології:</span> GPT OSS 120B • Python • GitHub Actions</p>
+            <p class="tech-info"><span data-translate="technologies">Технології:</span> GPT-OSS-120b • Python • GitHub Actions</p>
         </footer>
     </div>
 
-    <!-- Модальне вікно для фідбеку -->
     <div id="feedback-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <h3 data-translate="feedbackQuestion">Сигнал був вірний?</h3>
