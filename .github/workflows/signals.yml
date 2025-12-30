@@ -157,7 +157,13 @@ jobs:
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
         
+        # Синхронізуємо з віддаленим репозиторієм
+        echo "🔄 Синхронізація з GitHub..."
+        git fetch origin
+        git reset --hard origin/main
+        
         # Додаємо змінені файли
+        echo "📁 Додавання файлів..."
         git add data/
         git add logs/
         git add .nojekyll
@@ -167,6 +173,7 @@ jobs:
           echo "⚠️ Немає змін для коміту"
         else
           git commit -m "🤖 Генерація сигналів $(date +'%Y-%m-%d %H:%M') [skip ci]"
+          echo "📤 Відправка на GitHub..."
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
         fi
