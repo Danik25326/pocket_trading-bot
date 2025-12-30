@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
+import pytz
 from config import Config
 
 class DataHandler:
@@ -9,14 +10,14 @@ class DataHandler:
         self.signals_file = Config.SIGNALS_FILE
         self.history_file = Config.HISTORY_FILE
         self.feedback_file = Config.FEEDBACK_FILE
-        self.lessons_file = Config.LESSONS_FILE  # Додано цей рядок
+        self.lessons_file = Config.LESSONS_FILE
+        self.kyiv_tz = pytz.timezone('Europe/Kiev')
         self.create_data_dir()
     
     def create_data_dir(self):
         """Створення директорій для даних"""
         os.makedirs(self.data_dir, exist_ok=True)
         
-        # Створюємо порожній lessons.json, якщо його немає
         if not os.path.exists(self.lessons_file):
             with open(self.lessons_file, 'w', encoding='utf-8') as f:
                 json.dump([], f, indent=2, ensure_ascii=False)
@@ -34,25 +35,50 @@ class DataHandler:
                 print("⚠️ Немає сигналів з достатньою впевненістю для збереження")
                 return False
             
-            # Додаємо київський час
             now_kyiv = Config.get_kyiv_time()
+            now_utc = datetime.utcnow()
             
+            # Додаємо часові мітки
             for signal in valid_signals:
                 if 'generated_at' not in signal:
                     signal['generated_at'] = now_kyiv.isoformat()
+                if 'generated_at_utc' not in signal:
+                    signal['generated_at_utc'] = now_utc.isoformat() + 'Z'
                 if 'timestamp' not in signal:
                     signal['timestamp'] = now_kyiv.strftime('%Y-%m-%d %H:%M:%S')
+                
+                # Переконуємося, що є entry_timestamp
+                if 'entry_timestamp' not in signal and 'entry_time' in signal:
+                    try:
+                        entry_time = signal['entry_time']
+                        if ':' in entry_time:
+                            hour, minute = map(int, entry_time.split(':'))
+                            entry_date = now_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                            
+                            if entry_date < now_kyiv:
+                                entry_date = entry_date + timedelta(days=1)
+                            
+                            signal['entry_timestamp'] = entry_date.isoformat()
+                    except:
+                        pass
             
-            # Читаємо існуючі сигнали
+            # Завантажуємо існуючі сигнали
             existing_data = self.load_signals()
             existing_signals = existing_data.get('signals', [])
             
             # Фільтруємо тільки активні сигнали (не старіші ніж ACTIVE_SIGNAL_TIMEOUT хвилин)
             active_signals = []
             for signal in existing_signals:
-                signal_time = datetime.fromisoformat(signal.get('generated_at', ''))
-                if now_kyiv - signal_time <= timedelta(minutes=Config.ACTIVE_SIGNAL_TIMEOUT):
-                    active_signals.append(signal)
+                signal_time_str = signal.get('generated_at_utc') or signal.get('generated_at')
+                if signal_time_str:
+                    try:
+                        signal_time = datetime.fromisoformat(signal_time_str.replace('Z', '+00:00'))
+                        signal_time_kyiv = pytz.UTC.localize(signal_time).astimezone(self.kyiv_tz)
+                        
+                        if now_kyiv - signal_time_kyiv <= timedelta(minutes=Config.ACTIVE_SIGNAL_TIMEOUT):
+                            active_signals.append(signal)
+                    except:
+                        continue
             
             # Додаємо нові сигнали
             all_signals = active_signals + valid_signals
@@ -64,6 +90,7 @@ class DataHandler:
             # Оновлюємо дані
             data = {
                 "last_update": now_kyiv.isoformat(),
+                "last_update_utc": now_utc.isoformat() + 'Z',
                 "signals": all_signals,
                 "timezone": "Europe/Kiev (UTC+2)",
                 "total_signals": len(all_signals),
@@ -77,7 +104,7 @@ class DataHandler:
             # Додаємо в історію
             self._add_to_history(valid_signals)
             
-            # Автоматичне очищення історії після 9 сигналів
+            # Автоматичне очищення після 9 сигналів
             if len(all_signals) >= Config.CLEANUP_COUNT:
                 self.cleanup_old_signals()
             
@@ -107,29 +134,52 @@ class DataHandler:
             now_kyiv = Config.get_kyiv_time()
             
             # Час генерації сигналу
-            generated_at = datetime.fromisoformat(signal.get('generated_at', ''))
+            gen_time_str = signal.get('generated_at_utc') or signal.get('generated_at')
+            if not gen_time_str:
+                return False
+            
+            generated_at = datetime.fromisoformat(gen_time_str.replace('Z', '+00:00'))
+            generated_at_kyiv = pytz.UTC.localize(generated_at).astimezone(self.kyiv_tz)
             
             # Час входу
-            entry_time_str = signal.get('entry_time', '')
-            if ':' in entry_time_str:
-                hour, minute = map(int, entry_time_str.split(':'))
-                entry_date = generated_at.replace(hour=hour, minute=minute, second=0, microsecond=0)
-                
-                # Якщо час входу в минулому відносно часу генерації
-                if entry_date < generated_at:
-                    entry_date = entry_date.replace(day=entry_date.day + 1)
-                
-                # Тривалість угоди
-                duration = int(signal.get('duration', 2))
-                
-                # Час закінчення угоди
-                end_time = entry_date + timedelta(minutes=duration)
-                
-                # Сигнал активний, якщо поточний час між часом входу і закінченням
-                return entry_date <= now_kyiv <= end_time
+            entry_timestamp = signal.get('entry_timestamp')
+            if entry_timestamp:
+                try:
+                    entry_time = datetime.fromisoformat(entry_timestamp.replace('Z', '+00:00'))
+                    entry_time_kyiv = pytz.UTC.localize(entry_time).astimezone(self.kyiv_tz)
+                except:
+                    # Якщо entry_timestamp не в форматі ISO, спробуємо через entry_time
+                    entry_time_str = signal.get('entry_time', '')
+                    if ':' in entry_time_str:
+                        hour, minute = map(int, entry_time_str.split(':'))
+                        entry_time_kyiv = generated_at_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                        
+                        if entry_time_kyiv < generated_at_kyiv:
+                            entry_time_kyiv = entry_time_kyiv + timedelta(days=1)
+                    else:
+                        return False
+            else:
+                entry_time_str = signal.get('entry_time', '')
+                if ':' in entry_time_str:
+                    hour, minute = map(int, entry_time_str.split(':'))
+                    entry_time_kyiv = generated_at_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                    
+                    if entry_time_kyiv < generated_at_kyiv:
+                        entry_time_kyiv = entry_time_kyiv + timedelta(days=1)
+                else:
+                    return False
             
-            return False
-        except:
+            # Тривалість угоди
+            duration = int(signal.get('duration', 2))
+            
+            # Час закінчення угоди
+            end_time_kyiv = entry_time_kyiv + timedelta(minutes=duration)
+            
+            # Сигнал активний, якщо поточний час між часом входу і закінченням
+            return entry_time_kyiv <= now_kyiv <= end_time_kyiv
+            
+        except Exception as e:
+            print(f"⚠️ Помилка перевірки активності сигналу: {e}")
             return False
     
     def _add_to_history(self, signals):
@@ -144,6 +194,7 @@ class DataHandler:
             for signal in signals:
                 history_entry = signal.copy()
                 history_entry['saved_at'] = now_kyiv.isoformat()
+                history_entry['saved_at_utc'] = datetime.utcnow().isoformat() + 'Z'
                 history_entry['id'] = f"{signal['asset']}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
                 history.append(history_entry)
             
@@ -174,6 +225,7 @@ class DataHandler:
                 'success': success,
                 'user_comment': user_comment,
                 'feedback_at': now_kyiv.isoformat(),
+                'feedback_at_utc': datetime.utcnow().isoformat() + 'Z',
                 'learned': False
             }
             
@@ -182,7 +234,6 @@ class DataHandler:
             with open(self.feedback_file, 'w', encoding='utf-8') as f:
                 json.dump(feedback, f, indent=2, ensure_ascii=False, default=str)
             
-            # Навчаємо ШІ на основі feedback
             self.learn_from_feedback()
             
             print(f"💾 Збережено відгук для сигналу {signal_id}: {'✅ Успіх' if success else '❌ Невдача'}")
@@ -202,7 +253,6 @@ class DataHandler:
                 feedback = json.load(f)
             
             if asset:
-                # Фільтруємо по активу
                 return [f for f in feedback if asset in f.get('signal_id', '')]
             
             return feedback
@@ -237,7 +287,6 @@ class DataHandler:
             with open(self.feedback_file, 'r', encoding='utf-8') as f:
                 feedback = json.load(f)
             
-            # Фільтруємо невивчені записи
             unlearned = [fb for fb in feedback if not fb.get('learned', False)]
             
             if not unlearned:
@@ -254,23 +303,18 @@ class DataHandler:
                 }
                 lessons.append(lesson)
                 
-                # Позначаємо як вивчений
                 fb['learned'] = True
             
-            # Зберігаємо оновлений feedback
             with open(self.feedback_file, 'w', encoding='utf-8') as f:
                 json.dump(feedback, f, indent=2, ensure_ascii=False, default=str)
             
-            # Читаємо існуючі lessons
             existing_lessons = []
             if os.path.exists(self.lessons_file):
                 with open(self.lessons_file, 'r', encoding='utf-8') as f:
                     existing_lessons = json.load(f)
             
-            # Додаємо нові lessons
             all_lessons = existing_lessons + lessons
             
-            # Зберігаємо lessons
             with open(self.lessons_file, 'w', encoding='utf-8') as f:
                 json.dump(all_lessons, f, indent=2, ensure_ascii=False, default=str)
             
@@ -282,30 +326,42 @@ class DataHandler:
             return []
     
     def cleanup_old_signals(self):
-        """Очищення старих сигналів (після кожних 9 сигналів)"""
+        """Очищення старих сигналів"""
         try:
             print("🧹 Очищення старих сигналів...")
             
-            # Завантажуємо сигнали
             data = self.load_signals()
             signals = data.get('signals', [])
             
-            if len(signals) <= 3:  # Залишаємо мінімум 3 сигнали
+            if len(signals) <= 3:
                 return
             
-            # Залишаємо тільки останні 3 сигнали
-            keep_signals = signals[-3:]
+            now_kyiv = Config.get_kyiv_time()
+            valid_signals = []
             
-            # Оновлюємо дані
-            data['signals'] = keep_signals
-            data['total_signals'] = len(keep_signals)
-            data['active_signals'] = len([s for s in keep_signals if self._is_signal_active(s)])
+            for signal in signals:
+                signal_time_str = signal.get('generated_at_utc') or signal.get('generated_at')
+                if signal_time_str:
+                    try:
+                        signal_time = datetime.fromisoformat(signal_time_str.replace('Z', '+00:00'))
+                        signal_time_kyiv = pytz.UTC.localize(signal_time).astimezone(self.kyiv_tz)
+                        
+                        if now_kyiv - signal_time_kyiv <= timedelta(minutes=Config.ACTIVE_SIGNAL_TIMEOUT):
+                            valid_signals.append(signal)
+                    except:
+                        continue
             
-            # Зберігаємо
+            if len(valid_signals) > 3:
+                valid_signals = valid_signals[-3:]
+            
+            data['signals'] = valid_signals
+            data['total_signals'] = len(valid_signals)
+            data['active_signals'] = len([s for s in valid_signals if self._is_signal_active(s)])
+            
             with open(self.signals_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False, default=str)
             
-            print(f"✅ Залишено {len(keep_signals)} актуальних сигналів")
+            print(f"✅ Залишено {len(valid_signals)} актуальних сигналів")
             
         except Exception as e:
             print(f"❌ Помилка очищення сигналів: {e}")
