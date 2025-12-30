@@ -17,47 +17,57 @@ class DataHandler:
         os.makedirs(self.data_dir, exist_ok=True)
         
         # Створюємо всі необхідні файли
+        default_signals = {
+            "last_update": None,
+            "signals": [],
+            "timezone": "Europe/Kiev (UTC+2)",
+            "total_signals": 0,
+            "active_signals": 0
+        }
+        
         if not os.path.exists(self.signals_file):
             with open(self.signals_file, 'w', encoding='utf-8') as f:
-                json.dump({
-                    "last_update": None,
-                    "signals": [],
-                    "timezone": "Europe/Kiev (UTC+2)",
-                    "total_signals": 0,
-                    "active_signals": 0
-                }, f, indent=2, ensure_ascii=False)
+                json.dump(default_signals, f, indent=2, ensure_ascii=False)
+        
+        if not os.path.exists(self.history_file):
+            with open(self.history_file, 'w', encoding='utf-8') as f:
+                json.dump([], f, indent=2, ensure_ascii=False)
     
     def save_signals(self, signals):
-        """Збереження сигналів - НАЙПРОСТІША ВЕРСІЯ"""
+        """Збереження сигналів - ПРОСТА ВЕРСІЯ"""
         try:
             if not signals:
                 print("⚠️ Немає сигналів для збереження")
                 return False
             
-            # Фільтруємо сигнали з достатньою впевненістю
+            # Проста фільтрація
             valid_signals = []
             for signal in signals:
                 confidence = signal.get('confidence', 0)
                 if confidence >= Config.MIN_CONFIDENCE:
+                    # Додаємо ID, якщо немає
+                    if 'id' not in signal:
+                        now = datetime.now()
+                        signal['id'] = f"{signal.get('asset', 'unknown')}_{now.strftime('%Y%m%d%H%M%S')}"
+                    
+                    # Додаємо час генерації
+                    if 'generated_at' not in signal:
+                        signal['generated_at'] = datetime.now().isoformat()
+                    
                     valid_signals.append(signal)
             
             if not valid_signals:
                 print("⚠️ Немає сигналів з достатньою впевненістю")
                 return False
             
-            # Додаємо просту часову мітку (без часових зон!)
+            # Створюємо нові дані (не змішуємо зі старими)
             now = datetime.now()
-            for signal in valid_signals:
-                signal['generated_at'] = now.isoformat()
-                signal['id'] = f"{signal.get('asset', 'unknown')}_{now.strftime('%Y%m%d%H%M%S')}"
-            
-            # Створюємо новий файл КОЖЕН РАЗ (не додаємо до старих)
             data = {
                 "last_update": now.isoformat(),
                 "signals": valid_signals,
                 "timezone": "Europe/Kiev (UTC+2)",
                 "total_signals": len(valid_signals),
-                "active_signals": len(valid_signals)  # Всі нові сигнали вважаємо активними
+                "active_signals": len(valid_signals)  # Всі нові сигнали активні
             }
             
             # Зберігаємо
@@ -77,35 +87,13 @@ class DataHandler:
             return False
     
     def load_signals(self):
-        """Завантаження сигналів з файлу - ПРОСТА ВЕРСІЯ"""
+        """Завантаження сигналів з файлу"""
         try:
             if os.path.exists(self.signals_file):
                 with open(self.signals_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    
-                    # Перевіряємо, чи сигнали ще актуальні (не старіші 5 хвилин)
-                    if 'signals' in data:
-                        current_time = datetime.now()
-                        valid_signals = []
-                        
-                        for signal in data['signals']:
-                            # Якщо є час генерації
-                            if 'generated_at' in signal:
-                                try:
-                                    gen_time = datetime.fromisoformat(signal['generated_at'])
-                                    # Різниця в хвилинах
-                                    diff_minutes = (current_time - gen_time).total_seconds() / 60
-                                    
-                                    if diff_minutes <= 5:  # До 5 хвилин
-                                        valid_signals.append(signal)
-                                except:
-                                    valid_signals.append(signal)
-                        
-                        data['signals'] = valid_signals
-                        data['active_signals'] = len(valid_signals)
-                        data['total_signals'] = len(valid_signals)
-                    
-                    return data
+                    return json.load(f)
+            
+            # Повертаємо пусті дані
             return {
                 "last_update": None,
                 "signals": [],
@@ -113,6 +101,7 @@ class DataHandler:
                 "total_signals": 0,
                 "active_signals": 0
             }
+            
         except Exception as e:
             print(f"❌ Помилка завантаження сигналів: {e}")
             return {
@@ -136,18 +125,46 @@ class DataHandler:
             
             now = datetime.now()
             for signal in signals:
-                history_entry = signal.copy()
-                history_entry['saved_to_history_at'] = now.isoformat()
-                history.append(history_entry)
+                # Створюємо копію для історії
+                history_signal = signal.copy()
+                history_signal['history_saved_at'] = now.isoformat()
+                history.append(history_signal)
             
-            # Обмежуємо історію (100 записів)
+            # Обмежуємо розмір історії
             if len(history) > 100:
                 history = history[-100:]
             
             with open(self.history_file, 'w', encoding='utf-8') as f:
                 json.dump(history, f, indent=2, ensure_ascii=False, default=str)
-                
+            
             print(f"📚 Додано {len(signals)} сигналів до історії")
-                
+            
         except Exception as e:
-            print(f"❌ Помилка додавання в історію: {e}")
+            print(f"❌ Помилка збереження в історію: {e}")
+    
+    def get_active_signals(self):
+        """Отримання активних сигналів"""
+        try:
+            data = self.load_signals()
+            signals = data.get('signals', [])
+            
+            # Проста перевірка: сигнал активний, якщо йому менше 5 хвилин
+            current_time = datetime.now()
+            active_signals = []
+            
+            for signal in signals:
+                if 'generated_at' in signal:
+                    try:
+                        gen_time = datetime.fromisoformat(signal['generated_at'])
+                        diff_minutes = (current_time - gen_time).total_seconds() / 60
+                        
+                        if diff_minutes <= 5:
+                            active_signals.append(signal)
+                    except:
+                        active_signals.append(signal)
+            
+            return active_signals
+            
+        except Exception as e:
+            print(f"❌ Помилка отримання активних сигналів: {e}")
+            return []
