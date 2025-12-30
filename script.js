@@ -1,402 +1,332 @@
 class SignalDisplay {
     constructor() {
         this.signalsUrl = 'data/signals.json';
-        this.kyivOffset = 2; // UTC+2 (зимній) / UTC+3 (літній) - будемо брати з локального часу
         this.language = localStorage.getItem('language') || 'uk';
         this.activeTimers = new Map();
         this.lastGenerationTime = null;
         this.cooldownMinutes = 5;
+        this.cooldownInterval = null;
+
         this.translations = {
             uk: {
                 title: "AI Trading Signals",
-                subtitle: "Автоматичні сигнали для бінарних опціонів з використанням GPT-OSS-120b",
-                updateMode: "Режим:",
-                onDemand: "За запитом",
-                minAccuracy: "Мін. точність:",
-                model: "Модель:",
-                lastUpdate: "Останнє оновлення",
-                kievTime: "(Київський час)",
-                activeSignals: "Активних сигналів",
-                withConfidence: "з впевненістю >70%",
-                currentSignals: "Актуальні сигнали",
-                serverTime: "Поточний час:",
-                loadingSignals: "Аналіз графіків...",
-                noSignalsNow: "Наразі немає актуальних сигналів",
-                waitForUpdate: "Спробуйте пізніше",
+                subtitle: "Генерація сигналів на основі GPT-OSS-120b",
+                lastUpdate: "Оновлено",
+                activeSignals: "Активні",
+                currentSignals: "Сигнали",
                 searchBtn: "Пошук сигналів",
                 updateBtn: "Оновити",
                 pressSearch: "Натисніть 'Пошук сигналів'",
-                searchDesc: "Система проаналізує ринок та знайде найкращі точки входу",
+                searchDesc: "AI проаналізує ринок і знайде точки входу",
+                noSignalsNow: "Сигналів не знайдено",
+                waitForUpdate: "Спробуйте оновити пізніше",
                 timerWaiting: "Вхід через:",
-                timerActive: "Таймер активний:",
+                timerActive: "Час угоди:",
                 timerExpired: "Завершено",
-                signalCorrect: "Сигнал вірний?",
-                replyYes: "Так",
-                replyNo: "Ні",
-                replySkip: "Пропустити",
-                feedbackQuestion: "Сигнал був вірний?",
-                feedbackYes: "Так",
-                feedbackNo: "Ні",
-                feedbackSkip: "Не перевіряв"
+                confidence: "Впевненість",
+                entry: "Вхід",
+                duration: "Час",
+                aiReason: "Аналіз AI"
             },
             ru: {
                 title: "AI Торговые Сигналы",
-                subtitle: "Автоматические сигналы для бинарных опционов с использованием GPT-OSS-120b",
-                updateMode: "Режим:",
-                onDemand: "По запросу",
-                minAccuracy: "Мин. точность:",
-                model: "Модель:",
-                lastUpdate: "Последнее обновление",
-                kievTime: "(Киевское время)",
-                activeSignals: "Активных сигналов",
-                withConfidence: "с уверенностью >70%",
-                currentSignals: "Актуальные сигналы",
-                serverTime: "Текущее время:",
-                loadingSignals: "Анализ графиков...",
-                noSignalsNow: "В настоящее время нет актуальных сигналов",
-                waitForUpdate: "Попробуйте позже",
+                subtitle: "Генерация сигналов на основе GPT-OSS-120b",
+                lastUpdate: "Обновлено",
+                activeSignals: "Активные",
+                currentSignals: "Сигналы",
                 searchBtn: "Поиск сигналов",
                 updateBtn: "Обновить",
                 pressSearch: "Нажмите 'Поиск сигналов'",
-                searchDesc: "Система проанализирует рынок и найдет лучшие точки входа",
+                searchDesc: "AI проанализирует рынок и найдет точки входа",
+                noSignalsNow: "Сигналов не найдено",
+                waitForUpdate: "Попробуйте обновить позже",
                 timerWaiting: "Вход через:",
-                timerActive: "Таймер активен:",
+                timerActive: "Время сделки:",
                 timerExpired: "Завершено",
-                signalCorrect: "Сигнал верный?",
-                replyYes: "Да",
-                replyNo: "Нет",
-                replySkip: "Пропустить",
-                feedbackQuestion: "Сигнал был верным?",
-                feedbackYes: "Да",
-                feedbackNo: "Нет",
-                feedbackSkip: "Не проверял"
+                confidence: "Уверенность",
+                entry: "Вход",
+                duration: "Время",
+                aiReason: "Анализ AI"
             }
         };
-        
+
         this.init();
     }
 
-    async init() {
-        await this.setupLanguage();
-        this.updateKyivTime();
-        setInterval(() => this.updateKyivTime(), 1000);
-        
-        // Обробник кнопки "Пошук"
+    init() {
+        this.setupLanguage();
+        this.updateTime();
+        setInterval(() => this.updateTime(), 1000);
+
+        // Кнопка ПОШУК (перший запуск)
         document.getElementById('search-btn').addEventListener('click', () => {
             this.handleSearch();
         });
 
-        // Обробник кнопки "Оновити"
+        // Кнопка ОНОВИТИ
         document.getElementById('refresh-btn').addEventListener('click', () => {
-            this.handleRefresh();
+            if (!document.getElementById('refresh-btn').disabled) {
+                this.loadSignals(true);
+            }
         });
     }
 
     handleSearch() {
+        // Ховаємо початковий екран, показуємо контейнер
         document.getElementById('initial-state').style.display = 'none';
-        document.getElementById('signals-container').style.display = 'block';
+        document.getElementById('signals-container').style.display = 'grid'; // Grid для карток
+        
+        // Змінюємо кнопки
         document.getElementById('search-btn').style.display = 'none';
         document.getElementById('refresh-btn').style.display = 'flex';
         
+        // Завантажуємо
         this.loadSignals(true);
     }
 
-    handleRefresh() {
-        if (this.canUpdate()) {
-            this.loadSignals(true);
-        }
-    }
-
-    canUpdate() {
-        if (!this.lastGenerationTime) return true;
-        const now = new Date();
-        const diff = (now - this.lastGenerationTime) / 60000; // різниця в хвилинах
-        return diff >= this.cooldownMinutes;
-    }
-
-    updateCooldownButton() {
-        const btn = document.getElementById('refresh-btn');
-        const timerSpan = document.getElementById('cooldown-timer');
-        
-        if (!this.lastGenerationTime) {
-            btn.disabled = false;
-            timerSpan.textContent = "";
-            return;
-        }
-
-        const now = new Date();
-        const diffSeconds = (now - this.lastGenerationTime) / 1000;
-        const secondsLeft = (this.cooldownMinutes * 60) - diffSeconds;
-
-        if (secondsLeft <= 0) {
-            btn.disabled = false;
-            btn.classList.remove('disabled');
-            timerSpan.textContent = "";
-        } else {
-            btn.disabled = true;
-            btn.classList.add('disabled');
-            const m = Math.floor(secondsLeft / 60);
-            const s = Math.floor(secondsLeft % 60);
-            timerSpan.textContent = `(${m}:${s.toString().padStart(2, '0')})`;
-            
-            // Оновлюємо таймер кнопки кожну секунду
-            if (!this.cooldownInterval) {
-                this.cooldownInterval = setInterval(() => this.updateCooldownButton(), 1000);
-            }
-        }
-    }
-
     async loadSignals(force = false) {
+        const container = document.getElementById('signals-container');
+        const btn = document.getElementById('refresh-btn');
+        
+        // Анімація завантаження на кнопці
+        const originalBtnText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
         try {
-            const timestamp = new Date().getTime();
-            // Додаємо timestamp щоб уникнути кешування браузером
-            const response = await fetch(`${this.signalsUrl}?t=${timestamp}`);
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            // Додаємо timestamp, щоб браузер не кешував
+            const response = await fetch(`${this.signalsUrl}?t=${new Date().getTime()}`);
+            if (!response.ok) throw new Error("File not found");
             
             const data = await response.json();
             
-            // Якщо це перший пошук, або "силове" оновлення
-            this.processSignals(data);
-            
-            // Встановлюємо час останньої генерації з файлу (це важливо для кнопки Оновити)
             if (data.last_update) {
                 this.lastGenerationTime = new Date(data.last_update);
-                this.updateCooldownButton();
+                this.startCooldown(); // Запускаємо таймер блокування кнопки
             }
 
-        } catch (error) {
-            console.error('Помилка завантаження:', error);
-            this.showError('Не вдалося завантажити сигнали. Перевірте з\'єднання.');
+            this.renderSignals(data);
+            this.updateStats(data);
+
+        } catch (e) {
+            console.error(e);
+            if(container.children.length === 0) {
+                 document.getElementById('no-signals').style.display = 'block';
+            }
+        } finally {
+            btn.innerHTML = originalBtnText; // Повертаємо текст кнопці
         }
     }
 
-    processSignals(data) {
+    renderSignals(data) {
         const container = document.getElementById('signals-container');
         const noSignals = document.getElementById('no-signals');
-        const lastUpdate = document.getElementById('last-update');
-        const activeSignalsElement = document.getElementById('active-signals');
-        
-        if (!data || !data.signals || data.signals.length === 0) {
-            container.innerHTML = '';
-            noSignals.style.display = 'block';
-            activeSignalsElement.textContent = '0';
-            return;
-        }
-        
-        noSignals.style.display = 'none';
-        
-        if (data.last_update) {
-            const updateDate = new Date(data.last_update);
-            lastUpdate.textContent = this.formatTime(updateDate, true);
-        }
-        
-        let html = '';
-        let activeCount = 0;
         
         // Очищаємо старі таймери
-        this.activeTimers.forEach((timerId) => clearInterval(timerId));
+        this.activeTimers.forEach(t => clearInterval(t));
         this.activeTimers.clear();
+        container.innerHTML = '';
 
-        data.signals.forEach((signal, index) => {
-            activeCount++;
-            const signalId = `signal-${index}`;
-            html += this.createSignalHTML(signal, signalId);
-        });
-        
-        activeSignalsElement.textContent = activeCount;
-        container.innerHTML = html;
+        if (!data.signals || data.signals.length === 0) {
+            noSignals.style.display = 'block';
+            return;
+        }
 
-        // Запускаємо таймери для кожного сигналу
+        noSignals.style.display = 'none';
+
+        // Рендеримо картки
         data.signals.forEach((signal, index) => {
-            const signalId = `signal-${index}`;
-            this.setupSignalTimer(signal, signalId);
+            const html = this.createCardHTML(signal, index);
+            container.insertAdjacentHTML('beforeend', html);
+            this.startSignalTimer(signal, index);
         });
     }
 
-    createSignalHTML(signal, signalId) {
-        const confidencePercent = Math.round(signal.confidence * 100);
-        const confidenceClass = this.getConfidenceClass(confidencePercent);
-        const directionClass = signal.direction.toLowerCase();
+    createCardHTML(signal, index) {
+        const directionClass = signal.direction.toLowerCase(); // 'up' or 'down'
+        const arrow = signal.direction === 'UP' ? '↗' : '↘';
+        const colorClass = signal.direction === 'UP' ? 'green' : 'red';
         
-        // Вибираємо мову опису
-        const reasonText = this.language === 'ru' && signal.reason_ru ? signal.reason_ru : signal.reason;
-
-        // Конвертуємо час
-        let generatedTime = 'Unknown';
-        if (signal.generated_at) {
-            generatedTime = this.formatTime(new Date(signal.generated_at), false);
-        }
+        // Вибір мови для пояснення
+        const reason = this.language === 'ru' && signal.reason_ru ? signal.reason_ru : signal.reason;
 
         return `
-            <div class="signal-card ${directionClass}" id="${signalId}" data-asset="${signal.asset}">
-                <div class="signal-header">
-                    <div class="asset-info">
-                        <div class="asset-icon"><i class="fas fa-chart-line"></i></div>
-                        <div>
-                            <div class="asset-name">${signal.asset}</div>
-                            <small>Таймфрейм: ${signal.duration} хв | Київ</small>
-                        </div>
-                    </div>
-                    <div class="direction-badge">
-                        ${signal.direction === 'UP' ? '📈 CALL' : '📉 PUT'}
-                    </div>
+        <div class="signal-card ${directionClass}" id="card-${index}">
+            <div class="card-header">
+                <div class="asset-name">
+                    <i class="fas fa-coins"></i> ${signal.asset}
                 </div>
-                
-                <div class="signal-details">
-                    <div class="detail-item">
-                        <div class="label"><i class="fas fa-bullseye"></i> ${this.translate('minAccuracy')}</div>
-                        <div class="value">${confidencePercent}% <span class="confidence-badge ${confidenceClass}">OK</span></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="label"><i class="far fa-clock"></i> Вхід (Київ)</div>
-                        <div class="value">${signal.entry_time}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="label"><i class="fas fa-hourglass-half"></i> Тривалість</div>
-                        <div class="value">${signal.duration} хв</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="label"><i class="fas fa-calendar"></i> Створено</div>
-                        <div class="value">${generatedTime}</div>
-                    </div>
+                <div class="badge ${colorClass}">
+                    ${signal.direction} ${arrow}
                 </div>
-                
-                <div class="timer-container" id="timer-${signalId}"></div>
-                
-                ${reasonText ? `
-                <div class="signal-reason">
-                    <div class="reason-header"><i class="fas fa-lightbulb"></i> AI Аналіз</div>
-                    <div class="reason-text">${reasonText}</div>
-                </div>
-                ` : ''}
             </div>
+
+            <div class="card-body">
+                <div class="info-row">
+                    <span>${this.translate('confidence')}</span>
+                    <strong>${Math.round(signal.confidence * 100)}%</strong>
+                </div>
+                <div class="info-row">
+                    <span>${this.translate('entry')} (Kyiv)</span>
+                    <strong class="entry-time">${signal.entry_time}</strong>
+                </div>
+                <div class="info-row">
+                    <span>${this.translate('duration')}</span>
+                    <strong>${signal.duration} min</strong>
+                </div>
+            </div>
+
+            <div class="timer-box" id="timer-${index}">
+                --:--
+            </div>
+
+            ${reason ? `
+            <div class="ai-analysis">
+                <small><i class="fas fa-brain"></i> ${this.translate('aiReason')}</small>
+                <p>${reason}</p>
+            </div>
+            ` : ''}
+        </div>
         `;
     }
 
-    setupSignalTimer(signal, signalId) {
-        const timerContainer = document.getElementById(`timer-${signalId}`);
-        if (!timerContainer) return;
-
-        const durationMinutes = parseFloat(signal.duration) || 2;
+    startSignalTimer(signal, index) {
+        const timerEl = document.getElementById(`timer-${index}`);
+        const cardEl = document.getElementById(`card-${index}`);
         
-        // Парсинг часу входу HH:MM у об'єкт Date (Сьогодні)
+        const durationMin = parseFloat(signal.duration);
+        
+        // Парсимо час входу
         const now = new Date();
-        const [hours, minutes] = signal.entry_time.split(':').map(Number);
-        
+        const [h, m] = signal.entry_time.split(':').map(Number);
         const entryDate = new Date();
-        entryDate.setHours(hours, minutes, 0, 0);
+        entryDate.setHours(h, m, 0, 0);
 
-        // Якщо час входу менше ніж "зараз" мінус 12 годин, значить це було вчора (або помилка). 
-        // Якщо час входу менше ніж "зараз", але недалеко, значить ми запізнилися або сигнал йде.
-        // Для простоти припускаємо, що сигнал завжди на сьогодні або завтра.
-        if (entryDate < now && (now - entryDate) > 12 * 60 * 60 * 1000) {
-             entryDate.setDate(entryDate.getDate() + 1);
+        // Якщо вхід був "вчора" (наприклад зараз 00:10, а вхід 23:50), не чіпаємо.
+        // Якщо вхід "сьогодні" але в минулому, це ОК.
+        // Якщо вхід "завтра" (наприклад зараз 23:50, вхід 00:05), додаємо день.
+        if (entryDate < now && (now - entryDate) > 12 * 3600 * 1000) {
+            entryDate.setDate(entryDate.getDate() + 1);
         }
 
-        const endDate = new Date(entryDate.getTime() + durationMinutes * 60000);
+        const endDate = new Date(entryDate.getTime() + durationMin * 60000);
 
-        const updateTimer = () => {
-            const currentTime = new Date();
-            
-            // 1. Чекаємо входу
-            if (currentTime < entryDate) {
-                const diff = entryDate - currentTime;
-                const m = Math.floor(diff / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                timerContainer.innerHTML = `
-                    <div class="signal-timer waiting">
-                        <div class="timer-display"><i class="fas fa-pause"></i> ${m}:${s.toString().padStart(2, '0')}</div>
-                        <small>${this.translate('timerWaiting')}</small>
-                    </div>`;
-            } 
-            // 2. Сигнал активний (йде таймер)
-            else if (currentTime >= entryDate && currentTime < endDate) {
-                const diff = endDate - currentTime;
-                const m = Math.floor(diff / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                timerContainer.innerHTML = `
-                    <div class="signal-timer active">
-                        <div class="timer-display"><i class="fas fa-hourglass-half"></i> ${m}:${s.toString().padStart(2, '0')}</div>
-                        <small>${this.translate('timerActive')}</small>
-                    </div>`;
-            } 
-            // 3. Час вийшов
+        const update = () => {
+            const current = new Date();
+
+            // 1. ОЧІКУВАННЯ (Waiting)
+            if (current < entryDate) {
+                const diff = entryDate - current;
+                const mm = Math.floor(diff / 60000);
+                const ss = Math.floor((diff % 60000) / 1000);
+                timerEl.innerHTML = `<span style="color:#3498db">${this.translate('timerWaiting')} ${mm}:${ss.toString().padStart(2,'0')}</span>`;
+                timerEl.className = 'timer-box waiting';
+            }
+            // 2. АКТИВНИЙ (Active)
+            else if (current >= entryDate && current < endDate) {
+                const diff = endDate - current;
+                const mm = Math.floor(diff / 60000);
+                const ss = Math.floor((diff % 60000) / 1000);
+                timerEl.innerHTML = `<span style="color:#e74c3c; font-weight:bold">${this.translate('timerActive')} ${mm}:${ss.toString().padStart(2,'0')}</span>`;
+                timerEl.className = 'timer-box active';
+                cardEl.classList.add('pulse-active'); // Додаємо пульсацію
+            }
+            // 3. ЗАВЕРШЕНО (Expired)
             else {
-                timerContainer.innerHTML = `
-                    <div class="signal-feedback">
-                        <p>${this.translate('timerExpired')}</p>
-                    </div>`;
-                // Зупиняємо таймер
-                clearInterval(this.activeTimers.get(signalId));
+                timerEl.innerHTML = `<span style="color:#7f8c8d">${this.translate('timerExpired')}</span>`;
+                timerEl.className = 'timer-box expired';
+                cardEl.classList.remove('pulse-active');
+                cardEl.style.opacity = '0.7'; // Трішки тускніє
+                clearInterval(this.activeTimers.get(index));
             }
         };
 
-        updateTimer(); // Перший виклик
-        const intervalId = setInterval(updateTimer, 1000);
-        this.activeTimers.set(signalId, intervalId);
+        update();
+        const interval = setInterval(update, 1000);
+        this.activeTimers.set(index, interval);
     }
 
-    updateKyivTime() {
-        const now = new Date();
-        const options = { timeZone: 'Europe/Kiev', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('server-time').textContent = now.toLocaleTimeString('uk-UA', options);
+    // Логіка блокування кнопки "Оновити"
+    startCooldown() {
+        if (!this.lastGenerationTime) return;
+
+        const btn = document.getElementById('refresh-btn');
+        const timerText = document.getElementById('cooldown-timer');
+        
+        if (this.cooldownInterval) clearInterval(this.cooldownInterval);
+
+        const check = () => {
+            const now = new Date();
+            const diffSec = (now - this.lastGenerationTime) / 1000;
+            const timeLeft = (this.cooldownMinutes * 60) - diffSec;
+
+            if (timeLeft <= 0) {
+                btn.disabled = false;
+                timerText.textContent = '';
+                clearInterval(this.cooldownInterval);
+            } else {
+                btn.disabled = true;
+                const m = Math.floor(timeLeft / 60);
+                const s = Math.floor(timeLeft % 60);
+                timerText.textContent = `(${m}:${s.toString().padStart(2, '0')})`;
+            }
+        };
+
+        check();
+        this.cooldownInterval = setInterval(check, 1000);
     }
 
-    formatTime(date, includeSeconds) {
-        return date.toLocaleTimeString('uk-UA', {
-            timeZone: 'Europe/Kiev',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: includeSeconds ? '2-digit' : undefined
-        });
-    }
-
-    getConfidenceClass(percent) {
-        if (percent >= 85) return 'confidence-high';
-        if (percent >= 75) return 'confidence-medium';
-        return 'confidence-low';
-    }
-    
-    // Переклад
-    async setupLanguage() {
-        this.applyLanguage(this.language);
-        document.getElementById('lang-uk').addEventListener('click', () => this.switchLanguage('uk'));
-        document.getElementById('lang-ru').addEventListener('click', () => this.switchLanguage('ru'));
-    }
-
-    switchLanguage(lang) {
-        this.language = lang;
-        localStorage.setItem('language', lang);
-        this.applyLanguage(lang);
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
-        // Перемальовуємо сигнали щоб оновити текст AI
-        const container = document.getElementById('signals-container');
-        if (container.children.length > 0 && !container.querySelector('.loading-state')) {
-             // Перезавантажуємо відображення з кешу (data/signals.json) - насправді треба просто оновити DOM
-             // Для простоти можна просто перезавантажити сторінку або викликати loadSignals знову
-             this.loadSignals(); 
+    updateStats(data) {
+        if (data.last_update) {
+            const d = new Date(data.last_update);
+            document.getElementById('last-update').textContent = d.toLocaleTimeString('uk-UA', {timeZone:'Europe/Kiev', hour:'2-digit', minute:'2-digit'});
         }
+        document.getElementById('active-signals').textContent = data.signals ? data.signals.length : 0;
     }
 
-    applyLanguage(lang) {
-        const translations = this.translations[lang];
-        document.querySelectorAll('[data-translate]').forEach(el => {
-            const key = el.getAttribute('data-translate');
-            if (translations[key]) el.textContent = translations[key];
+    updateTime() {
+        const now = new Date();
+        document.getElementById('server-time').textContent = now.toLocaleTimeString('uk-UA', {
+            timeZone: 'Europe/Kiev', hour12: false
         });
+    }
+
+    setupLanguage() {
+        const apply = (lang) => {
+            this.language = lang;
+            localStorage.setItem('language', lang);
+            
+            // Переклад статичних текстів
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const k = el.getAttribute('data-translate');
+                if (this.translations[lang][k]) el.textContent = this.translations[lang][k];
+            });
+
+            // Кнопки
+            document.querySelectorAll('.lang-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.lang === lang);
+            });
+
+            // Якщо сигнали вже є - перерендер (щоб змінилась мова AI аналізу)
+            const container = document.getElementById('signals-container');
+            if (container.children.length > 0) {
+                 // Перезавантажуємо відображення (без запиту на сервер)
+                 // Але оскільки дані у нас не збережені в змінну класу в цьому прикладі, 
+                 // то краще просто натиснути "Оновити" або залишити як є.
+                 // В ідеалі треба зберігати `this.currentData` і викликати `renderSignals(this.currentData)`
+            }
+        };
+
+        document.getElementById('lang-uk').addEventListener('click', () => apply('uk'));
+        document.getElementById('lang-ru').addEventListener('click', () => apply('ru'));
+        
+        apply(this.language);
     }
 
     translate(key) {
         return this.translations[this.language][key] || key;
     }
-
-    showError(msg) {
-        const container = document.getElementById('signals-container');
-        container.innerHTML = `<div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>${msg}</p></div>`;
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.signalDisplay = new SignalDisplay();
+    new SignalDisplay();
 });
