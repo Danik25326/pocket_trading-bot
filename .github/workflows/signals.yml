@@ -1,7 +1,7 @@
-name: Generate Trading Signals
+name: Generate Trading Signals and Deploy
 
 on:
-  workflow_dispatch:  # ТІЛЬКИ ручний запуск
+  workflow_dispatch:  # Тільки ручний запуск
   push:
     branches: [ main ]
     paths-ignore:
@@ -68,7 +68,7 @@ jobs:
           echo '[]' > data/lessons.json
         fi
     
-    - name: Clean old signals
+    - name: Clean old signals (older than 5 minutes)
       run: |
         echo "🧹 Очищення старих сигналів..."
         python -c "
@@ -79,23 +79,46 @@ jobs:
         kyiv_tz = pytz.timezone('Europe/Kiev')
         now = datetime.now(kyiv_tz)
         
-        # Завантажуємо сигнали
         try:
             with open('data/signals.json', 'r', encoding='utf-8') as f:
                 signals_data = json.load(f)
         except:
             signals_data = {'last_update': None, 'signals': [], 'timezone': 'Europe/Kiev (UTC+2)'}
         
-        # Видаляємо ВСІ старі сигнали перед новою генерацією
-        print('🗑️ Видаляю всі старі сигнали...')
-        signals_data['signals'] = []
-        signals_data['last_update'] = None
+        # Фільтруємо сигнали старіші 5 хвилин
+        valid_signals = []
+        for signal in signals_data.get('signals', []):
+            try:
+                # Час генерації сигналу
+                gen_time_str = signal.get('generated_at_utc') or signal.get('generated_at')
+                if gen_time_str:
+                    gen_time = datetime.fromisoformat(gen_time_str.replace('Z', '+00:00'))
+                    
+                    # Конвертуємо в київський час
+                    if gen_time.tzinfo is None:
+                        gen_time = pytz.UTC.localize(gen_time)
+                    gen_time_kyiv = gen_time.astimezone(kyiv_tz)
+                    
+                    # Перевіряємо, чи сигнал ще дійсний (менше 5 хвилин)
+                    if now - gen_time_kyiv <= timedelta(minutes=5):
+                        valid_signals.append(signal)
+            except Exception as e:
+                print(f'⚠️ Помилка обробки сигналу: {e}')
+                continue
         
-        # Зберігаємо
+        # Обмежуємо кількість (максимум 3)
+        if len(valid_signals) > 3:
+            valid_signals = valid_signals[:3]
+        
+        # Оновлюємо дані
+        signals_data['signals'] = valid_signals
+        signals_data['active_signals'] = len(valid_signals)
+        signals_data['total_signals'] = len(valid_signals)
+        
         with open('data/signals.json', 'w', encoding='utf-8') as f:
             json.dump(signals_data, f, indent=2, ensure_ascii=False)
         
-        print('✅ Всі старі сигнали видалено')
+        print(f'✅ Залишено {len(valid_signals)} актуальних сигналів')
         "
     
     - name: Generate trading signals
@@ -103,16 +126,17 @@ jobs:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
-        SIGNAL_INTERVAL: '0'  # Вимикаємо інтервал, бо тепер тільки ручний запуск
+        SIGNAL_INTERVAL: '300'
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
         SIGNAL_VALIDITY_MINUTES: '5'
+        SIGNAL_CLEANUP_COUNT: '9'
         ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'openai/gpt-oss-120b'
       run: |
-        echo "🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ ВРУЧНУ"
+        echo "🚀 Початок генерації сигналів..."
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
         echo "🎯 Мінімальна впевненість: 70%"
@@ -142,7 +166,7 @@ jobs:
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Ручна генерація: Нові сигнали $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "🤖 Генерація сигналів $(date +'%Y-%m-%d %H:%M') [skip ci]"
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
         fi
