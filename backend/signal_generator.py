@@ -16,42 +16,118 @@ class SignalGenerator:
         self.data_handler = DataHandler()
         self.signals = []
 
-async def generate_signal(self, asset):
-    """Генерація одного сигналу"""
-    try:
-        logger.info(f"📈 Аналіз активу: {asset}")
-        
-        # Отримуємо свічки
-        logger.info(f"📊 Запит свічок для {asset}...")
-        candles = await self.pocket_client.get_candles(
-            asset=asset,
-            timeframe=Config.TIMEFRAMES,
-            count=50
-        )
-        
-        if not candles or len(candles) == 0:
-            logger.error(f"❌ Не вдалося отримати свічки для {asset}")
-            return None
-
-        logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
-        
-        # ПЕРЕВІРКА: Якщо остання свічка старіша за 5 хвилин - ПРОПУСКАЄМО
-        if hasattr(candles[-1], 'timestamp'):
-            last_candle_time = candles[-1].timestamp
-            current_time = datetime.now()
+    async def generate_signal(self, asset):
+        """Генерація одного сигналу"""
+        try:
+            logger.info(f"📈 Аналіз активу: {asset}")
             
-            # Якщо свічка має часовий пояс, видаляємо його для порівняння
-            if last_candle_time.tzinfo is not None:
-                last_candle_time = last_candle_time.replace(tzinfo=None)
-            
-            time_diff = (current_time - last_candle_time).total_seconds()
-            
-            if time_diff > 300:  # 5 хвилин
-                logger.error(f"❌ Свічки для {asset} ЗАСТАРІЛІ: {time_diff:.0f} сек ({time_diff/60:.1f} хв)")
-                logger.error(f"   Час останньої свічки: {last_candle_time}")
-                logger.error(f"   Поточний час: {current_time}")
-                logger.error(f"   Пропускаємо актив {asset}")
+            # Перевірка підключення
+            if not hasattr(self.pocket_client, 'client') or not self.pocket_client.client:
+                logger.error("❌ PocketOptionClient не ініціалізований")
                 return None
+            
+            # Отримуємо свічки
+            logger.info(f"📊 Запит свічок для {asset}...")
+            candles = await self.pocket_client.get_candles(
+                asset=asset,
+                timeframe=Config.TIMEFRAMES,
+                count=50
+            )
+            
+            if not candles or len(candles) == 0:
+                logger.error(f"❌ Не вдалося отримати свічки для {asset}")
+                return None
+
+            logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
+            
+            # ПЕРЕВІРКА: Якщо остання свічка старіша за 5 хвилин - ПРОПУСКАЄМО
+            if hasattr(candles[-1], 'timestamp'):
+                last_candle_time = candles[-1].timestamp
+                current_time = Config.get_kyiv_time()
+                
+                # Якщо свічка має часовий пояс, видаляємо його для порівняння
+                if last_candle_time.tzinfo is not None:
+                    last_candle_time = last_candle_time.replace(tzinfo=None)
+                
+                # Перетворюємо current_time також без часового поясу для порівняння
+                current_time_no_tz = current_time.replace(tzinfo=None)
+                time_diff = (current_time_no_tz - last_candle_time).total_seconds()
+                
+                if time_diff > 300:  # 5 хвилин
+                    logger.error(f"❌ Свічки для {asset} ЗАСТАРІЛІ: {time_diff:.0f} сек ({time_diff/60:.1f} хв)")
+                    logger.error(f"   Час останньої свічки: {last_candle_time}")
+                    logger.error(f"   Поточний час: {current_time_no_tz}")
+                    logger.error(f"   Пропускаємо актив {asset}")
+                    return None
+            
+            # Перевірка актуальності останньої свічки (додаткова перевірка)
+            if hasattr(candles[-1], 'timestamp'):
+                last_candle_time = candles[-1].timestamp
+                current_time = Config.get_kyiv_time()
+                
+                if last_candle_time.tzinfo is None:
+                    last_candle_time = pytz.UTC.localize(last_candle_time)
+                
+                last_candle_time_kyiv = last_candle_time.astimezone(Config.KYIV_TZ)
+                time_diff = (current_time - last_candle_time_kyiv).total_seconds()
+                
+                # Якщо свічка старіша за 5 хвилин - пропускаємо актив
+                if time_diff > 300:  # 5 хвилин
+                    logger.error(f"❌ Свічки для {asset} застарілі: {time_diff:.0f} сек")
+                    return None
+                elif time_diff > 180:  # 3 хвилини
+                    logger.warning(f"⚠️ Остання свічка трохи застаріла: {time_diff:.0f} сек тому")
+                else:
+                    logger.info(f"🕐 Остання свічка актуальна: {time_diff:.0f} сек тому")
+            
+            # Аналізуємо через AI
+            logger.info(f"🧠 Аналіз через GPT OSS 120B для {asset}...")
+            signal = self.analyzer.analyze_market(asset, candles)
+
+            if signal:
+                confidence = signal.get('confidence', 0)
+                logger.info(f"📝 AI повернув сигнал для {asset}: confidence={confidence*100:.1f}%")
+                
+                if confidence >= Config.MIN_CONFIDENCE:
+                    # Перевірка тривалості
+                    duration = signal.get('duration', 2)
+                    if duration > Config.MAX_DURATION:
+                        logger.warning(f"⚠️ Сигнал для {asset} має завелику тривалість: {duration} > {Config.MAX_DURATION}")
+                        signal['duration'] = Config.MAX_DURATION
+                    
+                    # Додаємо часові мітки
+                    now_kyiv = Config.get_kyiv_time()
+                    signal['generated_at'] = now_kyiv.isoformat()
+                    signal['generated_at_utc'] = datetime.utcnow().isoformat() + 'Z'
+                    signal['asset'] = asset
+                    signal['id'] = f"{asset}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
+                    
+                    # Перевіряємо час входу
+                    entry_time = signal.get('entry_time', '')
+                    if ':' in entry_time:
+                        hour, minute = map(int, entry_time.split(':'))
+                        entry_datetime = now_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                        
+                        if entry_datetime < now_kyiv:
+                            entry_datetime += timedelta(days=1)
+                        
+                        time_to_entry = (entry_datetime - now_kyiv).total_seconds() / 60
+                        logger.info(f"⏰ Час входу: {entry_time} (через {time_to_entry:.1f} хв)")
+                    
+                    logger.info(f"✅ Створено сигнал для {asset}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
+                    logger.info(f"   📅 Вхід: {entry_time}, Тривалість: {signal['duration']} хв")
+                    return signal
+                else:
+                    logger.warning(f"⚠️ Сигнал для {asset} має низьку впевненість: {confidence*100:.1f}% < {Config.MIN_CONFIDENCE*100}%")
+            else:
+                logger.warning(f"⚠️ AI не повернув сигнал для {asset}")
+                    
+        except Exception as e:
+            logger.error(f"❌ Помилка генерації сигналу для {asset}: {e}")
+            import traceback
+            logger.error(f"📋 Трейс: {traceback.format_exc()}")
+
+        return None
 
     async def generate_all_signals(self):
         """Генерація сигналів для всіх активів - одноразово"""
