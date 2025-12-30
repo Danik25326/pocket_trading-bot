@@ -401,63 +401,71 @@ class SignalDisplay {
         }
     }
 
-    processSignals(data, force = false) {
-        const container = document.getElementById('signals-container');
-        const noSignals = document.getElementById('no-signals');
-        const welcomeState = document.querySelector('.welcome-state');
-        const lastUpdate = document.getElementById('last-update');
-        const activeSignalsElement = document.getElementById('active-signals');
-        
-        if (!data || !data.signals || data.signals.length === 0) {
-            if (welcomeState) welcomeState.style.display = 'none';
-            container.innerHTML = '';
-            noSignals.style.display = 'block';
-            lastUpdate.textContent = '--:--:--';
-            activeSignalsElement.textContent = '0';
-            return;
-        }
-        
+processSignals(data, force = false) {
+    const container = document.getElementById('signals-container');
+    const noSignals = document.getElementById('no-signals');
+    const welcomeState = document.querySelector('.welcome-state');
+    const lastUpdate = document.getElementById('last-update');
+    const activeSignalsElement = document.getElementById('active-signals');
+    
+    if (!data || !data.signals || data.signals.length === 0) {
         if (welcomeState) welcomeState.style.display = 'none';
-        noSignals.style.display = 'none';
+        container.innerHTML = '';
+        noSignals.style.display = 'block';
+        lastUpdate.textContent = '--:--:--';
+        activeSignalsElement.textContent = '0';
+        return;
+    }
+    
+    if (welcomeState) welcomeState.style.display = 'none';
+    noSignals.style.display = 'none';
+    
+    if (data.last_update) {
+        const updateDate = new Date(data.last_update);
+        lastUpdate.textContent = this.formatKyivTime(updateDate, true);
+    }
+    
+    const nowKyiv = this.getKyivTime();
+    const fiveMinutesAgo = new Date(nowKyiv.getTime() - 5 * 60000);
+    
+    let activeSignals = 0;
+    let html = '';
+    
+    data.signals.forEach((signal, index) => {
+        const confidencePercent = Math.round(signal.confidence * 100);
+        if (confidencePercent < 70) return;
         
-        if (data.last_update) {
-            const updateDate = new Date(data.last_update);
-            lastUpdate.textContent = this.formatKyivTime(updateDate, true);
-        }
+        const generatedAt = new Date(signal.generated_at);
+        if (generatedAt < fiveMinutesAgo && !force) return;
         
-        const nowKyiv = this.getKyivTime();
-        const fiveMinutesAgo = new Date(nowKyiv.getTime() - 5 * 60000);
+        activeSignals++;
         
-        let activeSignals = 0;
-        let html = '';
+        const signalId = `signal-${index}`;
+        html += this.createSignalHTML(signal, signalId);
+    });
+    
+    activeSignalsElement.textContent = activeSignals;
+    
+    if (activeSignals === 0) {
+        noSignals.style.display = 'block';
+        container.innerHTML = '';
+    } else {
+        container.innerHTML = html;
         
-        data.signals.forEach((signal, index) => {
-            const confidencePercent = Math.round(signal.confidence * 100);
-            if (confidencePercent < 70) return;
-            
-            const generatedAt = new Date(signal.generated_at);
-            if (generatedAt < fiveMinutesAgo && !force) return;
-            
-            activeSignals++;
-            
-            const signalId = `signal-${index}`;
-            html += this.createSignalHTML(signal, signalId);
-        });
-        
-        activeSignalsElement.textContent = activeSignals;
-        
-        if (activeSignals === 0) {
-            noSignals.style.display = 'block';
-            container.innerHTML = '';
-        } else {
-            container.innerHTML = html;
-            
+        // Даємо час DOM для рендерингу перед запуском таймерів
+        setTimeout(() => {
             data.signals.forEach((signal, index) => {
                 const signalId = `signal-${index}`;
-                this.setupSignalTimer(signal, signalId);
+                const signalElement = document.getElementById(signalId);
+                
+                // Запускаємо таймер тільки якщо елемент сигналу існує
+                if (signalElement) {
+                    this.setupSignalTimer(signal, signalId);
+                }
             });
-        }
+        }, 100); // Невелика затримка для гарантії рендерингу
     }
+}
 
     createSignalHTML(signal, signalId) {
         const confidencePercent = Math.round(signal.confidence * 100);
@@ -561,15 +569,41 @@ setupSignalTimer(signal, signalId) {
     if (!entryTime) return;
     
     const updateTimer = () => {
-        // Перевіряємо, чи сигнал ще існує в DOM
-        const signalElement = document.getElementById(signalId);
-        if (!signalElement) {
-            // Якщо сигнал видалений - зупиняємо таймер
+        // Перш за все перевіряємо, чи є елемент таймера
+        const timerElement = document.getElementById(`timer-${signalId}`);
+        const timerDisplay = document.getElementById(`timer-display-${signalId}`);
+        const timerStatus = document.getElementById(`timer-status-${signalId}`);
+        const timeUntilElement = document.getElementById(`time-until-${signalId}`);
+        
+        // Якщо основного елементу таймера немає - зупиняємо все
+        if (!timerElement) {
             const intervalId = this.activeTimers.get(signalId);
             if (intervalId) {
                 clearInterval(intervalId);
                 this.activeTimers.delete(signalId);
             }
+            return;
+        }
+        
+        // Перевіряємо, чи сигнал ще існує
+        const signalElement = document.getElementById(signalId);
+        if (!signalElement) {
+            const intervalId = this.activeTimers.get(signalId);
+            if (intervalId) {
+                clearInterval(intervalId);
+                this.activeTimers.delete(signalId);
+            }
+            
+            // Видаляємо всі елементи, пов'язані з цим сигналом
+            if (timerElement) timerElement.remove();
+            if (timerDisplay) timerDisplay.remove();
+            if (timerStatus) timerStatus.remove();
+            if (timeUntilElement) timeUntilElement.remove();
+            return;
+        }
+        
+        // Перевіряємо обов'язкові елементи для таймера
+        if (!timerDisplay || !timerStatus) {
             return;
         }
         
@@ -585,64 +619,75 @@ setupSignalTimer(signal, signalId) {
         const endDate = new Date(entryDate.getTime() + duration * 60000);
         const timeLeftMs = entryDate - nowKyiv;
         
-        const timerElement = document.getElementById(`timer-${signalId}`);
-        const timerDisplay = document.getElementById(`timer-display-${signalId}`);
-        const timerStatus = document.getElementById(`timer-status-${signalId}`);
-        const timeUntilElement = document.getElementById(`time-until-${signalId}`);
-        
-        // Перевіряємо, чи всі елементи існують перед оновленням
-        if (!timerElement || !timerDisplay || !timerStatus) {
-            return;
-        }
-        
-        if (timeLeftMs > 0) {
-            const minutesLeft = Math.floor(timeLeftMs / 60000);
-            const secondsLeft = Math.floor((timeLeftMs % 60000) / 1000);
-            
-            timerElement.className = 'signal-timer waiting';
-            timerDisplay.textContent = `${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
-            timerStatus.textContent = `${this.translate('entryIn')} ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
-            
-            if (timeUntilElement) {
-                timeUntilElement.textContent = `${minutesLeft}${this.translate('minutes')} ${secondsLeft}${this.translate('seconds')}`;
+        try {
+            if (timeLeftMs > 0) {
+                const minutesLeft = Math.floor(timeLeftMs / 60000);
+                const secondsLeft = Math.floor((timeLeftMs % 60000) / 1000);
+                
+                timerElement.className = 'signal-timer waiting';
+                timerDisplay.textContent = `${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
+                timerStatus.textContent = `${this.translate('entryIn')} ${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
+                
+                if (timeUntilElement) {
+                    timeUntilElement.textContent = `${minutesLeft}${this.translate('minutes')} ${secondsLeft}${this.translate('seconds')}`;
+                }
+            } else if (nowKyiv <= endDate) {
+                const timeActiveMs = nowKyiv - entryDate;
+                const minutesActive = Math.floor(timeActiveMs / 60000);
+                const secondsActive = Math.floor((timeActiveMs % 60000) / 1000);
+                const timeLeftMsTotal = endDate - nowKyiv;
+                const minutesLeft = Math.floor(timeLeftMsTotal / 60000);
+                const secondsLeft = Math.floor((timeLeftMsTotal % 60000) / 1000);
+                
+                timerElement.className = 'signal-timer active';
+                timerDisplay.textContent = `${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
+                timerStatus.textContent = `${this.translate('signalActive')} (${minutesActive}:${secondsActive.toString().padStart(2, '0')})`;
+                
+                if (timeUntilElement) {
+                    timeUntilElement.textContent = `${this.translate('activeFor')} ${minutesActive}:${secondsActive.toString().padStart(2, '0')}`;
+                }
+            } else {
+                timerElement.className = 'signal-timer expired';
+                timerDisplay.textContent = '0:00';
+                timerStatus.textContent = this.translate('signalExpired');
+                
+                if (timeUntilElement) {
+                    timeUntilElement.textContent = this.translate('expired');
+                }
+                
+                // Запускаємо фідбек тільки якщо ще не запускали
+                if (!signalElement.dataset.feedbackShown) {
+                    setTimeout(() => {
+                        this.showFeedback(signalId, signal.asset);
+                        signalElement.dataset.feedbackShown = 'true';
+                    }, 30000);
+                }
             }
-        } else if (nowKyiv <= endDate) {
-            const timeActiveMs = nowKyiv - entryDate;
-            const minutesActive = Math.floor(timeActiveMs / 60000);
-            const secondsActive = Math.floor((timeActiveMs % 60000) / 1000);
-            const timeLeftMsTotal = endDate - nowKyiv;
-            const minutesLeft = Math.floor(timeLeftMsTotal / 60000);
-            const secondsLeft = Math.floor((timeLeftMsTotal % 60000) / 1000);
+        } catch (error) {
+            console.warn(`Помилка оновлення таймера для ${signalId}:`, error);
             
-            timerElement.className = 'signal-timer active';
-            timerDisplay.textContent = `${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}`;
-            timerStatus.textContent = `${this.translate('signalActive')} (${minutesActive}:${secondsActive.toString().padStart(2, '0')})`;
-            
-            if (timeUntilElement) {
-                timeUntilElement.textContent = `${this.translate('activeFor')} ${minutesActive}:${secondsActive.toString().padStart(2, '0')}`;
-            }
-        } else {
-            timerElement.className = 'signal-timer expired';
-            timerDisplay.textContent = '0:00';
-            timerStatus.textContent = this.translate('signalExpired');
-            
-            if (timeUntilElement) {
-                timeUntilElement.textContent = this.translate('expired');
-            }
-            
-            // Запускаємо фідбек тільки якщо ще не запускали
-            if (!signalElement.dataset.feedbackShown) {
-                setTimeout(() => {
-                    this.showFeedback(signalId, signal.asset);
-                    signalElement.dataset.feedbackShown = 'true';
-                }, 30000);
+            // Якщо виникла помилка, зупиняємо таймер
+            const intervalId = this.activeTimers.get(signalId);
+            if (intervalId) {
+                clearInterval(intervalId);
+                this.activeTimers.delete(signalId);
             }
         }
     };
     
-    updateTimer();
-    const intervalId = setInterval(updateTimer, 1000);
-    this.activeTimers.set(signalId, intervalId);
+    // Запускаємо тільки якщо є елемент таймера
+    const timerElement = document.getElementById(`timer-${signalId}`);
+    if (timerElement) {
+        try {
+            updateTimer();
+            const intervalId = setInterval(updateTimer, 1000);
+            this.activeTimers.set(signalId, intervalId);
+        } catch (error) {
+            console.error(`Помилка запуску таймера для ${signalId}:`, error);
+        }
+    } else {
+        console.warn(`Не знайдено елемент таймера для ${signalId}`);
+    }
 }
 
 showFeedback(signalId, asset) {
