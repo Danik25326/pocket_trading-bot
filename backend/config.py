@@ -15,7 +15,7 @@ load_dotenv()
 logger = logging.getLogger("signal_bot")
 
 BASE_DIR = Path(__file__).parent.parent
-LANGUAGE = os.getenv('LANGUAGE', 'uk')
+
 class Config:
     # Pocket Option
     POCKET_SSID = os.getenv('POCKET_SSID')
@@ -56,6 +56,9 @@ class Config:
     
     # Часовий пояс
     KYIV_TZ = pytz.timezone('Europe/Kiev')
+
+    # Мова
+    LANGUAGE = os.getenv('LANGUAGE', 'uk')
 
     @staticmethod
     def get_kyiv_time():
