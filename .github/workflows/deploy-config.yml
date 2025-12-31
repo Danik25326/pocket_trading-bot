@@ -6,12 +6,10 @@ on:
     paths:
       - 'config.template.js'
       - '.github/workflows/deploy-config.yml'
-  workflow_dispatch:  # Ручний запуск
 
 jobs:
   generate-config:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,23 +21,15 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          # Читаємо шаблон
-          if [ -f config.template.js ]; then
-            # Замінюємо токен у шаблоні
-            sed "s/{{GH_PAT}}/$GH_PAT/g" config.template.js > config.js
-            echo "✅ config.js згенеровано з шаблону"
-          else
-            # Створюємо config.js з нуля, якщо шаблону немає
-            echo "// config.js - автоматично згенеровано" > config.js
-            echo "window.GH_CONFIG = {" >> config.js
-            echo "    token: '${{ secrets.GH_PAT }}'," >> config.js
-            echo "    owner: 'DimonFrontend'," >> config.js
-            echo "    repo: 'pocket_trading_bot'," >> config.js
-            echo "    workflowId: 'signals.yml'" >> config.js
-            echo "};" >> config.js
-            echo "✅ config.js згенеровано з нуля"
-          fi
+          echo "// config.js - automatically generated" > config.js
+          echo "window.GH_CONFIG = {" >> config.js
+          echo "    token: '${{ secrets.GH_PAT }}'," >> config.js
+          echo "    owner: 'DimonFrontend'," >> config.js
+          echo "    repo: 'pocket_trading_bot'," >> config.js
+          echo "    workflowId: 'signals.yml'" >> config.js
+          echo "};" >> config.js
           
+          echo "✅ Config.js generated"
           cat config.js
       
       - name: Commit and push config.js
@@ -50,9 +40,9 @@ jobs:
           git add config.js
           
           if git diff --staged --quiet; then
-            echo "⚠️ Немає змін для коміту"
+            echo "⚠️ No changes to commit"
           else
-            git commit -m "🤖 Оновлено config.js з токеном GitHub [skip ci]"
+            git commit -m "🤖 Update config.js with GitHub token [skip ci]"
             git push origin main
-            echo "✅ config.js оновлено та відправлено"
+            echo "✅ Config.js updated and pushed"
           fi
