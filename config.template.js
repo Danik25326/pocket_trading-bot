@@ -1,3 +1,4 @@
+
 // config.template.js
 window.GH_CONFIG = {
     token: '{{GH_PAT}}',
