@@ -15,7 +15,7 @@ load_dotenv()
 logger = logging.getLogger("signal_bot")
 
 BASE_DIR = Path(__file__).parent.parent
-
+LANGUAGE = os.getenv('LANGUAGE', 'uk')
 class Config:
     # Pocket Option
     POCKET_SSID = os.getenv('POCKET_SSID')
