@@ -8,7 +8,7 @@ class SignalDisplay {
         this.lastGenerationTime = localStorage.getItem('lastGenerationTime') ? new Date(localStorage.getItem('lastGenerationTime')) : null;
         this.refreshTimer = null;
         this.ghConfig = window.GH_CONFIG || {
-            owner: 'DimonFrontend',
+            owner: 'Danik25326',
             repo: 'pocket_trading_bot',
             workflowId: 'signals.yml'
         };
