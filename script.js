@@ -7,10 +7,12 @@ class SignalDisplay {
         this.activeTimers = new Map();
         this.lastGenerationTime = localStorage.getItem('lastGenerationTime') ? new Date(localStorage.getItem('lastGenerationTime')) : null;
         this.refreshTimer = null;
+        this.searchCooldownTimer = null;
         this.ghConfig = window.GH_CONFIG || {
             owner: 'Danik25326',
             repo: 'pocket_trading_bot',
-            workflowId: 'signals.yml'
+            workflowId: 'signals.yml',
+            token: '{{GH_PAT}}'
         };
         
         this.translations = {
@@ -74,7 +76,6 @@ class SignalDisplay {
                 generatingViaAPI: "Запуск генерації через API...",
                 waitMinutes: 'Зачекайте ще',
                 minutesLeft: 'хвилин',
-                generatingSignals: 'Генерація сигналів...',
                 signalGenerationStarted: 'Генерація сигналів запущена!',
                 generationFailed: 'Не вдалося запустити генерацію',
                 cooldownActive: 'Зачекайте 5 хвилин перед наступною генерацією',
@@ -140,7 +141,6 @@ class SignalDisplay {
                 generatingViaAPI: "Запуск генерации через API...",
                 waitMinutes: 'Подождите еще',
                 minutesLeft: 'минут',
-                generatingSignals: 'Генерация сигналов...',
                 signalGenerationStarted: 'Генерация сигналов запущена!',
                 generationFailed: 'Не удалось запустить генерацию',
                 cooldownActive: 'Подождите 5 минут перед следующей генерацией',
@@ -180,6 +180,7 @@ class SignalDisplay {
         const btn = document.getElementById('search-signals-btn');
         const originalText = btn.innerHTML;
         
+        // Перевірка 5-хвилинного інтервалу
         const now = new Date();
         if (this.lastGenerationTime) {
             const diffMs = now - this.lastGenerationTime;
@@ -188,9 +189,7 @@ class SignalDisplay {
             if (diffMinutes < 5) {
                 const minutesLeft = 5 - diffMinutes;
                 this.showMessage('warning', 
-                    this.translate('cooldownActive') + 
-                    ` (${minutesLeft} ${this.translate('minutesLeft')})`
-                );
+                    `${this.translate('cooldownActive')} (${minutesLeft} ${this.translate('minutesLeft')})`);
                 return;
             }
         }
@@ -199,18 +198,29 @@ class SignalDisplay {
         btn.disabled = true;
         
         try {
+            // Запускаємо workflow
             const success = await this.triggerGitHubWorkflow();
             
             if (success) {
+                // Зберігаємо час запуску
                 this.lastGenerationTime = new Date();
                 localStorage.setItem('lastGenerationTime', this.lastGenerationTime.toISOString());
                 
+                // Блокуємо кнопку на 5 хвилин
                 this.disableSearchButton(5);
-                this.showMessage('success', this.translate('signalGenerationStarted'));
                 
-                setTimeout(() => {
-                    this.loadSignals(true);
+                // Показуємо повідомлення про успіх
+                this.showMessage('success', 
+                    '🚀 Генерація сигналів запущена!<br>' +
+                    '<small>Сигнали з\'являться через 30-60 секунд</small>');
+                
+                // Оновлюємо сигнали через 30 секунд (час на генерацію)
+                setTimeout(async () => {
+                    await this.loadSignals(true);
+                    btn.innerHTML = originalText;
+                    this.showMessage('info', 'Сигнали оновлено!');
                 }, 30000);
+                
             } else {
                 throw new Error('Failed to trigger workflow');
             }
@@ -223,9 +233,12 @@ class SignalDisplay {
     }
 
     async triggerGitHubWorkflow() {
-        if (!this.ghConfig.token || this.ghConfig.token === '{{GH_PAT}}') {
+        // Перевірка наявності токена
+        if (!this.ghConfig.token || this.ghConfig.token.includes('ваш_реальний')) {
             console.error('GitHub token not configured');
-            this.showMessage('error', this.translate('noTokenConfigured'));
+            this.showMessage('error', 
+                'GitHub токен не налаштовано. Будь ласка, додайте токен у файл config.js<br>' +
+                '<small>Створіть PAT токен у GitHub з правами repo та workflow</small>');
             return false;
         }
 
@@ -249,17 +262,55 @@ class SignalDisplay {
             });
             
             if (response.status === 204) {
-                console.log('Workflow triggered successfully');
+                console.log('✅ Workflow triggered successfully');
                 return true;
             } else {
                 const errorText = await response.text();
-                console.error('Failed to trigger workflow:', response.status, errorText);
+                console.error('❌ Failed to trigger workflow:', response.status, errorText);
+                
+                if (response.status === 401 || response.status === 403) {
+                    this.showMessage('error', 
+                        'Помилка авторизації. Перевірте ваш токен:<br>' +
+                        '1. Чи активний токен?<br>' +
+                        '2. Чи має права repo та workflow?<br>' +
+                        '3. Чи правильний токен у config.js?');
+                } else {
+                    this.showMessage('error', `Помилка GitHub API: ${response.status}`);
+                }
                 return false;
             }
         } catch (error) {
-            console.error('Network error:', error);
+            console.error('❌ Network error:', error);
+            this.showMessage('error', 'Мережева помилка. Перевірте підключення до інтернету');
             return false;
         }
+    }
+
+    async checkWorkflowStatus() {
+        // Це опціональний метод для перевірки статусу workflow
+        const url = `https://api.github.com/repos/${this.ghConfig.owner}/${this.ghConfig.repo}/actions/runs`;
+        
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${this.ghConfig.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestRun = data.workflow_runs[0];
+                
+                if (latestRun) {
+                    console.log(`Workflow status: ${latestRun.status}, conclusion: ${latestRun.conclusion}`);
+                    return latestRun;
+                }
+            }
+        } catch (error) {
+            console.error('Error checking workflow status:', error);
+        }
+        return null;
     }
 
     disableSearchButton(minutes) {
