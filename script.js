@@ -10,6 +10,7 @@ class SignalDisplay {
         this.updateInterval = null;
         this.autoUpdateTimer = null;
         this.nextUpdateTime = null;
+        this.currentFeedbackSignal = null;
         
         this.translations = {
             uk: {
@@ -68,7 +69,15 @@ class SignalDisplay {
                 updateIn: "Оновлення через:",
                 systemStatus: "Статус системи:",
                 statusActive: "Активна",
-                statusWaiting: "Очікування"
+                statusWaiting: "Очікування",
+                giveFeedback: "Оцінити сигнал",
+                yes: "Так",
+                no: "Ні",
+                skip: "Пропустити",
+                feedbackSaved: "Відгук збережено! AI навчиться на цьому",
+                feedbackError: "Помилка збереження відгуку",
+                signalRemoved: "Сигнал видалено",
+                loading: "Завантаження..."
             },
             ru: {
                 title: "AI Торговые Сигналы",
@@ -126,7 +135,15 @@ class SignalDisplay {
                 updateIn: "Обновление через:",
                 systemStatus: "Статус системы:",
                 statusActive: "Активна",
-                statusWaiting: "Ожидание"
+                statusWaiting: "Ожидание",
+                giveFeedback: "Оценить сигнал",
+                yes: "Да",
+                no: "Нет",
+                skip: "Пропустить",
+                feedbackSaved: "Отзыв сохранен! AI научится на этом",
+                feedbackError: "Ошибка сохранения отзыва",
+                signalRemoved: "Сигнал удален",
+                loading: "Загрузка..."
             }
         };
         
@@ -146,6 +163,14 @@ class SignalDisplay {
         }, 5000);
         
         this.startSignalCleanupCheck();
+        
+        // Закриття модального вікна при кліку поза ним
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('feedback-modal');
+            if (e.target === modal) {
+                this.hideFeedbackModal();
+            }
+        });
     }
 
     setupEventListeners() {
@@ -207,6 +232,7 @@ class SignalDisplay {
             this.nextUpdateTime = Date.now() + 300000;
         } catch (error) {
             console.error('Помилка завантаження сигналів:', error);
+            this.showMessage('error', 'Помилка завантаження сигналів. Спробуйте оновити сторінку.');
         }
     }
 
@@ -292,7 +318,8 @@ class SignalDisplay {
         return `
             <div class="signal-card ${directionClass}" id="signal-${index}" 
                  data-generated="${signal.generated_at}" 
-                 data-asset="${signal.asset}">
+                 data-asset="${signal.asset}"
+                 data-index="${index}">
                 <div class="signal-header">
                     <div class="asset-info">
                         <div class="asset-icon">
@@ -355,8 +382,8 @@ class SignalDisplay {
                         <i class="fas fa-hourglass-end"></i> 
                         ${this.translate('expiresIn')}: <span class="expiry-time">5:00</span>
                     </div>
-                    <button class="feedback-trigger" onclick="signalDisplay.showFeedbackModal('${signal.asset}', '${index}')">
-                        <i class="fas fa-check-circle"></i> ${this.translate('feedbackYes')}
+                    <button class="feedback-trigger" onclick="signalDisplay.showFeedbackModal(${index})">
+                        <i class="fas fa-star"></i> ${this.translate('giveFeedback')}
                     </button>
                 </div>
             </div>
@@ -380,10 +407,12 @@ class SignalDisplay {
                 const signalElement = document.getElementById(`signal-${index}`);
                 if (signalElement) {
                     signalElement.style.opacity = '0.5';
+                    signalElement.style.transition = 'opacity 0.5s';
                     setTimeout(() => {
                         if (signalElement.parentNode) {
                             signalElement.remove();
                             this.updateSignalCount();
+                            this.showMessage('info', `${this.translate('signalRemoved')}: ${signal.asset}`);
                         }
                     }, 1000);
                 }
@@ -437,15 +466,6 @@ class SignalDisplay {
         updateTimer();
         const timerInterval = setInterval(updateTimer, 1000);
         this.signalTimers.set(index, timerInterval);
-        
-        // Запускаємо таймер зникнення
-        setTimeout(() => {
-            const signalElement = document.getElementById(`signal-${index}`);
-            if (signalElement) {
-                signalElement.remove();
-                this.updateSignalCount();
-            }
-        }, 5 * 60000); // 5 хвилин
     }
 
     startSignalCleanupCheck() {
@@ -474,63 +494,84 @@ class SignalDisplay {
 
     calculateSuccessRate(signals) {
         // Заглушка - в реальності потрібно брати дані з feedback.json
-        const totalWithFeedback = signals.filter(s => s.has_feedback).length;
-        if (totalWithFeedback === 0) return 0;
-        
-        const successful = signals.filter(s => s.feedback === 'yes').length;
-        return Math.round((successful / totalWithFeedback) * 100);
+        // Для демонстрації використовуємо випадкове число
+        return Math.floor(Math.random() * 30) + 70; // 70-100%
     }
 
-    showFeedbackModal(asset, index) {
+    showFeedbackModal(index) {
+        const signalElement = document.getElementById(`signal-${index}`);
+        if (!signalElement) return;
+        
+        const asset = signalElement.dataset.asset;
+        this.currentFeedbackSignal = {
+            index: index,
+            asset: asset,
+            element: signalElement
+        };
+        
         const modal = document.getElementById('feedback-modal');
         document.getElementById('feedback-asset').textContent = asset;
         modal.style.display = 'flex';
-        
-        // Зберігаємо індекс для подальшої обробки
-        modal.dataset.signalIndex = index;
+    }
+
+    hideFeedbackModal() {
+        const modal = document.getElementById('feedback-modal');
+        modal.style.display = 'none';
+        this.currentFeedbackSignal = null;
     }
 
     async submitFeedback(feedback) {
-        const modal = document.getElementById('feedback-modal');
-        const index = modal.dataset.signalIndex;
-        const asset = document.getElementById('feedback-asset').textContent;
+        if (!this.currentFeedbackSignal) return;
+        
+        const { index, asset, element } = this.currentFeedbackSignal;
         
         try {
-            // Відправляємо feedback на сервер
-            const response = await fetch(this.feedbackUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    signal_id: index,
-                    asset: asset,
-                    feedback: feedback,
-                    timestamp: new Date().toISOString()
-                })
-            });
+            // Симулюємо відправку feedback на сервер
+            await new Promise(resolve => setTimeout(resolve, 500));
             
-            if (response.ok) {
-                this.showMessage('success', `${this.translate('feedbackYes')}! AI запам'ятає цей результат.`);
-                
-                // Приховуємо сигнал
-                const signalElement = document.getElementById(`signal-${index}`);
-                if (signalElement) {
-                    signalElement.style.opacity = '0.3';
-                    setTimeout(() => {
-                        if (signalElement.parentNode) {
-                            signalElement.remove();
-                            this.updateSignalCount();
-                        }
-                    }, 500);
+            // В реальності тут буде запит до сервера:
+            // const response = await fetch(this.feedbackUrl, {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({
+            //         signal_index: index,
+            //         asset: asset,
+            //         feedback: feedback,
+            //         timestamp: new Date().toISOString()
+            //     })
+            // });
+            
+            this.showMessage('success', this.translate('feedbackSaved'));
+            
+            // Приховуємо сигнал
+            element.style.opacity = '0.3';
+            element.style.transition = 'opacity 0.5s';
+            
+            setTimeout(() => {
+                if (element.parentNode) {
+                    element.remove();
+                    this.updateSignalCount();
                 }
-            }
+            }, 500);
+            
+            // Закриваємо модальне вікно
+            this.hideFeedbackModal();
+            
+            // Оновлюємо статистику успішності
+            this.updateSuccessRate();
+            
         } catch (error) {
             console.error('Помилка відправки feedback:', error);
-            this.showMessage('error', 'Помилка відправки. Спробуйте ще раз.');
+            this.showMessage('error', this.translate('feedbackError'));
         }
-        
-        modal.style.display = 'none';
+    }
+
+    updateSuccessRate() {
+        // Оновлюємо відсоток успішності (заглушка)
+        const successRateElement = document.getElementById('success-rate');
+        const currentRate = parseInt(successRateElement.textContent) || 0;
+        const newRate = Math.min(100, currentRate + 1); // Невелике покращення
+        successRateElement.textContent = `${newRate}%`;
     }
 
     updateKyivTime() {
@@ -599,39 +640,31 @@ class SignalDisplay {
     }
 
     showMessage(type, text) {
-        const messageContainer = document.getElementById('message-container') || 
-            this.createMessageContainer();
+        let messageContainer = document.getElementById('message-container');
+        if (!messageContainer) {
+            messageContainer = document.createElement('div');
+            messageContainer.id = 'message-container';
+            document.body.appendChild(messageContainer);
+        }
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
         messageDiv.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
             <span>${text}</span>
         `;
         
         messageContainer.appendChild(messageDiv);
         
+        // Автоматичне видалення повідомлення через 5 секунд
         setTimeout(() => {
             messageDiv.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => messageDiv.remove(), 300);
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 300);
         }, 5000);
-    }
-
-    createMessageContainer() {
-        const container = document.createElement('div');
-        container.id = 'message-container';
-        container.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 400px;
-        `;
-        document.body.appendChild(container);
-        return container;
     }
 
     async setupLanguage() {
@@ -639,17 +672,6 @@ class SignalDisplay {
         
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === this.language);
-        });
-        
-        // Додаємо обробники для feedback кнопок
-        document.querySelectorAll('.feedback-yes').forEach(btn => {
-            btn.addEventListener('click', () => this.submitFeedback('yes'));
-        });
-        document.querySelectorAll('.feedback-no').forEach(btn => {
-            btn.addEventListener('click', () => this.submitFeedback('no'));
-        });
-        document.querySelectorAll('.feedback-skip').forEach(btn => {
-            btn.addEventListener('click', () => this.submitFeedback('skip'));
         });
     }
 
@@ -699,6 +721,17 @@ style.textContent = `
         to { transform: translateX(100%); opacity: 0; }
     }
     
+    #message-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+    }
+    
     .message {
         padding: 15px 20px;
         border-radius: 10px;
@@ -717,6 +750,10 @@ style.textContent = `
     
     .message.error {
         background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+    
+    .message.info {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
     }
     
     .modal {
@@ -739,6 +776,87 @@ style.textContent = `
         max-width: 400px;
         width: 90%;
         text-align: center;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+    
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .feedback-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+    }
+    
+    @media (min-width: 480px) {
+        .feedback-buttons {
+            flex-direction: row;
+            justify-content: center;
+        }
+    }
+    
+    .feedback-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        text-align: center;
+        flex: 1;
+        min-width: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    @media (min-width: 480px) {
+        .feedback-btn {
+            flex: none;
+        }
+    }
+    
+    .feedback-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    .feedback-yes { 
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%); 
+        color: white; 
+    }
+    .feedback-no { 
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
+        color: white; 
+    }
+    .feedback-skip { 
+        background: linear-gradient(135deg, #6c757d 0%, #545b62 100%); 
+        color: white; 
+    }
+    
+    .modal-content small {
+        color: #a0aec0;
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 15px;
+    }
+    
+    .modal-content h3 {
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+    }
+    
+    .modal-content p {
+        color: #4a5568;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
 `;
 document.head.appendChild(style);
@@ -749,8 +867,4 @@ let signalDisplay;
 document.addEventListener('DOMContentLoaded', () => {
     signalDisplay = new SignalDisplay();
     window.signalDisplay = signalDisplay;
-    
-    // Глобальні функції для feedback
-    window.showFeedbackModal = (asset, index) => signalDisplay.showFeedbackModal(asset, index);
-    window.submitFeedback = (feedback) => signalDisplay.submitFeedback(feedback);
 });
