@@ -15,19 +15,10 @@ on:
         description: 'Джерело запуску'
         default: 'manual'
         type: string
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - 'data/**'
-      - 'logs/**'
-      - '*.md'
-      - '*.css'
-      - '*.js'
-      - '*.html'
-      - 'config.js'
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   generate-signals:
