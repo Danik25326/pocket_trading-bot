@@ -1,4 +1,4 @@
-name: Generate Trading Signals
+name: Generate Trading Signals and Deploy
 
 on:
   schedule:
@@ -6,61 +6,237 @@ on:
   workflow_dispatch:  # Дозволити ручний запуск
     inputs:
       language:
-        description: 'Мова'
-        required: false
+        description: 'Мова для генерації сигналів'
+        required: true
         default: 'uk'
+        type: choice
+        options:
+          - uk
+          - ru
+      trigger_source:
+        description: 'Джерело запуску'
+        required: true
+        default: 'manual'
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  lint:
+    name: Lint and Validate
+    runs-on: ubuntu-latest
+    outputs:
+      valid: ${{ steps.validate.outputs.valid }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Validate YAML syntax
+      id: validate
+      run: |
+        echo "🔍 Перевірка синтаксису YAML..."
+        if python3 -c "import yaml; yaml.safe_load(open('.github/workflows/signals.yml'))"; then
+          echo "✅ YAML синтаксис валідний"
+          echo "valid=true" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Помилка в YAML синтаксисі"
+          echo "valid=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: Check Python syntax
+      run: |
+        echo "🔍 Перевірка синтаксису Python файлів..."
+        python3 -m py_compile backend/*.py || exit 1
+        echo "✅ Python файли валідні"
+    
+    - name: Validate JSON files
+      run: |
+        echo "🔍 Перевірка JSON файлів..."
+        for file in data/*.json; do
+          if [ -f "$file" ]; then
+            python3 -m json.tool "$file" > /dev/null && echo "✅ $file валідний"
+          fi
+        done
+
   generate-signals:
+    name: Generate Signals
+    needs: lint
+    if: needs.lint.outputs.valid == 'true'
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
     
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
+        cache: 'pip'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
+        python -m pip install --upgrade pip
+        pip install --upgrade setuptools wheel
         pip install -r backend/requirements.txt
     
-    - name: Create data directory
+    - name: Create necessary directories
       run: |
         mkdir -p data
         mkdir -p logs
+        touch .nojekyll
         
-        # Створюємо файли якщо немає
-        if [ ! -f data/signals.json ]; then
-          echo '{"last_update": null, "signals": []}' > data/signals.json
-        fi
+        [ ! -f data/signals.json ] && echo '{"last_update": null, "signals": [], "timezone": "Europe/Kyiv (UTC+2)"}' > data/signals.json
+        [ ! -f data/history.json ] && echo '[]' > data/history.json
+        [ ! -f data/assets_config.json ] && echo '{"preferred_assets": ["GBPJPY_otc", "EURUSD_otc", "USDJPY_otc"]}' > data/assets_config.json
+        [ ! -f data/lessons.json ] && echo '[]' > data/lessons.json
     
-    - name: Run signal generator
+    - name: Generate trading signals
       env:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
+        SIGNAL_INTERVAL: '600'
+        MIN_CONFIDENCE: '0.7'
+        MAX_DURATION: '5.0'
+        SIGNAL_VALIDITY_MINUTES: '10'
+        MAX_SIGNALS_ON_SITE: '6'
+        ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
+        TIMEFRAMES: '120'
+        LOG_LEVEL: 'INFO'
+        GROQ_MODEL: 'openai/gpt-oss-120b'
         LANGUAGE: ${{ inputs.language || 'uk' }}
+        TRIGGER_SOURCE: ${{ inputs.trigger_source || 'manual' }}
       run: |
+        echo "🚀 Початок генерації сигналів..."
+        echo "📅 Дата: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "🌐 Мова: $LANGUAGE"
+        echo "📊 Активи: $ASSETS"
+        echo "🧠 Модель AI: $GROQ_MODEL"
+        echo "🕐 Часовий пояс: Київ (UTC+2)"
+        echo "🔧 Джерело запуску: $TRIGGER_SOURCE"
+        
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
+        
+        echo "🔍 Перевірка наявності файлів..."
+        ls -la backend/
+        
         cd backend
         python signal_generator.py
+        
+        echo "✅ Генерація сигналів завершена"
+        
+        echo "📊 Перевірка результату:"
+        if [ -f "../data/signals.json" ]; then
+          echo "✅ Файл signals.json створено/оновлено"
+          SIGNAL_COUNT=$(jq '.signals | length' "../data/signals.json" 2>/dev/null || echo "0")
+          echo "📈 Кількість сигналів: $SIGNAL_COUNT"
+        else
+          echo "❌ Файл signals.json не знайдено"
+          exit 1
+        fi
     
-    - name: Commit and push generated signals
+    - name: Log success
+      if: success()
       run: |
-        git config --global user.name 'github-actions'
+        echo "🎉 Workflow успішно завершено!"
+        echo "📊 Сигнали оновлено: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "🌍 Сайт доступний за адресою: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+    
+    - name: Log failure
+      if: failure()
+      run: |
+        echo "❌ Workflow завершився з помилкою!"
+        echo "🔧 Перевірте логи для деталей"
+        echo "💡 Можливі причини:"
+        echo "   - Неправильні API ключі"
+        echo "   - Проблеми з підключенням до PocketOption"
+        echo "   - Закінчились токени Groq API"
+    
+    - name: Commit and push changes
+      if: success()
+      run: |
+        git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
         
-        # Додаємо тільки data/signals.json
-        git add data/signals.json
+        git add data/signals.json data/history.json logs/ .nojekyll
         
         if git diff --staged --quiet; then
-          echo "No changes to commit"
+          echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Auto-generated signals $(date +'%Y-%m-%d %H:%M')"
-          git push
+          git commit -m "🤖 Автоматичне оновлення сигналів $(date +'%Y-%m-%d %H:%M') [Мова: ${{ inputs.language || 'uk' }}]"
+          git push origin main
+          echo "✅ Зміни закомічено та відправлено"
         fi
+    
+    - name: Upload logs as artifact
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: signal-logs
+        path: logs/
+        retention-days: 7
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: generate-signals
+    if: success() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    permissions:
+      pages: write
+      id-token: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+    
+    - name: Deploy success
+      if: success()
+      run: |
+        echo "🚀 Сайт успішно задеплоєно!"
+        echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "📅 Час: $(date '+%Y-%m-%d %H:%M:%S')"
+    
+    - name: Deploy failure
+      if: failure()
+      run: |
+        echo "❌ Помилка деплою сайту!"
+        echo "💡 Перевірте налаштування GitHub Pages"
