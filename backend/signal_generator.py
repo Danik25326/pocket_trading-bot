@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 import os
@@ -8,6 +7,7 @@ from config import Config
 from pocket_client import PocketOptionClient
 from groq_analyzer import GroqAnalyzer
 from data_handler import DataHandler
+from check_limits import UsageLimits
 
 logger = logging.getLogger("signal_bot")
 
@@ -16,11 +16,17 @@ class SignalGenerator:
         self.pocket_client = PocketOptionClient()
         self.analyzer = GroqAnalyzer()
         self.data_handler = DataHandler()
+        self.usage_limits = UsageLimits()
         self.signals = []
+        self.max_signals_to_show = Config.MAX_SIGNALS_TO_SHOW
+        self.entry_delay_minutes = Config.ENTRY_DELAY_MINUTES
 
     async def generate_signal(self, asset):
-        """Генерація одного сигналу"""
+        """Генерація одного сигналу з затримкою входу"""
         try:
+            # Додаємо затримку між запитами до API для дотримання лімітів
+            await asyncio.sleep(Config.MIN_TIME_BETWEEN_REQUESTS)
+            
             logger.info(f"📈 Аналіз активу: {asset}")
             
             if not hasattr(self.pocket_client, 'client') or not self.pocket_client.client:
@@ -31,7 +37,7 @@ class SignalGenerator:
             candles = await self.pocket_client.get_candles(
                 asset=asset,
                 timeframe=Config.TIMEFRAMES,
-                count=50
+                count=30  # Менше даних для економії токенів
             )
             
             if not candles or len(candles) == 0:
@@ -40,53 +46,52 @@ class SignalGenerator:
 
             logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
             
-            if hasattr(candles[-1], 'timestamp'):
-                last_candle_time = candles[-1].timestamp
-                current_time = Config.get_kyiv_time()
+            # Створюємо час входу через задану кількість хвилин після генерації
+            now_kyiv = Config.get_kyiv_time()
+            
+            # Додаємо випадкову затримку від 1 до 3 хвилин
+            import random
+            actual_delay = self.entry_delay_minutes + random.randint(-1, 1)
+            if actual_delay < 1:
+                actual_delay = 1
+            elif actual_delay > 3:
+                actual_delay = 3
                 
-                if last_candle_time.tzinfo is None:
-                    last_candle_time = pytz.UTC.localize(last_candle_time)
-                
-                last_candle_time_kyiv = last_candle_time.astimezone(Config.KYIV_TZ)
-                time_diff = (current_time - last_candle_time_kyiv).total_seconds()
-                
-                if time_diff > 300:
-                    logger.warning(f"⚠️ Остання свічка застаріла: {time_diff:.0f} сек тому")
-                else:
-                    logger.info(f"🕐 Остання свічка актуальна: {time_diff:.0f} сек тому")
+            entry_time_dt = now_kyiv + timedelta(minutes=actual_delay)
+            entry_time = entry_time_dt.strftime('%H:%M')
             
             logger.info(f"🧠 Аналіз через GPT OSS 120B для {asset}...")
-            signal = self.analyzer.analyze_market(asset, candles, language=Config.LANGUAGE)
+            signal = self.analyzer.analyze_market(
+                asset=asset, 
+                candles_data=candles, 
+                language=Config.LANGUAGE,
+                entry_time=entry_time  # Передаємо заданий час входу
+            )
 
             if signal:
                 confidence = signal.get('confidence', 0)
                 logger.info(f"📝 AI повернув сигнал для {asset}: confidence={confidence*100:.1f}%")
                 
                 if confidence >= Config.MIN_CONFIDENCE:
+                    # Записуємо використання токенів (приблизна оцінка)
+                    estimated_tokens = 2500  # Середня оцінка на запит
+                    self.usage_limits.record_usage(
+                        tokens_used=estimated_tokens, 
+                        requests_used=1
+                    )
+                    
                     duration = signal.get('duration', 2)
                     if duration > Config.MAX_DURATION:
                         logger.warning(f"⚠️ Сигнал для {asset} має завелику тривалість: {duration} > {Config.MAX_DURATION}")
                         signal['duration'] = Config.MAX_DURATION
                     
-                    now_kyiv = Config.get_kyiv_time()
                     signal['generated_at'] = now_kyiv.isoformat()
-                    signal['generated_at_utc'] = datetime.utcnow().isoformat() + 'Z'
                     signal['asset'] = asset
                     signal['id'] = f"{asset}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
-                    
-                    entry_time = signal.get('entry_time', '')
-                    if ':' in entry_time:
-                        hour, minute = map(int, entry_time.split(':'))
-                        entry_datetime = now_kyiv.replace(hour=hour, minute=minute, second=0, microsecond=0)
-                        
-                        if entry_datetime < now_kyiv:
-                            entry_datetime += timedelta(days=1)
-                        
-                        time_to_entry = (entry_datetime - now_kyiv).total_seconds() / 60
-                        logger.info(f"⏰ Час входу: {entry_time} (через {time_to_entry:.1f} хв)")
+                    signal['entry_delay_minutes'] = actual_delay
                     
                     logger.info(f"✅ Створено сигнал для {asset}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
-                    logger.info(f"   📅 Вхід: {entry_time}, Тривалість: {signal['duration']} хв")
+                    logger.info(f"   📅 Вхід: {entry_time} (через {actual_delay} хв), Тривалість: {signal['duration']} хв")
                     return signal
                 else:
                     logger.warning(f"⚠️ Сигнал для {asset} має низьку впевненість: {confidence*100:.1f}% < {Config.MIN_CONFIDENCE*100}%")
@@ -101,42 +106,22 @@ class SignalGenerator:
         return None
 
     async def generate_all_signals(self):
-        """Генерація сигналів для всіх активів - одноразово"""
+        """Генерація сигналів для всіх активів з обмеженнями"""
         logger.info("=" * 60)
         logger.info(f"🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ")
         logger.info(f"🌐 Мова: {Config.LANGUAGE}")
         logger.info(f"🕐 Час: {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')} (Київ)")
+        logger.info(f"📊 Ліміти: {Config.MAX_SIGNALS_TO_SHOW} сигналів, затримка {Config.ENTRY_DELAY_MINUTES} хв")
         logger.info("=" * 60)
 
         try:
-            logger.info(f"⚙️ Конфігурація:")
-            logger.info(f"  - Демо режим: {Config.POCKET_DEMO}")
-            logger.info(f"  - Активи: {Config.ASSETS}")
-            logger.info(f"  - Таймфрейм: {Config.TIMEFRAMES} сек ({Config.TIMEFRAMES/60} хв)")
-            logger.info(f"  - Мін. впевненість: {Config.MIN_CONFIDENCE*100}%")
-            logger.info(f"  - Макс. тривалість: {Config.MAX_DURATION} хв")
-            logger.info(f"  - Модель AI: {Config.GROQ_MODEL}")
-            logger.info(f"  - Мова: {Config.LANGUAGE}")
-            logger.info(f"  - Часовий пояс: Київ (UTC+2)")
+            # Перевіряємо ліміти використання
+            if not self.usage_limits.can_generate():
+                logger.warning("⏸️ Досягнуто денних лімітів. Генерацію пропущено.")
+                return []
             
-            existing_data = self.data_handler.load_signals()
-            last_update = existing_data.get('last_update')
-            
-            if last_update:
-                try:
-                    last_time = datetime.fromisoformat(last_update.replace('Z', '+00:00'))
-                    time_diff = (datetime.utcnow() - last_time).total_seconds()
-                    
-                    if time_diff < Config.SIGNAL_INTERVAL:
-                        logger.info(f"⏳ Ще не пройшло 5 хвилин з останньої генерації ({time_diff:.0f} сек)")
-                        logger.info(f"   Останнє оновлення: {last_time.strftime('%H:%M:%S')} UTC")
-                        return []
-                except Exception as e:
-                    logger.warning(f"⚠️ Помилка перевірки часу: {e}")
-            
+            # Підключення до PocketOption
             logger.info("🔗 Підключення до PocketOption...")
-            logger.info(f"   Режим: {'DEMO' if Config.POCKET_DEMO else 'REAL'}")
-            
             connection_result = await self.pocket_client.connect()
             
             if not connection_result:
@@ -145,12 +130,15 @@ class SignalGenerator:
                 return []
             
             logger.info("✅ Підключення успішне!")
-            logger.info("🎯 Генерую сигнали для активів...")
+            
+            # Обмежуємо кількість активів для економії токенів
+            assets_to_analyze = Config.get_assets_for_generation()
+            logger.info(f"🎯 Аналіз активів: {', '.join(assets_to_analyze)}")
             
             valid_signals = []
             failed_assets = []
             
-            for asset in Config.ASSETS:
+            for asset in assets_to_analyze:
                 logger.info(f"\n{'='*30}")
                 logger.info(f"💰 Обробка активу: {asset}")
                 logger.info(f"{'='*30}")
@@ -163,6 +151,11 @@ class SignalGenerator:
                     logger.warning(f"⚠️ Не створено сигнал для {asset}")
                     failed_assets.append(asset)
 
+            # Обмежуємо кількість сигналів для відображення
+            if len(valid_signals) > self.max_signals_to_show:
+                logger.info(f"⚠️ Обмежую кількість сигналів з {len(valid_signals)} до {self.max_signals_to_show}")
+                valid_signals = valid_signals[:self.max_signals_to_show]
+
             if valid_signals:
                 logger.info(f"\n💾 Збереження {len(valid_signals)} сигналів...")
                 save_result = self.data_handler.save_signals(valid_signals)
@@ -173,8 +166,8 @@ class SignalGenerator:
                     logger.info(f"\n🎯 ЗГЕНЕРОВАНО {len(valid_signals)} СИГНАЛІВ:")
                     for i, signal in enumerate(valid_signals, 1):
                         logger.info(f"   {i}. {signal['asset']}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
-                        logger.info(f"      Вхід: {signal.get('entry_time', 'N/A')}, Тривалість: {signal.get('duration', 'N/A')} хв")
-                        logger.info(f"      Волатильність: {signal.get('volatility', 0):.4f}%")
+                        logger.info(f"      Вхід: {signal.get('entry_time', 'N/A')} (через {signal.get('entry_delay_minutes', '?')} хв)")
+                        logger.info(f"      Тривалість: {signal.get('duration', 'N/A')} хв")
                 else:
                     logger.error("❌ Помилка збереження сигналів")
             else:
@@ -188,7 +181,13 @@ class SignalGenerator:
             logger.info("✅ Відключено від PocketOption")
             
             logger.info(f"\n⏱️  Час виконання: {Config.get_kyiv_time().strftime('%H:%M:%S')}")
-            logger.info(f"📊 Підсумок: {len(valid_signals)} сигналів з {len(Config.ASSETS)} активів")
+            logger.info(f"📊 Підсумок: {len(valid_signals)} сигналів з {len(assets_to_analyze)} активів")
+            
+            # Інформація про використання
+            usage = self.usage_limits.get_current_usage()
+            logger.info(f"📈 Використано: {usage['tokens_used']}/{Config.MAX_TOKENS_PER_DAY} токенів, "
+                       f"{usage['requests_used']}/{Config.MAX_REQUESTS_PER_DAY} запитів")
+            
             logger.info("=" * 60)
             
             return valid_signals
@@ -200,7 +199,7 @@ class SignalGenerator:
             return []
 
 async def main():
-    """Головна функція - запускається ТІЛЬКИ ОДИН РАЗ"""
+    """Головна функція - запускається автоматично"""
     print("\n" + "="*60)
     print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🌐 Мова: {Config.LANGUAGE}")
