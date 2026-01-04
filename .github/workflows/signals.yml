@@ -1,8 +1,8 @@
-name: Generate Trading Signals
+name: Generate and Deploy Trading Signals
 
 on:
   schedule:
-    # Запуск кожні 5 хвилин з випадковим зсувом
+    # Запуск кожні 5 хвилин
     - cron: '*/5 * * * *'
   
   workflow_dispatch:
@@ -22,11 +22,13 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   generate-signals:
     runs-on: ubuntu-latest
-    timeout-minutes: 4  # Завершуємо до наступного запуску
+    timeout-minutes: 4
     
     steps:
     - name: Checkout repository
@@ -71,7 +73,7 @@ jobs:
         python backend/check_limits.py
         echo "✅ Перевірка завершена"
     
-    - name: Generate trading signals (if limits allow)
+    - name: Generate trading signals
       if: steps.check_limits.outputs.can_generate == 'true'
       env:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
@@ -80,7 +82,9 @@ jobs:
         SIGNAL_INTERVAL: '300'
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
-        SIGNAL_VALIDITY_MINUTES: '5'
+        MAX_SIGNALS_TO_SHOW: '6'
+        ASSETS_PER_GENERATION: '2'
+        ENTRY_DELAY_MINUTES: '2'
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
@@ -89,15 +93,13 @@ jobs:
         TRIGGER_SOURCE: ${{ github.event_name == 'schedule' && 'auto' || inputs.trigger_source || 'manual' }}
         MAX_TOKENS_PER_DAY: '200000'
         MAX_REQUESTS_PER_DAY: '1000'
-        MAX_SIGNALS_TO_SHOW: '6'
-        ENTRY_DELAY_MINUTES: '2'
       run: |
         echo "🚀 Запуск генерації сигналів..."
-        echo "📊 Ліміти:"
-        echo "   • Токени/день: $MAX_TOKENS_PER_DAY"
-        echo "   • Запити/день: $MAX_REQUESTS_PER_DAY"
-        echo "   • Сигналів показувати: $MAX_SIGNALS_TO_SHOW"
+        echo "📊 Налаштування:"
+        echo "   • Мова: $LANGUAGE"
+        echo "   • Ліміт сигналів: $MAX_SIGNALS_TO_SHOW"
         echo "   • Затримка входу: $ENTRY_DELAY_MINUTES хв"
+        echo "   • Активи за раз: $ASSETS_PER_GENERATION"
         
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)
         
@@ -106,7 +108,7 @@ jobs:
         
         echo "✅ Генерація завершена"
     
-    - name: Commit and push generated data
+    - name: Deploy to GitHub Pages
       if: steps.check_limits.outputs.can_generate == 'true'
       run: |
         git config --global user.name 'GitHub Actions Bot'
@@ -124,7 +126,7 @@ jobs:
           echo "✅ Зміни закомічено та відправлено"
         fi
     
-    - name: Skip generation (limits reached)
+    - name: Skip generation
       if: steps.check_limits.outputs.can_generate == 'false'
       run: |
         echo "⏸️ Генерацію пропущено через досягнення лімітів"
@@ -133,3 +135,9 @@ jobs:
         echo "   • Використано запитів: ${{ steps.check_limits.outputs.requests_used }}"
         echo "   • Доступно токенів: ${{ steps.check_limits.outputs.tokens_remaining }}"
         echo "   • Доступно запитів: ${{ steps.check_limits.outputs.requests_remaining }}"
+    
+    - name: Deploy to GitHub Pages
+      if: steps.check_limits.outputs.can_generate == 'true'
+      uses: actions/deploy-pages@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
