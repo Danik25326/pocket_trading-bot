@@ -25,6 +25,8 @@ on:
       - '*.js'
       - '*.html'
       - 'config.js'
+  schedule:
+    - cron: '*/10 * * * *'  # Кожні 10 хвилин
 
 permissions:
   contents: write
@@ -87,12 +89,12 @@ jobs:
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
-        SIGNAL_INTERVAL: '300'
+        SIGNAL_INTERVAL: '600'  # 10 хвилин
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
-        SIGNAL_VALIDITY_MINUTES: '5'
-        SIGNAL_CLEANUP_COUNT: '9'
-        ASSETS: 'GBP/JPY_otc,EUR/USD_otc,USD/JPY_otc'
+        SIGNAL_VALIDITY_MINUTES: '10'  # Сигнали зникають через 10 хвилин
+        MAX_SIGNALS_ON_SITE: '6'       # Макс 6 сигналів на сайті
+        ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'openai/gpt-oss-120b'
@@ -105,6 +107,8 @@ jobs:
         echo "🧠 Модель AI: $GROQ_MODEL"
         echo "🕐 Часовий пояс: Київ (UTC+2)"
         echo "🔧 Джерело запуску: $TRIGGER_SOURCE"
+        echo "⏱️  Інтервал генерації: 10 хвилин"
+        echo "📈 Сигналів на сайті: максимум 6"
         
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
         
@@ -113,7 +117,20 @@ jobs:
         
         echo "✅ Генерація сигналів завершена"
     
-    - name: Commit and push generated data
+    - name: Generate config.js
+      run: |
+        echo "// config.js - automatically generated" > config.js
+        echo "window.GH_CONFIG = {" >> config.js
+        echo "    token: '${{ secrets.GH_PAT }}'," >> config.js
+        echo "    owner: 'Danik25326'," >> config.js
+        echo "    repo: 'pocket_trading_bot'," >> config.js
+        echo "    workflowId: 'signals.yml'" >> config.js
+        echo "};" >> config.js
+        
+        echo "✅ Config.js generated"
+        cat config.js
+    
+    - name: Commit and push all changes
       run: |
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
@@ -121,6 +138,7 @@ jobs:
         git add data/
         git add logs/
         git add .nojekyll
+        git add config.js
         
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
