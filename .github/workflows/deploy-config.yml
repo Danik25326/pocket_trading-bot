@@ -6,6 +6,10 @@ on:
     paths-ignore:
       - 'README.md'
       - '.gitignore'
+      - 'backend/**'
+      - 'data/signals.json'
+      - 'data/history.json'
+      - 'logs/**'
   workflow_dispatch:
 
 permissions:
