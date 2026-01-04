@@ -7,13 +7,14 @@ class SignalDisplay {
             baseUrl: 'https://danik25326.github.io/pocket_trading_bot'
         };
         
-        // Правильний URL для GitHub Pages
         this.signalsUrl = `${this.ghConfig.baseUrl}/data/signals.json`;
         this.kyivTZ = 'Europe/Kiev';
         this.language = localStorage.getItem('language') || 'uk';
         this.activeTimers = new Map();
+        this.maxSignalsToShow = 6;
+        this.feedbackKey = 'signal_feedback_v2';
         
-        // Отримуємо з localStorage час останньої генерації та час закінчення блокування
+        // Відновлюємо стан кнопки
         this.lastGenerationTime = localStorage.getItem('lastGenerationTime') ? 
             new Date(localStorage.getItem('lastGenerationTime')) : null;
         this.blockUntilTime = localStorage.getItem('blockUntilTime') ?
@@ -27,11 +28,11 @@ class SignalDisplay {
                 title: "AI Trading Signals",
                 subtitle: "Автоматичні сигнали для бінарних опціонів з використанням GPT OSS 120B AI",
                 generationType: "Генерація:",
-                manualOnly: "тільки вручну",
+                manualOnly: "кожні 5 хв (авто)",
                 minAccuracy: "Мін. точність:",
                 model: "Модель:",
-                searchSignalsBtn: "Пошук сигналів",
-                regenerateBtn: "Перегенерувати",
+                searchSignalsBtn: "Ручна генерація",
+                regenerateBtn: "Оновити",
                 lastUpdate: "Останнє оновлення",
                 kievTime: "(Київський час)",
                 activeSignals: "Активних сигналів",
@@ -43,9 +44,9 @@ class SignalDisplay {
                 currentSignals: "Актуальні сигнали",
                 serverTime: "Поточний час:",
                 noSignalsYet: "Сигналів ще немає",
-                clickSearchToStart: "Натисніть 'Пошук сигналів' для початку",
+                clickSearchToStart: "Автоматична генерація кожні 5 хвилин",
                 noSignalsNow: "Наразі немає актуальних сигналів",
-                searchNewSignals: "Знайдіть нові сигнали або зачекайте завершення поточних",
+                searchNewSignals: "Автоматична генерація запущена",
                 howItWorks: "Як працює система",
                 aiAnalysis: "AI Аналіз:",
                 aiAnalysisDesc: "GPT OSS 120B для технічного аналізу",
@@ -53,8 +54,8 @@ class SignalDisplay {
                 realTimeDataDesc: "Отримання з PocketOption API",
                 volatilityBased: "Тривалість угоди:",
                 volatilityBasedDesc: "1-5 хв на основі волатильності",
-                manualControl: "Контроль:",
-                manualControlDesc: "Тільки ручна генерація сигналів",
+                automaticMode: "Режим:",
+                automaticModeDesc: "Автоматична генерація кожні 5 хвилин",
                 important: "Важливо!",
                 disclaimer: "Торгівля містить високі ризики. Сигнали не є фінансовою рекомендацією.",
                 createdWith: "Створено з використанням",
@@ -62,17 +63,17 @@ class SignalDisplay {
                 feedbackQuestion: "Сигнал був вірний?",
                 feedbackYes: "Так",
                 feedbackNo: "Ні",
-                feedbackSkip: "Я не перевіряв",
+                feedbackSkip: "Пропустити",
                 timerActive: "Таймер активний:",
                 timerExpired: "Час вийшов",
-                signalCorrect: "Сигнал вірний?",
-                replyYes: "Так",
-                replyNo: "Ні",
+                signalCorrect: "Результат сигналу?",
+                replyYes: "Вдало",
+                replyNo: "Невдало",
                 replySkip: "Пропустити",
                 timeLeft: "Залишилось:",
                 entryTime: "Час входу:",
-                howToStart: "Як почати роботу?",
-                instructionText: "Натисніть кнопку 'Пошук сигналів' для запуску генерації нових сигналів. Після генерації ви зможете перегенерувати сигнали через 5 хвилин.",
+                howToStart: "Автоматичний режим",
+                instructionText: "Система автоматично генерує сигнали кожні 5 хвилин. Можна запустити додаткову ручну генерацію.",
                 generatingSignals: "Генерація сигналів...",
                 updateIn: "Оновлення через:",
                 minutes: "хв",
@@ -80,23 +81,28 @@ class SignalDisplay {
                 signalGenerated: "Сигнал згенеровано",
                 searchInProgress: "Запуск генерації...",
                 waitForCompletion: "Зачекайте завершення",
-                generatingViaAPI: "Запуск генерації через API...",
+                generatingViaAPI: "Запуск генерації...",
                 waitMinutes: 'Зачекайте ще',
                 minutesLeft: 'хвилин',
                 signalGenerationStarted: 'Генерація сигналів запущена!',
                 generationFailed: 'Не вдалося запустити генерацію',
                 cooldownActive: 'Зачекайте 5 хвилин перед наступною генерацією',
-                noTokenConfigured: 'GitHub токен не налаштовано. Перевірте config.js'
+                noTokenConfigured: 'GitHub токен не налаштовано',
+                nextAutoUpdate: 'Наступна авто-генерація:',
+                signalsLimit: 'Ліміт сигналів:',
+                answeredSignals: 'Відповіді на сигнали:',
+                showHistory: 'Показати історію',
+                hideHistory: 'Сховати історію'
             },
             ru: {
                 title: "AI Торговые Сигналы",
                 subtitle: "Автоматические сигналы для бинарных опционов с использованием GPT OSS 120B AI",
                 generationType: "Генерация:",
-                manualOnly: "только вручную",
+                manualOnly: "каждые 5 мин (авто)",
                 minAccuracy: "Мин. точность:",
                 model: "Модель:",
-                searchSignalsBtn: "Поиск сигналов",
-                regenerateBtn: "Перегенерировать",
+                searchSignalsBtn: "Ручная генерация",
+                regenerateBtn: "Обновить",
                 lastUpdate: "Последнее обновление",
                 kievTime: "(Киевское время)",
                 activeSignals: "Активных сигналов",
@@ -108,9 +114,9 @@ class SignalDisplay {
                 currentSignals: "Актуальные сигналы",
                 serverTime: "Текущее время:",
                 noSignalsYet: "Сигналов еще нет",
-                clickSearchToStart: "Нажмите 'Поиск сигналов' для начала",
+                clickSearchToStart: "Автоматическая генерация каждые 5 минут",
                 noSignalsNow: "В настоящее время нет актуальных сигналов",
-                searchNewSignals: "Найдите новые сигналы или дождитесь завершения текущих",
+                searchNewSignals: "Автоматическая генерация запущена",
                 howItWorks: "Как работает система",
                 aiAnalysis: "AI Анализ:",
                 aiAnalysisDesc: "GPT OSS 120B для технического анализа",
@@ -118,8 +124,8 @@ class SignalDisplay {
                 realTimeDataDesc: "Получение из PocketOption API",
                 volatilityBased: "Длительность сделки:",
                 volatilityBasedDesc: "1-5 мин на основе волатильности",
-                manualControl: "Контроль:",
-                manualControlDesc: "Только ручная генерация сигналов",
+                automaticMode: "Режим:",
+                automaticModeDesc: "Автоматическая генерация каждые 5 минут",
                 important: "Важно!",
                 disclaimer: "Торговля содержит высокие риски. Сигналы не являются финансовой рекомендацией.",
                 createdWith: "Создано с использованием",
@@ -127,17 +133,17 @@ class SignalDisplay {
                 feedbackQuestion: "Сигнал был верным?",
                 feedbackYes: "Да",
                 feedbackNo: "Нет",
-                feedbackSkip: "Я не проверял",
+                feedbackSkip: "Пропустить",
                 timerActive: "Таймер активен:",
                 timerExpired: "Время вышло",
-                signalCorrect: "Сигнал верный?",
-                replyYes: "Да",
-                replyNo: "Нет",
+                signalCorrect: "Результат сигнала?",
+                replyYes: "Удачно",
+                replyNo: "Неудачно",
                 replySkip: "Пропустить",
                 timeLeft: "Осталось:",
                 entryTime: "Время входа:",
-                howToStart: "Как начать работу?",
-                instructionText: "Нажмите кнопку 'Поиск сигналов' для запуска генерации новых сигналов. После генерации вы сможете перегенерировать сигналы через 5 минут.",
+                howToStart: "Автоматический режим",
+                instructionText: "Система автоматически генерирует сигналы каждые 5 минут. Можно запустить дополнительную ручную генерацию.",
                 generatingSignals: "Генерация сигналов...",
                 updateIn: "Обновление через:",
                 minutes: "мин",
@@ -145,13 +151,18 @@ class SignalDisplay {
                 signalGenerated: "Сигнал сгенерирован",
                 searchInProgress: "Запуск генерации...",
                 waitForCompletion: "Дождитесь завершения",
-                generatingViaAPI: "Запуск генерации через API...",
+                generatingViaAPI: "Запуск генерации...",
                 waitMinutes: 'Подождите еще',
                 minutesLeft: 'минут',
-                signalGenerationStarted: 'Генерация сигналів запущена!',
+                signalGenerationStarted: 'Генерация сигналов запущена!',
                 generationFailed: 'Не удалось запустить генерацию',
                 cooldownActive: 'Подождите 5 минут перед следующей генерацией',
-                noTokenConfigured: 'GitHub токен не настроен. Проверьте config.js'
+                noTokenConfigured: 'GitHub токен не настроен',
+                nextAutoUpdate: 'Следующая авто-генерация:',
+                signalsLimit: 'Лимит сигналов:',
+                answeredSignals: 'Ответы на сигналы:',
+                showHistory: 'Показать историю',
+                hideHistory: 'Скрыть историю'
             }
         };
         
@@ -164,9 +175,14 @@ class SignalDisplay {
         this.updateKyivTime();
         setInterval(() => this.updateKyivTime(), 1000);
         
+        // Відновлюємо блокування кнопки
         this.restoreButtonBlockState();
+        
         await this.loadSignals();
         this.startAutoRefresh();
+        
+        // Додаємо лічильник до наступної автоматичної генерації
+        this.updateNextAutoGenerationTimer();
     }
 
     setupEventListeners() {
@@ -184,17 +200,25 @@ class SignalDisplay {
         document.getElementById('lang-ru')?.addEventListener('click', () => {
             this.switchLanguage('ru');
         });
+        
+        // Додаємо обробку кнопки оновлення
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', async () => {
+                await this.loadSignals(true);
+                this.showMessage('success', '✅ Дані оновлено');
+            });
+        }
     }
 
     restoreButtonBlockState() {
-        const blockUntilTime = localStorage.getItem('blockUntilTime');
-        if (blockUntilTime) {
+        if (this.blockUntilTime) {
             const now = new Date();
-            const blockTime = new Date(blockUntilTime);
+            const timeLeft = Math.max(0, this.blockUntilTime - now);
             
-            if (blockTime > now) {
-                const timeLeft = Math.ceil((blockTime - now) / (1000 * 60));
-                this.disableSearchButton(timeLeft);
+            if (timeLeft > 0) {
+                const minutesLeft = Math.ceil(timeLeft / (1000 * 60));
+                this.disableSearchButton(minutesLeft);
             } else {
                 localStorage.removeItem('blockUntilTime');
                 this.blockUntilTime = null;
@@ -203,135 +227,86 @@ class SignalDisplay {
     }
 
     async startSignalGeneration() {
-        console.log('🚀 Початок генерації сигналів...');
-        
         const btn = document.getElementById('search-signals-btn');
         if (!btn) return;
         
-        // Перевірка 5-хвилинного інтервалу
         const now = new Date();
-        const lastGen = localStorage.getItem('lastGenerationTime');
-        
-        if (lastGen) {
-            const lastTime = new Date(lastGen);
-            const diffMinutes = (now - lastTime) / (1000 * 60);
-            
-            if (diffMinutes < 5) {
-                const timeLeft = Math.ceil(5 - diffMinutes);
-                this.showMessage('warning', 
-                    `Зачекайте ще ${timeLeft} хвилин перед наступною генерацією`);
-                return;
-            }
+        if (this.blockUntilTime && now < this.blockUntilTime) {
+            const timeLeft = Math.ceil((this.blockUntilTime - now) / (1000 * 60));
+            this.showMessage('warning', 
+                `${this.translate('cooldownActive')} (${timeLeft} ${this.translate('minutesLeft')})`);
+            return;
         }
         
-        // Блокуємо кнопку
         const originalText = btn.innerHTML;
+        
         btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${this.translate('searchInProgress')}`;
         btn.disabled = true;
         
-        // Показуємо повідомлення
         this.showMessage('info', 
-            '🚀 Запускаємо генерацію сигналів...<br>' +
+            '🚀 Запускаємо додаткову ручну генерацію сигналів...<br>' +
             '⏳ Сигнали з\'являться через 30-60 секунд<br>' +
             '<small>Під час генерації кнопка буде неактивна</small>');
         
-        try {
-            // Запускаємо GitHub Actions workflow через API
-            const success = await this.triggerGitHubWorkflow();
-            
-            if (success) {
-                // Зберігаємо час запуску
-                localStorage.setItem('lastGenerationTime', now.toISOString());
-                this.lastGenerationTime = now;
-                
-                // Встановлюємо час блокування
-                this.blockUntilTime = new Date(now.getTime() + 5 * 60 * 1000);
-                localStorage.setItem('blockUntilTime', this.blockUntilTime.toISOString());
-                
-                // Блокуємо кнопку на 5 хвилин
-                this.disableSearchButton(5);
-                
-                this.showMessage('success', 
-                    '✅ Генерація сигналів запущена!<br>' +
-                    '⏳ Сигнали оновляться через 40 секунд...');
-                
-                // Очікуємо і оновлюємо сигнали
-                setTimeout(async () => {
-                    await this.loadSignals(true);
-                    this.showMessage('success', 
-                        '✅ Сигнали успішно згенеровано!<br>' +
-                        '<small>Дані оновлено на сторінці</small>');
-                }, 40000);
-                
-                // Додаткове оновлення через 60 секунд для впевненості
-                setTimeout(async () => {
-                    await this.loadSignals(true);
-                }, 60000);
-                
-            } else {
-                throw new Error('Не вдалося запустити генерацію');
-            }
-            
-        } catch (error) {
-            console.error('Помилка запуску генерації:', error);
-            this.showMessage('error', 
-                '❌ Не вдалося запустити генерацію. Спробуйте ще раз.<br>' +
-                '<small>Перевірте, чи додано GitHub Token у Secrets</small>');
-            
-            // Розблоковуємо кнопку
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
+        this.lastGenerationTime = new Date();
+        this.blockUntilTime = new Date(now.getTime() + 5 * 60 * 1000);
+        
+        localStorage.setItem('lastGenerationTime', this.lastGenerationTime.toISOString());
+        localStorage.setItem('blockUntilTime', this.blockUntilTime.toISOString());
+        
+        this.disableSearchButton(5);
+        
+        // Запускаємо GitHub Actions workflow
+        await this.triggerGitHubAction();
+        
+        // Оновлюємо сигнали через 45 секунд
+        setTimeout(async () => {
+            await this.loadSignals(true);
+            this.showMessage('success', 
+                '✅ Сигнали успішно згенеровано!<br>' +
+                '<small>Дані оновлено на сторінці</small>');
+        }, 45000);
+        
+        // Додаткове оновлення через 60 секунд
+        setTimeout(async () => {
+            await this.loadSignals(true);
+        }, 60000);
     }
 
-    async triggerGitHubWorkflow() {
-        const workflowUrl = `https://api.github.com/repos/${this.ghConfig.owner}/${this.ghConfig.repo}/actions/workflows/signals.yml/dispatches`;
-        
-        console.log('Відправляємо запит до GitHub API...');
-        console.log('URL:', workflowUrl);
-        console.log('Мова:', this.language);
-        
+    async triggerGitHubAction() {
         try {
-            const response = await fetch(workflowUrl, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.ghConfig.token || ''}`,
-                    'User-Agent': 'PocketTradingBot/1.0'
-                },
-                body: JSON.stringify({
-                    ref: this.ghConfig.branch,
-                    inputs: {
-                        language: this.language,
-                        trigger_source: 'website_button_' + new Date().getTime()
-                    }
-                })
-            });
+            const token = this.ghConfig.token;
+            if (!token) {
+                console.warn('GitHub токен не налаштовано');
+                return;
+            }
             
-            console.log('GitHub API відповідь:', {
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-            
-            // GitHub повертає 204 No Content при успіху
-            if (response.status === 204 || response.ok) {
-                console.log('✅ Workflow успішно запущено!');
-                return true;
-            } else {
-                // Якщо є відповідь з текстом, спробуємо його прочитати
-                try {
-                    const errorText = await response.text();
-                    console.error('Помилка від GitHub:', errorText);
-                } catch (e) {
-                    console.error('Не вдалося прочитати текст помилки');
+            const response = await fetch(
+                `https://api.github.com/repos/${this.ghConfig.owner}/${this.ghConfig.repo}/dispatches`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        event_type: 'manual_generation',
+                        client_payload: {
+                            language: this.language,
+                            trigger_source: 'manual_from_website'
+                        }
+                    })
                 }
-                return false;
+            );
+            
+            if (response.ok) {
+                console.log('✅ GitHub Action запущено');
+            } else {
+                console.error('❌ Помилка запуску GitHub Action:', await response.text());
             }
         } catch (error) {
-            console.error('Помилка запиту до GitHub:', error);
-            return false;
+            console.error('❌ Помилка:', error);
         }
     }
 
@@ -339,7 +314,7 @@ class SignalDisplay {
         const btn = document.getElementById('search-signals-btn');
         if (!btn) return;
         
-        const endTime = new Date(new Date().getTime() + minutes * 60 * 1000);
+        const endTime = this.blockUntilTime || new Date(new Date().getTime() + minutes * 60 * 1000);
         
         const updateButton = () => {
             const now = new Date();
@@ -348,11 +323,7 @@ class SignalDisplay {
             if (timeLeft <= 0) {
                 btn.innerHTML = `<i class="fas fa-search"></i> <span class="btn-text">${this.translate('searchSignalsBtn')}</span>`;
                 btn.disabled = false;
-                
-                if (this.searchCooldownTimer) {
-                    clearInterval(this.searchCooldownTimer);
-                    this.searchCooldownTimer = null;
-                }
+                clearInterval(this.searchCooldownTimer);
                 
                 localStorage.removeItem('blockUntilTime');
                 this.blockUntilTime = null;
@@ -369,7 +340,6 @@ class SignalDisplay {
             `;
         };
         
-        // Очищаємо попередній таймер, якщо він є
         if (this.searchCooldownTimer) {
             clearInterval(this.searchCooldownTimer);
         }
@@ -383,20 +353,11 @@ class SignalDisplay {
             const timestamp = new Date().getTime();
             const cacheBuster = force ? `?t=${timestamp}` : `?nocache=${timestamp}`;
             
-            console.log('Завантаження сигналів з URL:', `${this.signalsUrl}${cacheBuster}`);
-            
             const response = await fetch(`${this.signalsUrl}${cacheBuster}`, {
-                cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache',
                     'Pragma': 'no-cache'
                 }
-            });
-            
-            console.log('Відповідь сервера:', {
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
             });
             
             if (!response.ok) {
@@ -404,13 +365,13 @@ class SignalDisplay {
             }
             
             const data = await response.json();
-            console.log('Отримані дані:', data);
             this.processSignals(data, force);
+            
             this.updateStats(data);
             
         } catch (error) {
             console.error('Помилка завантаження сигналів:', error);
-            // Оновлюємо час останньої спроби
+            
             const lastUpdate = document.getElementById('last-update');
             if (lastUpdate) {
                 const now = new Date();
@@ -420,10 +381,6 @@ class SignalDisplay {
                     second: '2-digit'
                 }) + ' (помилка)';
             }
-            
-            // Показуємо повідомлення користувачу
-            this.showMessage('warning', 
-                '⚠️ Не вдалося завантажити сигнали. Спробуйте оновити сторінку.');
         }
     }
 
@@ -443,8 +400,6 @@ class SignalDisplay {
             return;
         }
         
-        console.log('Обробка сигналів:', data.signals.length, 'сигналів');
-        
         if (data.last_update && lastUpdate) {
             const updateDate = new Date(data.last_update);
             lastUpdate.textContent = this.formatTime(updateDate, true);
@@ -458,38 +413,63 @@ class SignalDisplay {
             totalSignalsElement.textContent = data.total_signals || data.signals.length;
         }
         
-        let html = '';
-        let hasActiveSignals = false;
+        // Отримуємо фідбек з localStorage
+        const feedback = this.getFeedback();
+        const answeredSignalIds = new Set(feedback.map(f => f.signal_id));
         
-        data.signals.forEach((signal, index) => {
-            const confidencePercent = Math.round(signal.confidence * 100);
-            if (confidencePercent < 70) return;
-            
-            const signalId = `signal-${index}`;
-            const signalHTML = this.createSignalHTML(signal, signalId);
-            
-            if (signalHTML) {
-                html += signalHTML;
-                hasActiveSignals = true;
-            }
-        });
+        // Фільтруємо сигнали, на які ще не відповіли
+        const activeSignals = data.signals.filter(signal => 
+            !answeredSignalIds.has(signal.id)
+        );
         
-        if (!hasActiveSignals) {
+        // Обмежуємо кількість сигналів для відображення
+        const signalsToShow = activeSignals.slice(0, this.maxSignalsToShow);
+        
+        if (signalsToShow.length === 0) {
             container.innerHTML = this.getNoSignalsHTML();
             if (noSignals) noSignals.style.display = 'block';
         } else {
-            container.innerHTML = html;
-            if (noSignals) noSignals.style.display = 'none';
+            let html = '';
+            
+            signalsToShow.forEach((signal, index) => {
+                const confidencePercent = Math.round(signal.confidence * 100);
+                if (confidencePercent < 70) return;
+                
+                const signalId = `signal-${signal.id || index}`;
+                const signalHTML = this.createSignalHTML(signal, signalId);
+                
+                if (signalHTML) {
+                    html += signalHTML;
+                }
+            });
+            
+            if (html === '') {
+                container.innerHTML = this.getNoSignalsHTML();
+                if (noSignals) noSignals.style.display = 'block';
+            } else {
+                container.innerHTML = html;
+                if (noSignals) noSignals.style.display = 'none';
+                
+                // Налаштовуємо таймери для кожного сигналу
+                signalsToShow.forEach((signal, index) => {
+                    const signalId = `signal-${signal.id || index}`;
+                    this.setupSignalTimer(signal, signalId);
+                });
+            }
         }
+        
+        // Оновлюємо статистику фідбеку
+        this.updateFeedbackStats(feedback.length);
     }
 
     createSignalHTML(signal, signalId) {
         const confidencePercent = Math.round(signal.confidence * 100);
+        const confidenceClass = this.getConfidenceClass(confidencePercent);
         const directionClass = signal.direction.toLowerCase();
         const duration = signal.duration || 2;
         
-        const entryTime = signal.entry_time || '--:--';
-        const generatedTime = signal.timestamp ? this.formatTime(new Date(signal.timestamp), false) : '--:--';
+        const entryTimeKyiv = this.convertToKyivTime(signal.entry_time || signal.timestamp);
+        const generatedTime = this.convertToKyivTime(signal.generated_at);
         
         let reason = signal.reason || '';
         if (this.language === 'ru' && signal.reason_ru) {
@@ -497,7 +477,7 @@ class SignalDisplay {
         }
         
         return `
-            <div class="signal-card ${directionClass}" id="${signalId}" data-asset="${signal.asset}">
+            <div class="signal-card ${directionClass}" id="${signalId}" data-signal-id="${signal.id}" data-asset="${signal.asset}" data-entry-time="${entryTimeKyiv}">
                 <div class="signal-header">
                     <div class="asset-info">
                         <div class="asset-icon">
@@ -520,7 +500,7 @@ class SignalDisplay {
                         </div>
                         <div class="value">
                             ${confidencePercent}%
-                            <span class="confidence-badge ${confidencePercent >= 85 ? 'confidence-high' : confidencePercent >= 75 ? 'confidence-medium' : 'confidence-low'}">
+                            <span class="confidence-badge ${confidenceClass}">
                                 ${confidencePercent >= 85 ? 'Висока' : confidencePercent >= 75 ? 'Середня' : 'Низька'}
                             </span>
                         </div>
@@ -528,11 +508,11 @@ class SignalDisplay {
                     
                     <div class="detail-item">
                         <div class="label">
-                            <i class="far fa-clock"></i> Час входу
+                            <i class="far fa-clock"></i> ${this.translate('entryTime')}
                         </div>
                         <div class="value">
-                            ${entryTime}
-                            <small style="display: block; font-size: 0.8em; color: #666;">(Київ)</small>
+                            ${entryTimeKyiv}
+                            <small style="display: block; font-size: 0.8em; color: #666;">(через ${signal.entry_delay_minutes || 2} хв)</small>
                         </div>
                     </div>
                     
@@ -551,6 +531,10 @@ class SignalDisplay {
                     </div>
                 </div>
                 
+                <div class="signal-timer-container" id="timer-${signalId}">
+                    <!-- Таймер буде додано JavaScript -->
+                </div>
+                
                 ${reason ? `
                 <div class="signal-reason">
                     <div class="reason-header">
@@ -560,12 +544,198 @@ class SignalDisplay {
                 </div>
                 ` : ''}
                 
+                <div class="signal-feedback" id="feedback-${signalId}" style="display: none;">
+                    <p>${this.translate('signalCorrect')}</p>
+                    <div class="feedback-buttons">
+                        <button class="feedback-btn feedback-yes" onclick="signalDisplay.saveFeedback('${signal.id}', 'yes')">
+                            ${this.translate('feedbackYes')}
+                        </button>
+                        <button class="feedback-btn feedback-no" onclick="signalDisplay.saveFeedback('${signal.id}', 'no')">
+                            ${this.translate('feedbackNo')}
+                        </button>
+                        <button class="feedback-btn feedback-skip" onclick="signalDisplay.saveFeedback('${signal.id}', 'skip')">
+                            ${this.translate('feedbackSkip')}
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="signal-footer">
                     <span><i class="fas fa-globe-europe"></i> Часова зона: Київ (UTC+2)</span>
                     <span><i class="fas fa-brain"></i> Модель: GPT OSS 120B</span>
                 </div>
             </div>
         `;
+    }
+
+    setupSignalTimer(signal, signalId) {
+        const container = document.getElementById(`timer-${signalId}`);
+        const feedbackContainer = document.getElementById(`feedback-${signalId}`);
+        if (!container) return;
+        
+        const entryTime = signal.entry_time || signal.timestamp;
+        const duration = parseFloat(signal.duration) || 2;
+        
+        if (!entryTime) return;
+        
+        // Парсимо час входу
+        const now = new Date();
+        const [hours, minutes] = entryTime.split(':').map(Number);
+        let entryDate = new Date();
+        entryDate.setHours(hours, minutes, 0, 0);
+        
+        // Якщо час входу вже минув сьогодні, встановлюємо на завтра
+        if (entryDate < now) {
+            entryDate.setDate(entryDate.getDate() + 1);
+        }
+        
+        const endDate = new Date(entryDate.getTime() + duration * 60000);
+        
+        const updateTimerDisplay = () => {
+            const now = new Date();
+            const timeToEntry = entryDate - now;
+            const timeLeft = endDate - now;
+            
+            if (timeToEntry > 0) {
+                // Чекаємо на час входу
+                const minutesToEntry = Math.floor(timeToEntry / 60000);
+                const secondsToEntry = Math.floor((timeToEntry % 60000) / 1000);
+                
+                container.innerHTML = `
+                    <div class="signal-timer waiting">
+                        <div class="timer-display">
+                            <i class="fas fa-clock"></i> 
+                            <span class="timer-text">${minutesToEntry}:${secondsToEntry.toString().padStart(2, '0')}</span>
+                        </div>
+                        <small>${this.translate('timerActive')} (до входу)</small>
+                    </div>
+                `;
+                
+                container.style.display = 'block';
+                if (feedbackContainer) feedbackContainer.style.display = 'none';
+                
+            } else if (timeLeft > 0) {
+                // Сигнал активний
+                const minutesLeft = Math.floor(timeLeft / 60000);
+                const secondsLeft = Math.floor((timeLeft % 60000) / 1000);
+                
+                container.innerHTML = `
+                    <div class="signal-timer active">
+                        <div class="timer-display">
+                            <i class="fas fa-hourglass-half"></i> 
+                            <span class="timer-text">${minutesLeft}:${secondsLeft.toString().padStart(2, '0')}</span>
+                        </div>
+                        <small>${this.translate('timerActive')}</small>
+                    </div>
+                `;
+                
+                container.style.display = 'block';
+                if (feedbackContainer) feedbackContainer.style.display = 'none';
+                
+            } else {
+                // Час вийшов - показуємо фідбек
+                container.style.display = 'none';
+                if (feedbackContainer) {
+                    feedbackContainer.style.display = 'block';
+                    
+                    // Видаляємо старий таймер
+                    const timer = this.activeTimers.get(signalId);
+                    if (timer && timer.updateInterval) {
+                        clearInterval(timer.updateInterval);
+                    }
+                    this.activeTimers.delete(signalId);
+                }
+                return;
+            }
+            
+            // Зберігаємо таймер
+            this.activeTimers.set(signalId, {
+                isActive: true,
+                endTime: endDate.getTime(),
+                updateInterval: setInterval(() => updateTimerDisplay(), 1000)
+            });
+        };
+        
+        updateTimerDisplay();
+    }
+
+    saveFeedback(signalId, feedback) {
+        const existing = this.getFeedback();
+        
+        existing.push({
+            signal_id: signalId,
+            feedback: feedback,
+            timestamp: new Date().toISOString(),
+            language: this.language
+        });
+        
+        localStorage.setItem(this.feedbackKey, JSON.stringify(existing));
+        
+        // Приховуємо сигнал
+        const signalElement = document.querySelector(`[data-signal-id="${signalId}"]`);
+        if (signalElement) {
+            signalElement.remove();
+        }
+        
+        // Видаляємо таймер
+        const timer = this.activeTimers.get(`signal-${signalId}`);
+        if (timer && timer.updateInterval) {
+            clearInterval(timer.updateInterval);
+        }
+        this.activeTimers.delete(`signal-${signalId}`);
+        
+        this.updateSignalCount();
+        this.updateFeedbackStats(existing.length);
+        
+        this.showMessage('success', '✅ Відповідь збережено!');
+    }
+
+    getFeedback() {
+        const feedback = localStorage.getItem(this.feedbackKey);
+        return feedback ? JSON.parse(feedback) : [];
+    }
+
+    updateFeedbackStats(feedbackCount) {
+        // Оновлюємо статистику в інтерфейсі
+        const feedbackStats = document.getElementById('feedback-stats');
+        if (!feedbackStats) {
+            // Створюємо елемент, якщо його немає
+            const statsGrid = document.querySelector('.stats-grid');
+            if (statsGrid) {
+                const feedbackCard = document.createElement('div');
+                feedbackCard.className = 'stat-card info';
+                feedbackCard.id = 'feedback-stats';
+                feedbackCard.innerHTML = `
+                    <div class="stat-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>${this.translate('answeredSignals')}</h3>
+                        <p class="stat-value">${feedbackCount}</p>
+                        <small>${this.translate('feedbackGiven')}</small>
+                    </div>
+                `;
+                statsGrid.appendChild(feedbackCard);
+            }
+        } else {
+            const statValue = feedbackStats.querySelector('.stat-value');
+            if (statValue) {
+                statValue.textContent = feedbackCount;
+            }
+        }
+    }
+
+    updateSignalCount() {
+        const container = document.getElementById('signals-container');
+        const visibleSignals = container.querySelectorAll('.signal-card').length;
+        const activeSignalsElement = document.getElementById('active-signals');
+        if (activeSignalsElement) {
+            activeSignalsElement.textContent = visibleSignals;
+        }
+        
+        const noSignals = document.getElementById('no-signals');
+        if (visibleSignals === 0 && noSignals) {
+            noSignals.style.display = 'block';
+        }
     }
 
     updateStats(data) {
@@ -584,12 +754,6 @@ class SignalDisplay {
         if (totalSignalsElement) {
             totalSignalsElement.textContent = data.total_signals || '0';
         }
-        
-        // Оновлюємо успішність (заглушка)
-        const successRateElement = document.getElementById('success-rate');
-        if (successRateElement) {
-            successRateElement.textContent = '85%';
-        }
     }
 
     updateKyivTime() {
@@ -606,17 +770,66 @@ class SignalDisplay {
         }
     }
 
+    updateNextAutoGenerationTimer() {
+        // Розраховуємо час до наступної автоматичної генерації (кожні 5 хвилин)
+        const now = new Date();
+        const nextUpdate = new Date(Math.ceil(now.getTime() / (5 * 60 * 1000)) * (5 * 60 * 1000));
+        const timeToNext = nextUpdate - now;
+        
+        const updateTimer = () => {
+            const now = new Date();
+            const timeLeft = nextUpdate - now;
+            
+            if (timeLeft <= 0) {
+                // Запускаємо оновлення
+                this.loadSignals(true);
+                // Перераховуємо наступне оновлення
+                this.updateNextAutoGenerationTimer();
+                return;
+            }
+            
+            const minutes = Math.floor(timeLeft / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            // Оновлюємо інформаційну картку
+            const infoCard = document.querySelector('.action-info-card .info-content p');
+            if (infoCard) {
+                infoCard.innerHTML = `
+                    ${this.translate('instructionText')}
+                    <br><br>
+                    <strong>${this.translate('nextAutoUpdate')} ${minutes}:${seconds.toString().padStart(2, '0')}</strong>
+                `;
+            }
+        };
+        
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    }
+
+    convertToKyivTime(dateString) {
+        if (!dateString) return '--:--';
+        
+        const date = new Date(dateString);
+        return date.toLocaleTimeString('uk-UA', {
+            timeZone: this.kyivTZ,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
     formatTime(date, includeSeconds = false) {
-        try {
-            return date.toLocaleTimeString('uk-UA', {
-                timeZone: this.kyivTZ,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: includeSeconds ? '2-digit' : undefined
-            });
-        } catch (e) {
-            return '--:--';
-        }
+        return date.toLocaleTimeString('uk-UA', {
+            timeZone: this.kyivTZ,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: includeSeconds ? '2-digit' : undefined
+        });
+    }
+
+    getConfidenceClass(percent) {
+        if (percent >= 85) return 'confidence-high';
+        if (percent >= 75) return 'confidence-medium';
+        return 'confidence-low';
     }
 
     getEmptyStateHTML() {
@@ -646,7 +859,6 @@ class SignalDisplay {
             clearInterval(this.autoRefreshInterval);
         }
         
-        // Автоматично оновлюємо дані кожні 30 секунд
         this.autoRefreshInterval = setInterval(async () => {
             await this.loadSignals();
         }, 30000);
@@ -672,7 +884,7 @@ class SignalDisplay {
         const message = document.createElement('div');
         message.className = `message ${type}`;
         message.style.cssText = `
-            background: ${type === 'success' ? '#38a169' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ed8936' : '#3182ce'};
+            background: ${type === 'success' ? '#38a169' : type === 'error' ? '#e53e3e' : '#3182ce'};
             color: white;
             padding: 15px 20px;
             border-radius: 10px;
@@ -722,7 +934,11 @@ class SignalDisplay {
         document.querySelectorAll('[data-translate]').forEach(element => {
             const key = element.getAttribute('data-translate');
             if (translations[key]) {
-                element.textContent = translations[key];
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = translations[key];
+                } else {
+                    element.textContent = translations[key];
+                }
             }
         });
     }
@@ -767,38 +983,22 @@ style.textContent = `
         font-size: 12px;
     }
     
-    .confidence-high { 
-        background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); 
-        color: #22543d; 
-        box-shadow: 0 2px 5px rgba(38, 179, 97, 0.2);
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        white-space: nowrap;
-        display: inline-block;
+    .signal-timer.waiting {
+        background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+        border-left: 4px solid #1890ff;
     }
-    .confidence-medium { 
-        background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%); 
-        color: #742a2a; 
-        box-shadow: 0 2px 5px rgba(245, 101, 101, 0.2);
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        white-space: nowrap;
-        display: inline-block;
+    
+    .signal-timer.active {
+        background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+        border-left: 4px solid #52c41a;
     }
-    .confidence-low { 
-        background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%); 
-        color: #744210; 
-        box-shadow: 0 2px 5px rgba(237, 137, 54, 0.2);
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        white-space: nowrap;
-        display: inline-block;
+    
+    .signal-timer.waiting .timer-display {
+        color: #1890ff;
+    }
+    
+    .signal-timer.active .timer-display {
+        color: #52c41a;
     }
 `;
 document.head.appendChild(style);
