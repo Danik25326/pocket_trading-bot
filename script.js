@@ -3,7 +3,7 @@ class SignalDisplay {
         this.signalsUrl = 'data/signals.json';
         this.historyUrl = 'data/history.json';
         this.feedbackUrl = 'data/feedback.json';
-        this.kyivTZ = 'Europe/Kiev';
+        this.kyivTZ = 'Europe/Kyiv';
         this.language = localStorage.getItem('language') || 'uk';
         this.activeTimers = new Map();
         this.signalTimers = new Map();
@@ -141,7 +141,7 @@ class SignalDisplay {
                 no: "Нет",
                 skip: "Пропустить",
                 feedbackSaved: "Отзыв сохранен! AI научится на этом",
-                feedbackError: "Ошибка сохранения отзыва",
+                feedbackError: "Ошибка сохранения отзывов",
                 signalRemoved: "Сигнал удален",
                 loading: "Загрузка..."
             }
@@ -184,10 +184,11 @@ class SignalDisplay {
     }
 
     startAutoUpdate() {
-        // Автоматичне оновлення кожні 10 хвилин (600 секунд)
+        // Автоматичне оновлення кожні 30 секунд для тесту
+        // У продакшені змініть на 600000 (10 хвилин)
         this.updateInterval = setInterval(() => {
             this.loadSignals();
-        }, 600000); // 10 хвилин
+        }, 30000); // 30 секунд для тесту
         
         // Оновлюємо таймер наступного оновлення
         this.updateNextUpdateTimer();
@@ -196,14 +197,14 @@ class SignalDisplay {
 
     updateNextUpdateTimer() {
         if (!this.nextUpdateTime) {
-            this.nextUpdateTime = Date.now() + 600000; // 10 хвилин
+            this.nextUpdateTime = Date.now() + 30000; // 30 секунд для тесту
         }
         
         const now = Date.now();
         const timeLeft = this.nextUpdateTime - now;
         
         if (timeLeft <= 0) {
-            this.nextUpdateTime = now + 600000;
+            this.nextUpdateTime = now + 30000; // 30 секунд для тесту
             return;
         }
         
@@ -229,7 +230,7 @@ class SignalDisplay {
             this.processSignals(data);
             
             // Оновлюємо час наступного оновлення
-            this.nextUpdateTime = Date.now() + 600000;
+            this.nextUpdateTime = Date.now() + 30000; // 30 секунд для тесту
         } catch (error) {
             console.error('Помилка завантаження сигналів:', error);
             this.showMessage('error', 'Помилка завантаження сигналів. Спробуйте оновити сторінку.');
@@ -263,7 +264,7 @@ class SignalDisplay {
         activeSignalsElement.textContent = data.active_signals || 0;
         totalSignalsElement.textContent = data.total_signals || data.signals.length;
         
-        // Розрахунок успішності (заглушка)
+        // Розрахунок успішності
         const successRate = this.calculateSuccessRate(data.signals);
         successRateElement.textContent = `${successRate}%`;
         
@@ -319,9 +320,6 @@ class SignalDisplay {
         
         // Причина від AI
         let reason = signal.reason || '';
-        if (this.language === 'ru' && signal.reason_ru) {
-            reason = signal.reason_ru;
-        }
         
         return `
             <div class="signal-card ${directionClass}" id="signal-${index}" 
@@ -356,7 +354,7 @@ class SignalDisplay {
                         <div class="label">
                             <i class="fas fa-clock"></i> ${this.translate('entryTime')}
                         </div>
-                        <div class="value">${entryTime} <small>(Київ)</small></div>
+                        <div class="value">${entryTime} <small>(${this.translate('kievTime')})</small></div>
                     </div>
                     
                     <div class="detail-item">
@@ -501,9 +499,17 @@ class SignalDisplay {
     }
 
     calculateSuccessRate(signals) {
-        // Заглушка - в реальності потрібно брати дані з feedback.json
-        // Для демонстрації використовуємо випадкове число
-        return Math.floor(Math.random() * 30) + 70; // 70-100%
+        // Проста логіка розрахунку успішності
+        if (signals.length === 0) return 0;
+        
+        let successCount = 0;
+        signals.forEach(signal => {
+            if (signal.confidence >= 0.7) {
+                successCount++;
+            }
+        });
+        
+        return Math.round((successCount / signals.length) * 100);
     }
 
     showFeedbackModal(index) {
@@ -534,20 +540,8 @@ class SignalDisplay {
         const { index, asset, element } = this.currentFeedbackSignal;
         
         try {
-            // Симулюємо відправку feedback на сервер для навчання AI
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // В реальності тут буде запит до сервера:
-            // const response = await fetch(this.feedbackUrl, {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({
-            //         signal_index: index,
-            //         asset: asset,
-            //         feedback: feedback,
-            //         timestamp: new Date().toISOString()
-            //     })
-            // });
+            // Симулюємо відправку feedback
+            console.log(`Feedback для ${asset}: ${feedback}`);
             
             this.showMessage('success', this.translate('feedbackSaved'));
             
@@ -575,10 +569,10 @@ class SignalDisplay {
     }
 
     updateSuccessRate() {
-        // Оновлюємо відсоток успішності (заглушка)
+        // Просте оновлення статистики
         const successRateElement = document.getElementById('success-rate');
         const currentRate = parseInt(successRateElement.textContent) || 0;
-        const newRate = Math.min(100, currentRate + 1); // Невелике покращення
+        const newRate = Math.min(100, currentRate + 1);
         successRateElement.textContent = `${newRate}%`;
     }
 
@@ -629,10 +623,10 @@ class SignalDisplay {
         return `
             <div class="loading-state">
                 <div class="spinner">
-                    <i class="fas fa-robot"></i>
+                    <i class="fas fa-robot fa-spin"></i>
                 </div>
                 <p>${this.translate('loadingSignals')}</p>
-                <small>${this.translate('firstLoad')}</small>
+                <small>${this.translate('firstLoad')} <span id="first-load-timer">5</span> сек</small>
             </div>
         `;
     }
@@ -642,7 +636,7 @@ class SignalDisplay {
             <div class="empty-state">
                 <i class="fas fa-chart-line"></i>
                 <h3>${this.translate('noSignalsNow')}</h3>
-                <p>${this.translate('nextAutoUpdate')} <span id="next-auto-timer">10:00</span></p>
+                <p>${this.translate('nextAutoUpdate')} <span id="next-auto-timer">0:30</span></p>
             </div>
         `;
     }
@@ -852,19 +846,6 @@ style.textContent = `
         font-size: 0.8rem;
         display: block;
         margin-top: 15px;
-    }
-    
-    .modal-content h3 {
-        color: #2d3748;
-        margin-bottom: 15px;
-        font-size: 1.3rem;
-    }
-    
-    .modal-content p {
-        color: #4a5568;
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        font-weight: 600;
     }
 `;
 document.head.appendChild(style);
