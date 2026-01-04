@@ -23,7 +23,7 @@ class Config:
     
     # Groq AI
     GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
+    GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')  # Оновлено модель
     
     # Сигнали
     SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
@@ -40,21 +40,7 @@ class Config:
     
     # Навчання
     FEEDBACK_ENABLED = os.getenv('FEEDBACK_ENABLED', 'true').lower() == 'true'
-    CLEANUP_COUNT = int(os.getenv('SIGNAL_CLEANUP_COUNT', 9))
-    
-    # Ліміти відображення
-    MAX_SIGNALS_TO_SHOW = int(os.getenv('MAX_SIGNALS_TO_SHOW', 6))
-    MAX_HISTORY_ITEMS = int(os.getenv('MAX_HISTORY_ITEMS', 100))
-    ENTRY_DELAY_MINUTES = int(os.getenv('ENTRY_DELAY_MINUTES', 2))
-    
-    # Ліміти API Groq
-    MAX_TOKENS_PER_DAY = int(os.getenv('MAX_TOKENS_PER_DAY', 200000))
-    MAX_REQUESTS_PER_DAY = int(os.getenv('MAX_REQUESTS_PER_DAY', 1000))
-    MAX_REQUESTS_PER_MINUTE = int(os.getenv('MAX_REQUESTS_PER_MINUTE', 30))
-    
-    # Налаштування генерації
-    ASSETS_PER_GENERATION = int(os.getenv('ASSETS_PER_GENERATION', 2))
-    MIN_TIME_BETWEEN_REQUESTS = float(os.getenv('MIN_TIME_BETWEEN_REQUESTS', 1.0))
+    CLEANUP_COUNT = 9
     
     # Шляхи до файлів
     DATA_DIR = BASE_DIR / 'data'
@@ -63,7 +49,6 @@ class Config:
     FEEDBACK_FILE = DATA_DIR / 'feedback.json'
     ASSETS_CONFIG_FILE = DATA_DIR / 'assets_config.json'
     LESSONS_FILE = DATA_DIR / 'lessons.json'
-    USAGE_FILE = DATA_DIR / 'usage.json'
     
     # Налаштування логування
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
@@ -137,9 +122,3 @@ class Config:
                 logger.error(error)
             return False
         return True
-    
-    @classmethod
-    def get_assets_for_generation(cls):
-        """Отримати список активів для поточної генерації"""
-        # Обмежуємо кількість активів для економії токенів
-        return cls.ASSETS[:cls.ASSETS_PER_GENERATION]
