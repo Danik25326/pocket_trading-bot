@@ -1,0 +1,51 @@
+name: Generate Config File
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'config.template.js'
+  workflow_dispatch:  # Ручний запуск
+
+jobs:
+  generate-config:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}  # Використовуємо GH_PAT для checkout
+          fetch-depth: 0
+      
+      - name: Create config.js from template
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          echo "// config.js - automatically generated" > config.js
+          echo "window.GH_CONFIG = {" >> config.js
+          echo "    token: '${{ secrets.GH_PAT }}'," >> config.js
+          echo "    owner: 'Danik25326'," >> config.js
+          echo "    repo: 'pocket_trading_bot'," >> config.js
+          echo "    workflowId: 'signals.yml'" >> config.js
+          echo "};" >> config.js
+          
+          echo "✅ Config.js generated"
+          cat config.js
+      
+      - name: Commit and push config.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Використовуємо GH_PAT для push
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          
+          git add config.js
+          
+          if git diff --staged --quiet; then
+            echo "⚠️ Немає змін для коміту"
+          else
+            git commit -m "🤖 Update config.js with GitHub token [skip ci]"
+            git push origin main
+            echo "✅ Config.js updated and pushed"
+          fi
