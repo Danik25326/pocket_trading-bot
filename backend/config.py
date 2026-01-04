@@ -57,7 +57,7 @@ class Config:
     LOG_FILE = BASE_DIR / 'logs' / 'signals.log'
     
     # Часовий пояс
-    KYIV_TZ = pytz.timezone('Europe/Kiev')
+    KYIV_TZ = pytz.timezone('Europe/Kyiv')
 
     # Мова
     LANGUAGE = os.getenv('LANGUAGE', 'uk')
