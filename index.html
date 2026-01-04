@@ -31,10 +31,6 @@
                     <button id="search-signals-btn" class="action-btn primary-btn">
                         <i class="fas fa-search"></i> <span class="btn-text" data-translate="searchSignalsBtn">Пошук сигналів</span>
                     </button>
-                    <button id="refresh-btn" class="action-btn secondary-btn" disabled>
-                        <i class="fas fa-redo"></i> <span class="btn-text" data-translate="regenerateBtn">Перегенерувати</span>
-                        <span class="timer-badge" id="refresh-timer">5:00</span>
-                    </button>
                 </div>
             </div>
         </header>
@@ -93,9 +89,11 @@
                 <div class="info-content">
                     <h3 data-translate="howToStart">Як почати роботу?</h3>
                     <p data-translate="instructionText">
-                        Натисніть кнопку "Пошук сигналів" для запуску генерації нових сигналів. Після генерації ви зможете перегенерувати сигнали через 5 хвилин.
+                        Натисніть кнопку "Пошук сигналів" для запуску генерації нових сигналів. Сигнали з'являться через 30-60 секунд.
                         <br><br>
-                        <strong>Сигнали оновлюються автоматично кожні 30 секунд!</strong>
+                        <strong>❗️ Кнопка буде заблокована на 5 хвилин після натискання</strong>
+                        <br>
+                        <strong>🔄 Сигнали оновлюються автоматично кожні 30 секунд!</strong>
                     </p>
                 </div>
             </div>
@@ -111,7 +109,7 @@
                 <div class="signals-container" id="signals-container">
                     <div class="loading-state">
                         <div class="spinner">
-                            <i class="fas fa-spinner fa-spin"></i>
+                            <i class="fas fa-search"></i>
                         </div>
                         <p data-translate="noSignalsYet">Сигналів ще немає</p>
                         <small data-translate="clickSearchToStart">Натисніть "Пошук сигналів" для початку</small>
@@ -141,7 +139,8 @@
                 <div class="warning-card">
                     <h3><i class="fas fa-exclamation-triangle"></i> <span data-translate="important">Важливо!</span></h3>
                     <p data-translate="disclaimer">Торгівля містить високі ризики. Сигнали не є фінансовою рекомендацією.</p>
-                    <p><strong>🔄 Автоматичне оновлення:</strong> Сайт оновлює дані кожні 30 секунд (лише читання файлів).</p>
+                    <p><strong>🔄 Автоматичне оновлення:</strong> Сайт оновлює дані кожні 30 секунд.</p>
+                    <p><strong>⏳ Генерація сигналів:</strong> Кнопка блокується на 5 хвилин після натискання.</p>
                 </div>
             </div>
         </div>
@@ -153,19 +152,8 @@
         </footer>
     </div>
 
-    <!-- Модальне вікно для фідбеку -->
-    <div id="feedback-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3 data-translate="feedbackQuestion">Сигнал був вірний?</h3>
-            <p id="feedback-asset"></p>
-            <div class="feedback-buttons">
-                <button class="feedback-btn feedback-yes" data-translate="feedbackYes">Так</button>
-                <button class="feedback-btn feedback-no" data-translate="feedbackNo">Ні</button>
-                <button class="feedback-btn feedback-skip" data-translate="feedbackSkip">Я не перевіряв</button>
-            </div>
-        </div>
-    </div>
     <script src="config.js"></script>
+    <script src="api.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
