@@ -15,9 +15,16 @@ on:
         description: 'Джерело запуску'
         default: 'manual'
         type: string
-  # Додамо запуск по розкладу для тестування
-  schedule:
-    - cron: '*/5 * * * *'  # Кожні 5 хвилин
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'data/**'
+      - 'logs/**'
+      - '*.md'
+      - '*.css'
+      - '*.js'
+      - '*.html'
+      - 'config.js'
 
 permissions:
   contents: write
@@ -69,6 +76,9 @@ jobs:
         if [ ! -f data/assets_config.json ]; then 
           echo '{"preferred_assets": ["GBPJPY_otc", "EURUSD_otc", "USDJPY_otc"]}' > data/assets_config.json
         fi
+        if [ ! -f data/lessons.json ]; then 
+          echo '[]' > data/lessons.json
+        fi
     
     - name: Generate trading signals
       env:
@@ -85,7 +95,7 @@ jobs:
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'openai/gpt-oss-120b'
         LANGUAGE: ${{ inputs.language || 'uk' }}
-        TRIGGER_SOURCE: ${{ inputs.trigger_source || 'schedule' }}
+        TRIGGER_SOURCE: ${{ inputs.trigger_source || 'manual' }}
       run: |
         echo "🚀 Початок генерації сигналів..."
         echo "🌐 Мова: $LANGUAGE"
