@@ -4,5 +4,5 @@ window.GH_CONFIG = {
     repo: 'pocket_trading_bot',
     branch: 'main',
     baseUrl: 'https://danik25326.github.io/pocket_trading_bot',
-    // НЕ потрібно додавати токен тут - ми будемо використовувати workflow_dispatch
+    token: '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'
 };
