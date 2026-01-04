@@ -1,4 +1,3 @@
-
 import os
 import sys
 import json
@@ -24,14 +23,15 @@ class Config:
     
     # Groq AI
     GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-    GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')  # Оновлено модель
+    GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
     
     # Сигнали
-    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 300))
+    SIGNAL_INTERVAL = int(os.getenv('SIGNAL_INTERVAL', 600))  # 10 хвилин
     MIN_CONFIDENCE = float(os.getenv('MIN_CONFIDENCE', 0.7))
     MAX_DURATION = float(os.getenv('MAX_DURATION', 5.0))
     MAX_SIGNALS_HISTORY = int(os.getenv('MAX_SIGNALS_HISTORY', 100))
-    ACTIVE_SIGNAL_TIMEOUT = int(os.getenv('ACTIVE_SIGNAL_TIMEOUT', 5))
+    ACTIVE_SIGNAL_TIMEOUT = int(os.getenv('ACTIVE_SIGNAL_TIMEOUT', 10))  # 10 хвилин
+    MAX_SIGNALS_ON_SITE = int(os.getenv('MAX_SIGNALS_ON_SITE', 6))  # Макс 6 сигналів
     
     # Актив
     ASSETS_RAW = [asset.strip() for asset in os.getenv('ASSETS', 'GBPJPY_otc,EURUSD_otc,USDJPY_otc').split(',')]
@@ -41,7 +41,7 @@ class Config:
     
     # Навчання
     FEEDBACK_ENABLED = os.getenv('FEEDBACK_ENABLED', 'true').lower() == 'true'
-    CLEANUP_COUNT = 9
+    CLEANUP_COUNT = 6  # Зберігаємо останні 6 сигналів
     
     # Шляхи до файлів
     DATA_DIR = BASE_DIR / 'data'
