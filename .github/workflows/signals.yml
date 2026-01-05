@@ -123,7 +123,6 @@ jobs:
         git add data/
         git add logs/
         git add .nojekyll
-        git add config.js
         
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
