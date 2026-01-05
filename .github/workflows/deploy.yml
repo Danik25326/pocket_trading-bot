@@ -41,7 +41,7 @@ jobs:
         CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
         
         # Список файлів, які вимагають деплою
-        DEPLOY_FILES="data/signals.json data/history.json index.html style.css script.js config.js .nojekyll"
+        DEPLOY_FILES="data/signals.json data/history.json index.html style.css script.js .nojekyll"
         
         SHOULD_DEPLOY=false
         
@@ -89,8 +89,6 @@ jobs:
         echo "✅ signals.json: $(wc -l < data/signals.json) рядків"
         echo "✅ history.json: $(wc -l < data/history.json) записів"
         echo "✅ index.html: $(wc -l < index.html) рядків"
-        echo "✅ config.js:"
-        cat config.js
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
