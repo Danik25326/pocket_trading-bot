@@ -37,16 +37,6 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Debug SSID length
-      env:
-        POCKET_SSID: ${{ secrets.POCKET_SSID }}
-      run: |
-        echo "🔍 Перевірка SSID:"
-        echo "SSID length: ${#POCKET_SSID}"
-        echo "First 50 chars: ${POCKET_SSID:0:50}"
-        echo "Last 50 chars: ${POCKET_SSID: -50}"
-        echo "Full SSID: ${POCKET_SSID}"
-    
     - name: Clear all caches
       run: |
         echo "🧹 Очищення кешу..."
@@ -61,11 +51,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade setuptools wheel
         pip install --no-cache-dir -r backend/requirements.txt
-        echo "✅ Залежності встановлено"
     
     - name: Create necessary directories
       run: |
-        echo "📁 Створення директорій..."
         mkdir -p data
         mkdir -p logs
         touch .nojekyll
@@ -73,19 +61,15 @@ jobs:
         # Створюємо початкові файли, якщо їх немає
         if [ ! -f data/signals.json ]; then 
           echo '{"last_update": null, "signals": [], "timezone": "Europe/Kiev (UTC+2)"}' > data/signals.json
-          echo "✅ Створено signals.json"
         fi
         if [ ! -f data/history.json ]; then 
           echo '[]' > data/history.json
-          echo "✅ Створено history.json"
         fi
         if [ ! -f data/assets_config.json ]; then 
           echo '{"preferred_assets": ["GBPJPY_otc", "EURUSD_otc", "USDJPY_otc"]}' > data/assets_config.json
-          echo "✅ Створено assets_config.json"
         fi
         if [ ! -f data/lessons.json ]; then 
           echo '[]' > data/lessons.json
-          echo "✅ Створено lessons.json"
         fi
     
     - name: Generate trading signals
@@ -115,7 +99,6 @@ jobs:
         echo "🔧 Джерело запуску: $TRIGGER_SOURCE"
         echo "⏱️  Інтервал генерації: 10 хвилин"
         echo "📈 Сигналів на сайті: максимум 6"
-        echo "💰 Режим: DEMO"
         
         # Додаткове логування для дебагу
         echo "📋 Перевірка часу:"
@@ -123,68 +106,31 @@ jobs:
         echo "Таймзона:"
         timedatectl status 2>/dev/null || echo "Timedatectl не доступний"
         
-        # Встановлюємо PYTHONPATH та запускаємо з кореня
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
         
-        # Переходимо в корінь проекту та запускаємо
-        cd $(pwd)
-        python backend/signal_generator.py
+        cd backend
+        python signal_generator.py
         
         echo "✅ Генерація сигналів завершена"
         echo "🕐 Час завершення: $(date '+%H:%M:%S') UTC"
-    
-    - name: Verify generated files
-      run: |
-        echo "📁 Перевірка створених файлів:"
-        ls -la data/
-        echo "📊 signals.json content:"
-        cat data/signals.json
-        echo "📈 history.json content (перші 2 запису):"
-        jq '.[0:2]' data/history.json || head -20 data/history.json
-        echo "✅ Розмір signals.json: $(wc -c < data/signals.json) байт"
-        echo "✅ Розмір history.json: $(wc -c < data/history.json) байт"
     
     - name: Commit and push all changes
       run: |
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
         
-        # Перевіряємо зміни в даних
-        echo "🔍 Перевірка змін у файлах..."
-        git status
-        
         # Додаємо всі зміни в даних
         git add data/
         git add logs/
         git add .nojekyll
         
-        # Перевіряємо чи є зміни для коміту
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
           git commit -m "🤖 Сигнали: $(date +'%Y-%m-%d %H:%M') [Мова: ${{ inputs.language || 'uk' }}] [Auto]"
-          
-          # Спробуємо запушити змінs
-          echo "📤 Відправка змін до репозиторію..."
-          attempts=3
-          count=0
-          success=false
-          
-          while [ $count -lt $attempts ]; do
-            if git push origin main; then
-              success=true
-              break
-            fi
-            count=$((count+1))
-            echo "⚠️ Спроба $count не вдалася, чекаємо 5 секунд..."
-            sleep 5
-          done
-          
-          if [ "$success" = true ]; then
-            echo "✅ Зміни закомічено та відправлено"
-          else
-            echo "❌ Не вдалося відправити зміни після $attempts спроб"
-          fi
+          git push origin main
+          echo "✅ Зміни закомічено та відправлено"
+          echo "📤 Запущено пуш з оновленими сигналами"
         fi
     
     - name: Log completion time
@@ -192,13 +138,3 @@ jobs:
         echo "🏁 Генерація завершена о $(date '+%H:%M:%S') UTC"
         echo "⏳ Наступна генерація через 10 хвилин (у :00, :10, :20, :30, :40, :50)"
         echo "📊 Для перевірки: перейдіть у Actions -> signals.yml"
-        echo "🌐 Для перегляду сигналів: https://danik25326.github.io/pocket_trading_bot/"
-        
-        # Додаткова інформація
-        echo "📈 Статистика:"
-        if [ -f data/signals.json ]; then
-          total_signals=$(jq '.signals | length' data/signals.json 2>/dev/null || echo "0")
-          active_signals=$(jq '.active_signals' data/signals.json 2>/dev/null || echo "0")
-          echo "   Сигналів у файлі: $total_signals"
-          echo "   Активних сигналів: $active_signals"
-        fi
