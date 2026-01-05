@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 import os
@@ -224,9 +223,30 @@ async def main():
     """Головна функція - запускається ТІЛЬКИ ОДИН РАЗ"""
     print("\n" + "="*60)
     print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"📅 Поточний час UTC: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"⏰ Наступний запуск за розкладом: кожні 10 хвилин (у :00, :10, :20, :30, :40, :50)")
     print(f"🌐 Мова: {Config.LANGUAGE}")
     print(f"💰 Обмеження: 3 сигнали для економії токенів Groq")
     print("="*60)
+    
+    # Перевірка, чи не було запуску менше 9 хвилин тому
+    existing_data = DataHandler().load_signals()
+    last_update = existing_data.get('last_update')
+    
+    if last_update:
+        try:
+            last_time = datetime.fromisoformat(last_update.replace('Z', '+00:00'))
+            time_diff = (datetime.utcnow() - last_time).total_seconds()
+            minutes_diff = time_diff / 60
+            
+            print(f"⏳ Остання генерація була {minutes_diff:.1f} хвилин тому")
+            
+            if minutes_diff < 9:
+                print(f"⚠️  Ще не пройшло достатньо часу. Очікуйте наступного запуску за розкладом.")
+                print(f"   Наступний запуск через {10 - minutes_diff:.1f} хвилин")
+                return []
+        except Exception as e:
+            print(f"⚠️ Помилка перевірки часу: {e}")
     
     logging.basicConfig(
         level=getattr(logging, Config.LOG_LEVEL),
