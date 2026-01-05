@@ -4,11 +4,16 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'data/signals.json'  # Тільки при зміні сигналів
+      - 'data/signals.json'
       - 'data/history.json'
       - 'index.html'
       - 'style.css'
       - 'script.js'
+      - 'config.js'
+      - '.nojekyll'
+      - 'backend/**'
+      - 'utils/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: write
@@ -16,18 +21,77 @@ permissions:
   id-token: write
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    
+    - name: Check for deployable changes
+      id: check
+      run: |
+        # Перевіряємо, чи змінилися файли для деплою
+        echo "📋 Перевірка змін для деплою..."
+        
+        # Отримуємо список змінених файлів
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        
+        # Список файлів, які вимагають деплою
+        DEPLOY_FILES="data/signals.json data/history.json index.html style.css script.js config.js .nojekyll"
+        
+        SHOULD_DEPLOY=false
+        
+        # Перевіряємо кожен файл
+        for file in $DEPLOY_FILES; do
+          if echo "$CHANGED_FILES" | grep -q "$file"; then
+            echo "✅ Знайдено зміни в $file - потрібен деплой"
+            SHOULD_DEPLOY=true
+          fi
+        done
+        
+        # Перевіряємо зміни в backend (можуть бути оновлення логіки)
+        if echo "$CHANGED_FILES" | grep -q "^backend/"; then
+          echo "✅ Знайдено зміни в backend - потрібен деплой"
+          SHOULD_DEPLOY=true
+        fi
+        
+        if [ "$SHOULD_DEPLOY" = true ]; then
+          echo "🚀 Деплой необхідний"
+          echo "should_deploy=true" >> $GITHUB_OUTPUT
+        else
+          echo "⏸️ Зміни не потребують деплою"
+          echo "should_deploy=false" >> $GITHUB_OUTPUT
+        fi
+
   deploy:
+    needs: check-changes
+    if: needs.check-changes.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v4
       
     - name: Setup Pages
       uses: actions/configure-pages@v4
+      
+    - name: Verify files exist
+      run: |
+        echo "📁 Перевірка наявності файлів:"
+        ls -la data/
+        echo "✅ signals.json: $(wc -l < data/signals.json) рядків"
+        echo "✅ history.json: $(wc -l < data/history.json) записів"
+        echo "✅ index.html: $(wc -l < index.html) рядків"
+        echo "✅ config.js:"
+        cat config.js
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
@@ -37,3 +101,9 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+    
+    - name: Log deployment
+      run: |
+        echo "🎉 Успішно задеплойлено на GitHub Pages!"
+        echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "🕐 Час деплою: $(date '+%H:%M:%S') UTC"
