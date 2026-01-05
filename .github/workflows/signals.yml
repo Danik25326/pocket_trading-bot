@@ -15,15 +15,6 @@ on:
         description: 'Джерело запуску'
         default: 'manual'
         type: string
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - 'data/**'
-      - 'logs/**'
-      - '*.md'
-      - '*.css'
-      - '*.js'
-      - '*.html'
   schedule:
     - cron: '*/10 * * * *'  # Кожні 10 хвилин
 
