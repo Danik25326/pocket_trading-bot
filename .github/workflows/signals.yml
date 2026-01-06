@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 jobs:
   generate-signals:
@@ -50,7 +51,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade setuptools wheel
-        pip install --no-cache-dir -r backend/requirements.txt
+        pip install --no-cache-dir -r backend/requirements.txt jq
     
     - name: Create necessary directories
       run: |
@@ -71,19 +72,22 @@ jobs:
         if [ ! -f data/lessons.json ]; then 
           echo '[]' > data/lessons.json
         fi
+        
+        # Додаємо файл для деплою
+        echo "" > .nojekyll
+        echo "📁 Створено необхідні директорії"
     
     - name: Generate trading signals
       env:
-        # 🔴 ДОДАЄМО ЧАСОВИЙ ПОЯС
         TZ: 'Europe/Kiev'
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
-        SIGNAL_INTERVAL: '600'  # 10 хвилин
+        SIGNAL_INTERVAL: '600'
         MIN_CONFIDENCE: '0.7'
         MAX_DURATION: '5.0'
-        SIGNAL_VALIDITY_MINUTES: '10'  # Сигнали зникають через 10 хвилин
-        MAX_SIGNALS_ON_SITE: '6'       # Макс 6 сигналів на сайті
+        SIGNAL_VALIDITY_MINUTES: '10'
+        MAX_SIGNALS_ON_SITE: '6'
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
         TIMEFRAMES: '120'
         LOG_LEVEL: 'INFO'
@@ -92,21 +96,21 @@ jobs:
         TRIGGER_SOURCE: ${{ inputs.trigger_source || 'manual' }}
       run: |
         echo "🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ"
-        echo "⏰ Запущено за розкладом: $(date '+%Y-%m-%d %H:%M:%S') UTC"
-        echo "📅 Наступний запуск: через 10 хвилин (у :00, :10, :20, :30, :40, :50)"
+        echo "=" * 60
+        echo "⏰ Запущено: $(TZ='Europe/Kiev' date '+%Y-%m-%d %H:%M:%S') (Київський час)"
+        echo "📅 UTC час: $(date '+%Y-%m-%d %H:%M:%S')"
         echo "🌐 Мова: $LANGUAGE"
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
-        echo "🕐 Часовий пояс: $TZ (UTC+2)"
         echo "🔧 Джерело запуску: $TRIGGER_SOURCE"
-        echo "⏱️  Інтервал генерації: 10 хвилин"
-        echo "📈 Сигналів на сайті: максимум 6"
+        echo "⏱️ Інтервал генерації: 10 хвилин"
+        echo "=" * 60
         
-        # Додаткове логування для дебагу
-        echo "📋 Перевірка часу:"
-        date
-        echo "Таймзона:"
-        timedatectl status 2>/dev/null || echo "Timedatectl не доступний"
+        # Додаткове логування
+        echo "📋 Детальна інформація:"
+        echo "   - Робоча директорія: $(pwd)"
+        echo "   - Python шлях: $PYTHONPATH"
+        echo "   - Таймзона: $TZ"
         
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd):$(pwd)/utils
         
@@ -114,30 +118,82 @@ jobs:
         python signal_generator.py
         
         echo "✅ Генерація сигналів завершена"
-        echo "🕐 Час завершення: $(date '+%H:%M:%S') UTC"
-        echo "⏳ Наступна генерація: через 10 хвилин"
+        echo "🕐 Час завершення (Київ): $(TZ='Europe/Kiev' date '+%H:%M:%S')"
+        
+        # Перевіряємо чи є нові сигнали
+        if [ -f "../data/signals.json" ]; then
+          SIGNAL_COUNT=$(jq '.signals | length' ../data/signals.json)
+          LAST_UPDATE=$(jq -r '.last_update' ../data/signals.json)
+          echo "📊 Результат: $SIGNAL_COUNT сигналів"
+          echo "🔄 Останнє оновлення: $LAST_UPDATE"
+        else
+          echo "⚠️ Файл signals.json не знайдено"
+        fi
     
     - name: Commit and push all changes
       run: |
+        echo "💾 Коміт змін..."
         git config --global user.name 'GitHub Actions Bot'
         git config --global user.email 'actions@github.com'
         
-        # Додаємо всі зміни в даних
+        # Додаємо всі зміни
         git add data/
         git add logs/
         git add .nojekyll
         
+        # Перевіряємо зміни
+        echo "📋 Змінені файли:"
+        git status --porcelain
+        
         if git diff --staged --quiet; then
           echo "⚠️ Немає змін для коміту"
         else
-          git commit -m "🤖 Сигнали: $(date +'%Y-%m-%d %H:%M') [Мова: ${{ inputs.language || 'uk' }}] [Auto]"
+          KYIV_TIME=$(TZ='Europe/Kiev' date '+%Y-%m-%d %H:%M')
+          git commit -m "🤖 Сигнали: $KYIV_TIME [Мова: ${{ inputs.language || 'uk' }}] [Auto]"
           git push origin main
           echo "✅ Зміни закомічено та відправлено"
           echo "📤 Запущено пуш з оновленими сигналами"
+          
+          # Перевіряємо час коміту
+          echo "🕐 Час коміту (UTC): $(date '+%H:%M:%S')"
+          echo "🕐 Час коміту (Київ): $(TZ='Europe/Kiev' date '+%H:%M:%S')"
+        fi
+    
+    - name: Trigger deployment
+      run: |
+        echo "🚀 Запуск деплою на GitHub Pages..."
+        
+        # Перевіряємо наявність оновлених сигналів
+        if [ -f "data/signals.json" ]; then
+          echo "📄 Оновлено signals.json, запускаємо деплой"
+          
+          # Використовуємо GitHub CLI для запуску деплою
+          gh workflow run deploy.yml --ref main
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Деплой запущено успішно"
+          else
+            echo "⚠️ Не вдалося запустити деплой автоматично"
+            echo "ℹ️ Деплой запуститься автоматично через кілька хвилин"
+          fi
+        else
+          echo "⚠️ Файл signals.json не знайдено, деплой не запущено"
         fi
     
     - name: Log completion time
       run: |
-        echo "🏁 Генерація завершена о $(date '+%H:%M:%S') UTC"
-        echo "⏳ Наступна генерація через 10 хвилин (у :00, :10, :20, :30, :40, :50)"
-        echo "📊 Для перевірки: перейдіть у Actions -> signals.yml"
+        echo "=" * 60
+        echo "🏁 Генерація завершена"
+        echo "🕐 Час завершення (Київ): $(TZ='Europe/Kiev' date '+%H:%M:%S')"
+        echo "🕐 Час завершення (UTC): $(date '+%H:%M:%S')"
+        
+        # Розраховуємо час наступного запуску
+        CURRENT_MINUTE=$(date +%M)
+        NEXT_MINUTE=$(( ( (CURRENT_MINUTE + 10) / 10 ) * 10 ))
+        if [ $NEXT_MINUTE -ge 60 ]; then
+          NEXT_MINUTE=0
+        fi
+        
+        echo "⏰ Наступний автоматичний запуск: через $(( (NEXT_MINUTE - CURRENT_MINUTE + 10) % 10 )) хвилин"
+        echo "📅 У :$NEXT_MINUTE (UTC)"
+        echo "=" * 60
