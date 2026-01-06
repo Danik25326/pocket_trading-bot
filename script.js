@@ -8,14 +8,20 @@ class SignalDisplay {
         this.activeTimers = new Map();
         this.signalTimers = new Map();
         this.updateInterval = null;
+        this.autoUpdateTimer = null;
         this.nextUpdateTime = null;
         this.currentFeedbackSignal = null;
         
         // Додаткове логування для дебагу
         console.log("🤖 Signal Display ініціалізовано");
-        console.log("🕐 Час Київ: " + new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' }));
+        console.log("🕐 Час: " + new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' }));
         console.log("📊 URL сигналів: " + this.signalsUrl);
         console.log("🌐 Мова: " + this.language);
+        
+        // Таймер для логування автооновлення
+        setInterval(() => {
+            console.log("🔄 Автооновлення через 60 секунд...");
+        }, 60000);
         
         this.translations = {
             uk: {
@@ -161,12 +167,12 @@ class SignalDisplay {
         this.updateKyivTime();
         setInterval(() => this.updateKyivTime(), 1000);
         
-        // Перше завантаження через 2 секунди
+        // Перше завантаження через 5 секунд
         setTimeout(() => {
             console.log("📥 Перше завантаження сигналів...");
             this.loadSignals();
             this.startAutoUpdate();
-        }, 2000);
+        }, 5000);
         
         this.startSignalCleanupCheck();
         
@@ -190,13 +196,7 @@ class SignalDisplay {
     }
 
     startAutoUpdate() {
-        // Спершу очистимо існуючий інтервал
-        if (this.updateInterval) {
-            clearInterval(this.updateInterval);
-            this.updateInterval = null;
-        }
-        
-        // Автоматичне оновлення кожні 10 хвилин (600000 мс)
+        // Автоматичне оновлення кожні 10 хвилин (600 секунд)
         this.updateInterval = setInterval(() => {
             console.log("🔄 Автоматичне оновлення сигналів...");
             this.loadSignals();
@@ -219,19 +219,29 @@ class SignalDisplay {
         
         if (timeLeft <= 0) {
             this.nextUpdateTime = now + 600000;
-            this.loadSignals(); // Автоматично завантажуємо сигнали
             return;
         }
         
         const minutes = Math.floor(timeLeft / 60000);
         const seconds = Math.floor((timeLeft % 60000) / 1000);
         
-        document.getElementById('next-update-timer').textContent = 
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
-const autoTimer = document.getElementById('next-auto-timer');
-if (autoTimer) {
-    autoTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-}
+        // БЕЗОПАСНЕ ОНОВЛЕННЯ ЕЛЕМЕНТІВ
+        const updateTimer = document.getElementById('next-update-timer');
+        const autoTimer = document.getElementById('next-auto-timer');
+        
+        if (updateTimer) {
+            updateTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            console.warn("⚠️ Елемент 'next-update-timer' не знайдено");
+        }
+        
+        // Перевіряємо, чи існує елемент перед оновленням
+        if (autoTimer) {
+            autoTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            console.warn("⚠️ Елемент 'next-auto-timer' не знайдено");
+        }
+    }
 
     async loadSignals() {
         try {
@@ -246,17 +256,14 @@ if (autoTimer) {
             console.log("✅ Сигнали завантажені:", data.signals?.length || 0, "сигналів");
             console.log("📊 Активних сигналів:", data.active_signals || 0);
             console.log("🕐 Останнє оновлення:", data.last_update);
-            
             this.processSignals(data);
             
             // Оновлюємо час наступного оновлення
             this.nextUpdateTime = Date.now() + 600000;
+            
         } catch (error) {
             console.error('❌ Помилка завантаження сигналів:', error);
             this.showMessage('error', 'Помилка завантаження сигналів. Спробуйте оновити сторінку.');
-            
-            // Показуємо стан без сигналів
-            this.processSignals({ signals: [] });
         }
     }
 
@@ -268,13 +275,19 @@ if (autoTimer) {
         const totalSignalsElement = document.getElementById('total-signals');
         const successRateElement = document.getElementById('success-rate');
         
-        // Очищаємо контейнер
-        container.innerHTML = '';
-        
         if (!data || !data.signals || data.signals.length === 0) {
             console.log("⚠️ Немає сигналів для відображення");
             container.innerHTML = this.getEmptyStateHTML();
-            lastUpdate.textContent = '--:--:--';
+            
+            // Оновлюємо час останнього оновлення
+            if (data.last_update) {
+                const updateDate = new Date(data.last_update);
+                lastUpdate.textContent = this.formatTime(updateDate, true);
+                console.log("🕐 Останнє оновлення:", this.formatTime(updateDate, true));
+            } else {
+                lastUpdate.textContent = '--:--:--';
+            }
+            
             activeSignalsElement.textContent = '0';
             totalSignalsElement.textContent = '0';
             successRateElement.textContent = '0%';
@@ -283,16 +296,9 @@ if (autoTimer) {
         }
         
         if (data.last_update) {
-            try {
-                const updateDate = new Date(data.last_update);
-                lastUpdate.textContent = this.formatTime(updateDate, true);
-                console.log("🕐 Останнє оновлення:", this.formatTime(updateDate, true));
-            } catch (e) {
-                lastUpdate.textContent = '--:--:--';
-                console.error("Помилка форматування часу:", e);
-            }
-        } else {
-            lastUpdate.textContent = '--:--:--';
+            const updateDate = new Date(data.last_update);
+            lastUpdate.textContent = this.formatTime(updateDate, true);
+            console.log("🕐 Останнє оновлення:", this.formatTime(updateDate, true));
         }
         
         // Статистика
@@ -304,13 +310,12 @@ if (autoTimer) {
         successRateElement.textContent = `${successRate}%`;
         
         // Відображення сигналів
+        let html = '';
         let hasSignals = false;
         
         // Сортуємо сигнали за часом генерації (новіші перші)
         const sortedSignals = [...data.signals].sort((a, b) => {
-            const timeA = a.generated_at ? new Date(a.generated_at).getTime() : 0;
-            const timeB = b.generated_at ? new Date(b.generated_at).getTime() : 0;
-            return timeB - timeA;
+            return new Date(b.generated_at) - new Date(a.generated_at);
         });
         
         // Обмежуємо до 6 останніх сигналів
@@ -322,7 +327,7 @@ if (autoTimer) {
             
             const signalHTML = this.createSignalHTML(signal, index);
             if (signalHTML) {
-                container.innerHTML += signalHTML;
+                html += signalHTML;
                 hasSignals = true;
             }
         });
@@ -331,6 +336,7 @@ if (autoTimer) {
             container.innerHTML = this.getNoSignalsHTML();
             noSignals.style.display = 'block';
         } else {
+            container.innerHTML = html;
             noSignals.style.display = 'none';
             
             console.log("📊 Відображено сигналів:", latestSignals.length);
@@ -357,6 +363,9 @@ if (autoTimer) {
         
         // Причина від AI
         let reason = signal.reason || '';
+        if (this.language === 'ru' && signal.reason_ru) {
+            reason = signal.reason_ru;
+        }
         
         return `
             <div class="signal-card ${directionClass}" id="signal-${index}" 
@@ -434,17 +443,11 @@ if (autoTimer) {
     }
 
     setupSignalTimer(signal, index) {
-        // Очистимо попередній таймер, якщо він існує
-        if (this.signalTimers.has(index)) {
-            clearInterval(this.signalTimers.get(index));
-            this.signalTimers.delete(index);
-        }
-        
         const timerElement = document.getElementById(`timer-${index}`);
         const expiryElement = document.getElementById(`expiry-${index}`);
         if (!timerElement || !expiryElement) return;
         
-        const generatedTime = signal.generated_at ? new Date(signal.generated_at) : new Date();
+        const generatedTime = new Date(signal.generated_at);
         const expiryTime = new Date(generatedTime.getTime() + 10 * 60000); // 10 хвилин
         
         const updateTimer = () => {
@@ -509,14 +512,6 @@ if (autoTimer) {
                         <small>${this.translate('signalExpires')} ${minutes}:${seconds.toString().padStart(2, '0')}</small>
                     `;
                 }
-            } else {
-                timerElement.innerHTML = `
-                    <div class="timer-display">
-                        <i class="fas fa-clock"></i>
-                        <span class="timer-text">${minutes}:${seconds.toString().padStart(2, '0')}</span>
-                    </div>
-                    <small>${this.translate('expiresIn')}</small>
-                `;
             }
         };
         
@@ -547,8 +542,6 @@ if (autoTimer) {
         
         if (activeSignals === 0) {
             document.getElementById('no-signals').style.display = 'block';
-        } else {
-            document.getElementById('no-signals').style.display = 'none';
         }
     }
 
@@ -595,21 +588,19 @@ if (autoTimer) {
             
             this.showMessage('success', this.translate('feedbackSaved'));
             
+            // Приховуємо сигнал
+            element.style.opacity = '0.3';
+            element.style.transition = 'opacity 0.5s';
+            
+            setTimeout(() => {
+                if (element.parentNode) {
+                    element.remove();
+                    this.updateSignalCount();
+                }
+            }, 500);
+            
             // Закриваємо модальне вікно
             this.hideFeedbackModal();
-            
-            // Приховуємо сигнал (якщо потрібно)
-            if (feedback !== 'skip') {
-                element.style.opacity = '0.3';
-                element.style.transition = 'opacity 0.5s';
-                
-                setTimeout(() => {
-                    if (element.parentNode) {
-                        element.remove();
-                        this.updateSignalCount();
-                    }
-                }, 500);
-            }
             
             // Оновлюємо статистику успішності
             this.updateSuccessRate();
@@ -633,30 +624,22 @@ if (autoTimer) {
         const timeElement = document.getElementById('server-time');
         
         if (timeElement) {
-            try {
-                timeElement.textContent = now.toLocaleTimeString('uk-UA', {
-                    timeZone: this.kyivTZ,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-            } catch (e) {
-                timeElement.textContent = '--:--:--';
-            }
+            timeElement.textContent = now.toLocaleTimeString('uk-UA', {
+                timeZone: this.kyivTZ,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
         }
     }
 
     formatTime(date, includeSeconds = false) {
-        try {
-            return date.toLocaleTimeString('uk-UA', {
-                timeZone: this.kyivTZ,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: includeSeconds ? '2-digit' : undefined
-            });
-        } catch (e) {
-            return '--:--';
-        }
+        return date.toLocaleTimeString('uk-UA', {
+            timeZone: this.kyivTZ,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: includeSeconds ? '2-digit' : undefined
+        });
     }
 
     convertToKyivTime(dateString) {
@@ -686,7 +669,7 @@ if (autoTimer) {
                     <i class="fas fa-robot"></i>
                 </div>
                 <p>${this.translate('loadingSignals')}</p>
-                <small>${this.translate('firstLoad')} <span id="first-load-timer">5</span> сек</small>
+                <small>${this.translate('firstLoad')}</small>
             </div>
         `;
     }
@@ -770,168 +753,6 @@ if (autoTimer) {
         return this.translations[this.language][key] || key;
     }
 }
-
-// Додаємо стилі для анімацій
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    @keyframes modalFadeIn {
-        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    #message-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 400px;
-    }
-    
-    .message {
-        padding: 15px 20px;
-        border-radius: 10px;
-        color: white;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        animation: slideIn 0.3s ease-out;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    .message.success {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    }
-    
-    .message.error {
-        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-    }
-    
-    .message.info {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    }
-    
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1001;
-    }
-    
-    .modal-content {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        animation: modalFadeIn 0.3s ease-out;
-    }
-    
-    .feedback-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin: 20px 0;
-    }
-    
-    @media (min-width: 480px) {
-        .feedback-buttons {
-            flex-direction: row;
-            justify-content: center;
-        }
-    }
-    
-    .feedback-btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.3s;
-        text-align: center;
-        flex: 1;
-        min-width: 140px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    
-    @media (min-width: 480px) {
-        .feedback-btn {
-            flex: none;
-        }
-    }
-    
-    .feedback-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    
-    .feedback-yes { 
-        background: linear-gradient(135deg, #28a745 0%, #218838 100%); 
-        color: white; 
-    }
-    .feedback-no { 
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
-        color: white; 
-    }
-    .feedback-skip { 
-        background: linear-gradient(135deg, #6c757d 0%, #545b62 100%); 
-        color: white; 
-    }
-    
-    .modal-content small {
-        color: #a0aec0;
-        font-size: 0.8rem;
-        display: block;
-        margin-top: 15px;
-    }
-    
-    .modal-content h3 {
-        color: #2d3748;
-        margin-bottom: 15px;
-        font-size: 1.3rem;
-    }
-    
-    .modal-content p {
-        color: #4a5568;
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
-    
-    .signal-card {
-        animation: fadeIn 0.5s ease-out;
-    }
-`;
-document.head.appendChild(style);
 
 // Ініціалізація
 let signalDisplay;
