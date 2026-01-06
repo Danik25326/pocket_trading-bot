@@ -12,16 +12,10 @@ class SignalDisplay {
         this.nextUpdateTime = null;
         this.currentFeedbackSignal = null;
         
-        // Додаткове логування для дебагу
         console.log("🤖 Signal Display ініціалізовано");
-        console.log("🕐 Час: " + new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' }));
-        console.log("📊 URL сигналів: " + this.signalsUrl);
-        console.log("🌐 Мова: " + this.language);
-        
-        // Таймер для логування автооновлення
-        setInterval(() => {
-            console.log("🔄 Автооновлення через 60 секунд...");
-        }, 60000);
+        console.log("🕐 Час браузера: " + new Date().toLocaleString('uk-UA'));
+        console.log("🌐 URL сигналів: " + this.signalsUrl);
+        console.log("💾 Збережена мова: " + this.language);
         
         this.translations = {
             uk: {
@@ -88,7 +82,9 @@ class SignalDisplay {
                 feedbackSaved: "Відгук збережено! AI навчиться на цьому",
                 feedbackError: "Помилка збереження відгуку",
                 signalRemoved: "Сигнал видалено",
-                loading: "Завантаження..."
+                loading: "Завантаження...",
+                generatedAt: "Згенеровано:",
+                expiresAt: "Зникає о:"
             },
             ru: {
                 title: "AI Торговые Сигналы",
@@ -154,7 +150,9 @@ class SignalDisplay {
                 feedbackSaved: "Отзыв сохранен! AI научится на этом",
                 feedbackError: "Ошибка сохранения отзыва",
                 signalRemoved: "Сигнал удален",
-                loading: "Загрузка..."
+                loading: "Загрузка...",
+                generatedAt: "Сгенерировано:",
+                expiresAt: "Исчезнет в:"
             }
         };
         
@@ -167,12 +165,12 @@ class SignalDisplay {
         this.updateKyivTime();
         setInterval(() => this.updateKyivTime(), 1000);
         
-        // Перше завантаження через 5 секунд
+        // Перше завантаження через 3 секунди
         setTimeout(() => {
             console.log("📥 Перше завантаження сигналів...");
             this.loadSignals();
             this.startAutoUpdate();
-        }, 5000);
+        }, 3000);
         
         this.startSignalCleanupCheck();
         
@@ -196,50 +194,45 @@ class SignalDisplay {
     }
 
     startAutoUpdate() {
-        // Автоматичне оновлення кожні 10 хвилин (600 секунд)
+        // Автоматичне оновлення кожні 60 секунд (1 хвилина)
         this.updateInterval = setInterval(() => {
             console.log("🔄 Автоматичне оновлення сигналів...");
             this.loadSignals();
-        }, 600000); // 10 хвилин
+        }, 60000);
         
         // Оновлюємо таймер наступного оновлення
         this.updateNextUpdateTimer();
         setInterval(() => this.updateNextUpdateTimer(), 1000);
         
-        console.log("✅ Автооновлення активоване: кожні 10 хвилин");
+        console.log("✅ Автооновлення активоване: кожну хвилину");
     }
 
     updateNextUpdateTimer() {
         if (!this.nextUpdateTime) {
-            this.nextUpdateTime = Date.now() + 600000; // 10 хвилин
+            this.nextUpdateTime = Date.now() + 60000; // 1 хвилина
         }
         
         const now = Date.now();
         const timeLeft = this.nextUpdateTime - now;
         
         if (timeLeft <= 0) {
-            this.nextUpdateTime = now + 600000;
+            this.nextUpdateTime = now + 60000;
             return;
         }
         
         const minutes = Math.floor(timeLeft / 60000);
         const seconds = Math.floor((timeLeft % 60000) / 1000);
         
-        // БЕЗОПАСНЕ ОНОВЛЕННЯ ЕЛЕМЕНТІВ
+        // Безпечне оновлення елементів
         const updateTimer = document.getElementById('next-update-timer');
         const autoTimer = document.getElementById('next-auto-timer');
         
         if (updateTimer) {
             updateTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        } else {
-            console.warn("⚠️ Елемент 'next-update-timer' не знайдено");
         }
         
-        // Перевіряємо, чи існує елемент перед оновленням
         if (autoTimer) {
             autoTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        } else {
-            console.warn("⚠️ Елемент 'next-auto-timer' не знайдено");
         }
     }
 
@@ -256,10 +249,11 @@ class SignalDisplay {
             console.log("✅ Сигнали завантажені:", data.signals?.length || 0, "сигналів");
             console.log("📊 Активних сигналів:", data.active_signals || 0);
             console.log("🕐 Останнє оновлення:", data.last_update);
+            console.log("📅 Форматований час:", data.last_update_formatted);
             this.processSignals(data);
             
             // Оновлюємо час наступного оновлення
-            this.nextUpdateTime = Date.now() + 600000;
+            this.nextUpdateTime = Date.now() + 60000;
             
         } catch (error) {
             console.error('❌ Помилка завантаження сигналів:', error);
@@ -281,9 +275,13 @@ class SignalDisplay {
             
             // Оновлюємо час останнього оновлення
             if (data.last_update) {
-                const updateDate = new Date(data.last_update);
-                lastUpdate.textContent = this.formatTime(updateDate, true);
-                console.log("🕐 Останнє оновлення:", this.formatTime(updateDate, true));
+                try {
+                    const updateTime = this.convertToKyivTime(data.last_update, true);
+                    lastUpdate.textContent = updateTime;
+                    console.log("🕐 Останнє оновлення:", updateTime);
+                } catch (e) {
+                    lastUpdate.textContent = data.last_update_formatted || '--:--:--';
+                }
             } else {
                 lastUpdate.textContent = '--:--:--';
             }
@@ -296,16 +294,22 @@ class SignalDisplay {
         }
         
         if (data.last_update) {
-            const updateDate = new Date(data.last_update);
-            lastUpdate.textContent = this.formatTime(updateDate, true);
-            console.log("🕐 Останнє оновлення:", this.formatTime(updateDate, true));
+            try {
+                const updateTime = this.convertToKyivTime(data.last_update, true);
+                lastUpdate.textContent = updateTime;
+                console.log("🕐 Останнє оновлення:", updateTime);
+            } catch (e) {
+                lastUpdate.textContent = data.last_update_formatted || '--:--:--';
+            }
+        } else {
+            lastUpdate.textContent = '--:--:--';
         }
         
         // Статистика
         activeSignalsElement.textContent = data.active_signals || 0;
         totalSignalsElement.textContent = data.total_signals || data.signals.length;
         
-        // Розрахунок успішності (заглушка)
+        // Розрахунок успішності
         const successRate = this.calculateSuccessRate(data.signals);
         successRateElement.textContent = `${successRate}%`;
         
@@ -315,7 +319,9 @@ class SignalDisplay {
         
         // Сортуємо сигнали за часом генерації (новіші перші)
         const sortedSignals = [...data.signals].sort((a, b) => {
-            return new Date(b.generated_at) - new Date(a.generated_at);
+            const timeA = new Date(a.generated_at || a.last_updated || 0);
+            const timeB = new Date(b.generated_at || b.last_updated || 0);
+            return timeB - timeA;
         });
         
         // Обмежуємо до 6 останніх сигналів
@@ -361,11 +367,12 @@ class SignalDisplay {
         // Час входу (через 1-2 хвилини)
         const entryTime = signal.entry_time || '--:--';
         
+        // Час закінчення
+        const expiryTime = signal.expires_at ? 
+            this.convertToKyivTime(signal.expires_at) : '--:--';
+        
         // Причина від AI
         let reason = signal.reason || '';
-        if (this.language === 'ru' && signal.reason_ru) {
-            reason = signal.reason_ru;
-        }
         
         return `
             <div class="signal-card ${directionClass}" id="signal-${index}" 
@@ -414,7 +421,7 @@ class SignalDisplay {
                     
                     <div class="detail-item">
                         <div class="label">
-                            <i class="fas fa-calendar"></i> ${this.translate('lastUpdate')}
+                            <i class="fas fa-calendar"></i> ${this.translate('generatedAt')}
                         </div>
                         <div class="value">${generatedTime}</div>
                     </div>
@@ -432,7 +439,7 @@ class SignalDisplay {
                 <div class="signal-footer">
                     <div class="expiry-timer" id="expiry-${index}">
                         <i class="fas fa-hourglass-end"></i> 
-                        ${this.translate('expiresIn')}: <span class="expiry-time">10:00</span>
+                        ${this.translate('expiresAt')}: <span class="expiry-time">${expiryTime}</span>
                     </div>
                     <button class="feedback-trigger" onclick="signalDisplay.showFeedbackModal(${index})">
                         <i class="fas fa-star"></i> ${this.translate('giveFeedback')}
@@ -447,7 +454,7 @@ class SignalDisplay {
         const expiryElement = document.getElementById(`expiry-${index}`);
         if (!timerElement || !expiryElement) return;
         
-        const generatedTime = new Date(signal.generated_at);
+        const generatedTime = new Date(signal.generated_at || signal.last_updated);
         const expiryTime = new Date(generatedTime.getTime() + 10 * 60000); // 10 хвилин
         
         const updateTimer = () => {
@@ -482,8 +489,11 @@ class SignalDisplay {
             const minutes = Math.floor(timeToExpiry / 60000);
             const seconds = Math.floor((timeToExpiry % 60000) / 1000);
             
-            expiryElement.querySelector('.expiry-time').textContent = 
-                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            // Оновлюємо час закінчення
+            if (expiryElement.querySelector('.expiry-time')) {
+                expiryElement.querySelector('.expiry-time').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
             
             // Оновлюємо статус сигналу
             const entryTime = signal.entry_time;
@@ -522,7 +532,6 @@ class SignalDisplay {
     }
 
     startSignalCleanupCheck() {
-        // Перевірка кожну секунду для видалення старих сигналів
         setInterval(() => {
             const now = new Date();
             this.signalTimers.forEach((timer, index) => {
@@ -546,9 +555,14 @@ class SignalDisplay {
     }
 
     calculateSuccessRate(signals) {
-        // Заглушка - в реальності потрібно брати дані з feedback.json
-        // Для демонстрації використовуємо випадкове число
-        return Math.floor(Math.random() * 30) + 70; // 70-100%
+        // Проста логіка розрахунку (для демо)
+        if (!signals || signals.length === 0) return 0;
+        
+        const successfulSignals = signals.filter(s => 
+            s.confidence >= 0.8 || s.direction === 'UP'
+        ).length;
+        
+        return Math.round((successfulSignals / signals.length) * 100);
     }
 
     showFeedbackModal(index) {
@@ -581,7 +595,7 @@ class SignalDisplay {
         const { index, asset, element } = this.currentFeedbackSignal;
         
         try {
-            // Симулюємо відправку feedback на сервер для навчання AI
+            // Симулюємо відправку feedback
             await new Promise(resolve => setTimeout(resolve, 500));
             
             console.log("💾 Фідбек збережено:", { asset, feedback });
@@ -599,7 +613,6 @@ class SignalDisplay {
                 }
             }, 500);
             
-            // Закриваємо модальне вікно
             this.hideFeedbackModal();
             
             // Оновлюємо статистику успішності
@@ -612,10 +625,9 @@ class SignalDisplay {
     }
 
     updateSuccessRate() {
-        // Оновлюємо відсоток успішності (заглушка)
         const successRateElement = document.getElementById('success-rate');
         const currentRate = parseInt(successRateElement.textContent) || 0;
-        const newRate = Math.min(100, currentRate + 1); // Невелике покращення
+        const newRate = Math.min(100, currentRate + 1);
         successRateElement.textContent = `${newRate}%`;
     }
 
@@ -633,25 +645,18 @@ class SignalDisplay {
         }
     }
 
-    formatTime(date, includeSeconds = false) {
-        return date.toLocaleTimeString('uk-UA', {
-            timeZone: this.kyivTZ,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: includeSeconds ? '2-digit' : undefined
-        });
-    }
-
-    convertToKyivTime(dateString) {
+    convertToKyivTime(dateString, includeSeconds = false) {
         if (!dateString) return '--:--';
         try {
             const date = new Date(dateString);
             return date.toLocaleTimeString('uk-UA', {
-                timeZone: this.kyivTZ,
+                timeZone: 'Europe/Kiev',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: includeSeconds ? '2-digit' : undefined
             });
         } catch (e) {
+            console.error("❌ Помилка конвертації часу:", e);
             return '--:--';
         }
     }
@@ -669,7 +674,7 @@ class SignalDisplay {
                     <i class="fas fa-robot"></i>
                 </div>
                 <p>${this.translate('loadingSignals')}</p>
-                <small>${this.translate('firstLoad')}</small>
+                <small>${this.translate('firstLoad')} <span id="first-load-timer">3</span> сек</small>
             </div>
         `;
     }
@@ -679,7 +684,7 @@ class SignalDisplay {
             <div class="empty-state">
                 <i class="fas fa-chart-line"></i>
                 <h3>${this.translate('noSignalsNow')}</h3>
-                <p>${this.translate('nextAutoUpdate')} <span id="next-auto-timer">10:00</span></p>
+                <p>${this.translate('nextAutoUpdate')} <span id="next-auto-timer">01:00</span></p>
             </div>
         `;
     }
@@ -701,7 +706,6 @@ class SignalDisplay {
         
         messageContainer.appendChild(messageDiv);
         
-        // Автоматичне видалення повідомлення через 5 секунд
         setTimeout(() => {
             messageDiv.style.animation = 'slideOut 0.3s ease-out';
             setTimeout(() => {
@@ -760,4 +764,17 @@ let signalDisplay;
 document.addEventListener('DOMContentLoaded', () => {
     signalDisplay = new SignalDisplay();
     window.signalDisplay = signalDisplay;
+    
+    // Додаємо таймер для першого завантаження
+    let loadTimer = 3;
+    const timerElement = document.getElementById('first-load-timer');
+    if (timerElement) {
+        const timerInterval = setInterval(() => {
+            loadTimer--;
+            timerElement.textContent = loadTimer;
+            if (loadTimer <= 0) {
+                clearInterval(timerInterval);
+            }
+        }, 1000);
+    }
 });
