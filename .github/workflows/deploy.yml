@@ -13,6 +13,7 @@ on:
       - 'backend/**'
       - 'utils/**'
       - '.github/workflows/**'
+  workflow_dispatch:  # Додаємо можливість ручного запуску
 
 permissions:
   contents: write
@@ -20,56 +21,7 @@ permissions:
   id-token: write
 
 jobs:
-  check-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      should_deploy: ${{ steps.check.outputs.should_deploy }}
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 2
-    
-    - name: Check for deployable changes
-      id: check
-      run: |
-        # Перевіряємо, чи змінилися файли для деплою
-        echo "📋 Перевірка змін для деплою..."
-        
-        # Отримуємо список змінених файлів
-        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
-        
-        # Список файлів, які вимагають деплою
-        DEPLOY_FILES="data/signals.json data/history.json index.html style.css script.js .nojekyll"
-        
-        SHOULD_DEPLOY=false
-        
-        # Перевіряємо кожен файл
-        for file in $DEPLOY_FILES; do
-          if echo "$CHANGED_FILES" | grep -q "$file"; then
-            echo "✅ Знайдено зміни в $file - потрібен деплой"
-            SHOULD_DEPLOY=true
-          fi
-        done
-        
-        # Перевіряємо зміни в backend (можуть бути оновлення логіки)
-        if echo "$CHANGED_FILES" | grep -q "^backend/"; then
-          echo "✅ Знайдено зміни в backend - потрібен деплой"
-          SHOULD_DEPLOY=true
-        fi
-        
-        if [ "$SHOULD_DEPLOY" = true ]; then
-          echo "🚀 Деплой необхідний"
-          echo "should_deploy=true" >> $GITHUB_OUTPUT
-        else
-          echo "⏸️ Зміни не потребують деплою"
-          echo "should_deploy=false" >> $GITHUB_OUTPUT
-        fi
-
   deploy:
-    needs: check-changes
-    if: needs.check-changes.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -78,7 +30,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0
+    
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
@@ -89,6 +43,10 @@ jobs:
         echo "✅ signals.json: $(wc -l < data/signals.json) рядків"
         echo "✅ history.json: $(wc -l < data/history.json) записів"
         echo "✅ index.html: $(wc -l < index.html) рядків"
+        
+        # Перевіряємо вміст signals.json
+        echo "📋 Вміст signals.json:"
+        cat data/signals.json | jq '.last_update' || echo "Не вдалося прочитати signals.json"
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
@@ -104,3 +62,12 @@ jobs:
         echo "🎉 Успішно задеплойлено на GitHub Pages!"
         echo "🌐 URL: ${{ steps.deployment.outputs.page_url }}"
         echo "🕐 Час деплою: $(date '+%H:%M:%S') UTC"
+        echo "📅 Час Київ: $(TZ='Europe/Kiev' date '+%H:%M:%S')"
+        
+        # Додаємо перевірку останнього оновлення
+        LAST_UPDATE=$(cat data/signals.json | jq -r '.last_update // empty')
+        if [ -n "$LAST_UPDATE" ]; then
+          echo "🔄 Останнє оновлення сигналів: $LAST_UPDATE"
+        else
+          echo "⚠️ Не знайдено last_update в signals.json"
+        fi
