@@ -74,6 +74,8 @@ jobs:
     
     - name: Generate trading signals
       env:
+        # 🔴 ДОДАЄМО ЧАСОВИЙ ПОЯС
+        TZ: 'Europe/Kiev'
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         POCKET_DEMO: 'true'
@@ -95,7 +97,7 @@ jobs:
         echo "🌐 Мова: $LANGUAGE"
         echo "📊 Активи: $ASSETS"
         echo "🧠 Модель AI: $GROQ_MODEL"
-        echo "🕐 Часовий пояс: Київ (UTC+2)"
+        echo "🕐 Часовий пояс: $TZ (UTC+2)"
         echo "🔧 Джерело запуску: $TRIGGER_SOURCE"
         echo "⏱️  Інтервал генерації: 10 хвилин"
         echo "📈 Сигналів на сайті: максимум 6"
@@ -113,6 +115,7 @@ jobs:
         
         echo "✅ Генерація сигналів завершена"
         echo "🕐 Час завершення: $(date '+%H:%M:%S') UTC"
+        echo "⏳ Наступна генерація: через 10 хвилин"
     
     - name: Commit and push all changes
       run: |
