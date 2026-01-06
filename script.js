@@ -228,9 +228,10 @@ class SignalDisplay {
         
         document.getElementById('next-update-timer').textContent = 
             `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        document.getElementById('next-auto-timer').textContent = 
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
+const autoTimer = document.getElementById('next-auto-timer');
+if (autoTimer) {
+    autoTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
 
     async loadSignals() {
         try {
