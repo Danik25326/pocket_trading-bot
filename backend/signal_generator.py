@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import json
 from datetime import datetime, timedelta
 import pytz
 import random
@@ -20,7 +21,7 @@ class SignalGenerator:
         
         # Обмеження для економії токенів
         self.MAX_SIGNALS_PER_GENERATION = 3
-        self.REQUEST_DELAY = 2  # секунд між запитами
+        self.REQUEST_DELAY = 2
 
     async def generate_signal(self, asset):
         """Генерація одного сигналу з випадковою затримкою входу 1-2 хвилини"""
@@ -90,8 +91,13 @@ class SignalGenerator:
                     if 'volatility' not in signal:
                         signal['volatility'] = 0.0
                     
+                    # Додаємо час закінчення
+                    expiry_time = now_kyiv + timedelta(minutes=10)
+                    signal['expires_at'] = expiry_time.isoformat()
+                    
                     logger.info(f"✅ Створено сигнал для {asset}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
                     logger.info(f"   📅 Вхід через {delay_minutes} хв о {signal['entry_time']}, Тривалість: {signal['duration']} хв")
+                    logger.info(f"   🕐 Зникне через 10 хв: {expiry_time.strftime('%H:%M')}")
                     return signal
                 else:
                     logger.warning(f"⚠️ Сигнал для {asset} має низьку впевненість: {confidence*100:.1f}% < {Config.MIN_CONFIDENCE*100}%")
@@ -106,7 +112,7 @@ class SignalGenerator:
         return None
 
     async def generate_all_signals(self):
-        """Генерація сигналів для всіх активів з обмеженням для економії токенів"""
+        """Генерація сигналів для всіх активів"""
         logger.info("=" * 60)
         logger.info(f"🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ")
         logger.info(f"🌐 Мова: {Config.LANGUAGE}")
@@ -123,10 +129,8 @@ class SignalGenerator:
             logger.info(f"  - Макс. тривалість: {Config.MAX_DURATION} хв")
             logger.info(f"  - Модель AI: {Config.GROQ_MODEL}")
             logger.info(f"  - Мова: {Config.LANGUAGE}")
-            logger.info(f"  - Часовий пояс: Київ (UTC+2)")
-            logger.info(f"  - Затримка входу: 1-2 хвилини")
             
-            # ⚠️ ВИДАЛЕНО ВСІ ПЕРЕВІРКИ ЧАСУ! Генеруємо завжди
+            # ⚠️ ГЕНЕРУЄМО ЗАВЖДИ, БЕЗ ПЕРЕВІРОК ЧАСУ
             logger.info("🔗 Підключення до PocketOption...")
             logger.info(f"   Режим: {'DEMO' if Config.POCKET_DEMO else 'REAL'}")
             
@@ -165,10 +169,25 @@ class SignalGenerator:
 
             if valid_signals:
                 logger.info(f"\n💾 Збереження {len(valid_signals)} сигналів...")
+                
+                # Додаємо інформацію про останнє оновлення
+                now_kyiv = Config.get_kyiv_time()
+                for signal in valid_signals:
+                    signal['last_updated'] = now_kyiv.isoformat()
+                
                 save_result = self.data_handler.save_signals(valid_signals)
                 
                 if save_result:
                     logger.info(f"✅ Збережено {len(valid_signals)} сигналів")
+                    
+                    # Оновлюємо файл signals.json з актуальним часом
+                    signals_data = self.data_handler.load_signals()
+                    signals_data['last_update'] = now_kyiv.isoformat()
+                    signals_data['last_update_formatted'] = now_kyiv.strftime('%Y-%m-%d %H:%M:%S')
+                    signals_data['last_update_utc'] = datetime.utcnow().isoformat() + 'Z'
+                    
+                    with open(Config.SIGNALS_FILE, 'w', encoding='utf-8') as f:
+                        json.dump(signals_data, f, indent=2, ensure_ascii=False, default=str)
                     
                     logger.info(f"\n🎯 ЗГЕНЕРОВАНО {len(valid_signals)} СИГНАЛІВ:")
                     for i, signal in enumerate(valid_signals, 1):
@@ -183,6 +202,17 @@ class SignalGenerator:
                 
                 if failed_assets:
                     logger.info(f"📉 Активи без сигналів: {', '.join(failed_assets)}")
+                
+                # Все одно оновлюємо last_update
+                now_kyiv = Config.get_kyiv_time()
+                signals_data = self.data_handler.load_signals()
+                signals_data['last_update'] = now_kyiv.isoformat()
+                signals_data['last_update_formatted'] = now_kyiv.strftime('%Y-%m-%d %H:%M:%S')
+                
+                with open(Config.SIGNALS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(signals_data, f, indent=2, ensure_ascii=False, default=str)
+                
+                logger.info(f"🔄 Оновлено last_update: {now_kyiv.strftime('%H:%M:%S')}")
 
             logger.info("🔌 Відключення від PocketOption...")
             await self.pocket_client.disconnect()
@@ -207,9 +237,10 @@ class SignalGenerator:
 async def main():
     """Головна функція - запускається ТІЛЬКИ ОДИН РАЗ"""
     print("\n" + "="*60)
-    print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ - {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ")
     print(f"📅 Поточний час UTC: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"⏰ Автоматичний запуск: кожні 10 хвилин (у :00, :10, :20, :30, :40, :50)")
+    print(f"🌍 Поточний час Київ: {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"⏰ Автоматичний запуск: кожні 10 хвилин")
     print(f"🌐 Мова: {Config.LANGUAGE}")
     print(f"💰 Обмеження: 3 сигнали для економії токенів Groq")
     print(f"🔄 Режим: {'DEMO' if Config.POCKET_DEMO else 'REAL'}")
@@ -243,11 +274,17 @@ async def main():
         print("   - AI не повернув сигнали з достатньою впевненістю")
         print("   - Технічні проблеми з API")
     
+    # Завантажуємо оновлені дані для перевірки
+    data_handler = DataHandler()
+    signals_data = data_handler.load_signals()
+    
+    print(f"\n📊 ІНФОРМАЦІЯ ПРО ФАЙЛ:")
+    print(f"   • Останнє оновлення: {signals_data.get('last_update', 'N/A')}")
+    print(f"   • Всього сигналів: {signals_data.get('total_signals', 0)}")
+    print(f"   • Активних сигналів: {signals_data.get('active_signals', 0)}")
+    
     print(f"\n✅ Генерація сигналів завершена о {Config.get_kyiv_time().strftime('%H:%M:%S')}")
     print("="*60)
-    
-    # Очищаємо старі сигнали після генерації
-    generator.data_handler.auto_cleanup_old_signals()
     
     # Важливо: Повідомляємо про наступний автоматичний запуск
     print(f"\n⏰ НАСТУПНИЙ АВТОМАТИЧНИЙ ЗАПУСК:")
