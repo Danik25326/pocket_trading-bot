@@ -126,21 +126,7 @@ class SignalGenerator:
             logger.info(f"  - Часовий пояс: Київ (UTC+2)")
             logger.info(f"  - Затримка входу: 1-2 хвилини")
             
-            # Перевірка часу останнього оновлення
-            existing_data = self.data_handler.load_signals()
-            last_update = existing_data.get('last_update')
-            
-            if last_update:
-                try:
-                    last_time = datetime.fromisoformat(last_update.replace('Z', '+00:00'))
-                    time_diff = (datetime.utcnow() - last_time).total_seconds()
-                    
-                    if time_diff < Config.SIGNAL_INTERVAL:
-                        logger.info(f"⏳ Ще не пройшло 5 хвилин з останньої генерації ({time_diff:.0f} сек)")
-                        logger.info(f"   Останнє оновлення: {last_time.strftime('%H:%M:%S')} UTC")
-                        return []
-                except Exception as e:
-                    logger.warning(f"⚠️ Помилка перевірки часу: {e}")
+            # ⚠️ ВИДАЛЕНО: Перевірка часу останнього оновлення (вона блокуюча)
             
             logger.info("🔗 Підключення до PocketOption...")
             logger.info(f"   Режим: {'DEMO' if Config.POCKET_DEMO else 'REAL'}")
@@ -229,6 +215,9 @@ async def main():
     print(f"💰 Обмеження: 3 сигнали для економії токенів Groq")
     print("="*60)
     
+    # ⚠️ КОМЕНТУЄМО цю перевірку, оскільки вона блокуюча
+    # GitHub Actions і так запускає кожні 10 хвилин за розкладом
+    """
     # Перевірка, чи не було запуску менше 9 хвилин тому
     existing_data = DataHandler().load_signals()
     last_update = existing_data.get('last_update')
@@ -247,6 +236,7 @@ async def main():
                 return []
         except Exception as e:
             print(f"⚠️ Помилка перевірки часу: {e}")
+    """
     
     logging.basicConfig(
         level=getattr(logging, Config.LOG_LEVEL),
