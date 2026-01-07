@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-07T09:50:30.286336+02:00",
+  "last_update": "2026-01-07T10:00:02.941054+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,55 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-07T07:50:28.285163Z",
       "expires_at": "2026-01-07T10:00:28.285126+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "10:00",
+      "duration": 1,
+      "reason": "Ціна нижче SMA5 і SMA10, тренд вниз, висока волатильність 0.55% – очікуємо подальше падіння.",
+      "timestamp": "2026-01-07 09:59:53",
+      "generated_at": "2026-01-07T09:59:54.495345+02:00",
+      "volatility": 0.5509,
+      "id": "GBPJPY_otc_20260107095954",
+      "entry_delay": 1,
+      "generated_at_utc": "2026-01-07T07:59:54.495391Z",
+      "expires_at": "2026-01-07T10:09:54.495345+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "UP",
+      "confidence": 0.84,
+      "entry_time": "10:01",
+      "duration": 5,
+      "reason": "Ціна 1.16662 вище SMA5 (1.16581) і SMA10 (1.16549), тренд визначений як UP, волатильність низька (0.1544%), тому обираємо тривалість 5 хвилин. Останні свічки показують поступове підвищення закриття, що підтверджує висхідний рух.",
+      "timestamp": "2026-01-07 09:59:56",
+      "generated_at": "2026-01-07T09:59:57.509206+02:00",
+      "volatility": 0.1544,
+      "id": "EURUSD_otc_20260107095957",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-07T07:59:57.509253Z",
+      "expires_at": "2026-01-07T10:09:57.509206+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "10:01",
+      "duration": 5,
+      "reason": "Тренд зазначений як DOWN, ціна поступово знижується протягом останніх хвилин, SMA5 і SMA10 лежать нижче поточної ціни, а волатильність дуже низька (0.0726%), що відповідає 5‑хвилинному таймфрейму. Це підвищує ймовірність продовження короткострокового падіння.",
+      "timestamp": "2026-01-07 09:59:59",
+      "generated_at": "2026-01-07T10:00:00.940054+02:00",
+      "volatility": 0.0726,
+      "id": "USDJPY_otc_20260107100000",
+      "entry_delay": 1,
+      "generated_at_utc": "2026-01-07T08:00:00.940104Z",
+      "expires_at": "2026-01-07T10:10:00.940054+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 32
+  "total_signals": 6,
+  "active_signals": 6,
+  "generation_count": 33
 }
