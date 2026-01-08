@@ -13,7 +13,7 @@ class SignalDisplay {
             this.feedbackUrl = 'data/feedback.json';
         } else {
             // Для GitHub Pages
-            this.signalsUrl = `/${repoName}/data/signals.json`;
+            this.signalsUrl = `https://raw.githubusercontent.com/Danik25326/pocket_trading_bot/main/data/signals.json?t=${Date.now()}`;
             this.historyUrl = `/${repoName}/data/history.json`;
             this.feedbackUrl = `/${repoName}/data/feedback.json`;
         }
