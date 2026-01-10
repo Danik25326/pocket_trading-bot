@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-10T23:46:06.617625+02:00",
+  "last_update": "2026-01-10T23:55:22.615612+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,55 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-10T21:46:04.615823Z",
       "expires_at": "2026-01-10T23:56:04.615760+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "UP",
+      "confidence": 0.86,
+      "entry_time": "23:57",
+      "duration": 1,
+      "reason": "Ціна вище SMA5 (224.3676) і SMA10 (223.956), тренд UP, волатильність 0.62% – високий рівень, що підтримує короткостроковий рух вгору, тому прогноз на підвищення з високою впевненістю.",
+      "timestamp": "2026-01-10 23:55:13",
+      "generated_at": "2026-01-10T23:55:14.713779+02:00",
+      "volatility": 0.6202,
+      "id": "GBPJPY_otc_20260110235514",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-10T21:55:14.713827Z",
+      "expires_at": "2026-01-11T00:05:14.713779+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "UP",
+      "confidence": 0.78,
+      "entry_time": "23:57",
+      "duration": 5,
+      "reason": "Ціна перебуває вище SMA5 і SMA10, тренд UP, волатильність низька (<0.2%), тому очікуємо подальший поступовий зріст протягом 5 хвилин.",
+      "timestamp": "2026-01-10 23:55:17",
+      "generated_at": "2026-01-10T23:55:17.642033+02:00",
+      "volatility": 0.1503,
+      "id": "EURUSD_otc_20260110235517",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-10T21:55:17.642080Z",
+      "expires_at": "2026-01-11T00:05:17.642033+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "UP",
+      "confidence": 0.78,
+      "entry_time": "23:57",
+      "duration": 5,
+      "reason": "Тренд UP, ціна вище SMA5 і SMA10, низька волатильність (0.113%), тому очікується подальший зріст у короткостроковій перспективі.",
+      "timestamp": "2026-01-10 23:55:19",
+      "generated_at": "2026-01-10T23:55:20.614232+02:00",
+      "volatility": 0.113,
+      "id": "USDJPY_otc_20260110235520",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-10T21:55:20.614280Z",
+      "expires_at": "2026-01-11T00:05:20.614232+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 236
+  "total_signals": 6,
+  "active_signals": 6,
+  "generation_count": 237
 }
