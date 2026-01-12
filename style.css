@@ -908,16 +908,6 @@ footer p {
     color: #2d3748;
 }
 
-/* Анімації для сигналів */
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0.3; }
-}
-
-.signal-card.fading {
-    animation: fadeOut 0.5s ease-out;
-}
-
 /* Animations */
 @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -973,7 +963,6 @@ footer p {
     }
 }
 
-/* Mobile Optimizations */
 @media (max-width: 480px) {
     .container {
         padding: 10px;
@@ -1037,34 +1026,4 @@ footer p {
         padding: 10px 15px;
         font-size: 0.9rem;
     }
-}
-/* Кнопка ручного оновлення */
-.refresh-btn {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s;
-    margin-top: 10px;
-}
-
-.refresh-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3);
-}
-
-.refresh-btn i {
-    animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
