@@ -1,54 +1,54 @@
 {
-  "last_update": "2026-01-12T12:40:54.673265+02:00",
+  "last_update": "2026-01-12T12:57:25.717925+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "DOWN",
+      "direction": "UP",
       "confidence": 0.75,
-      "entry_time": "12:42",
+      "entry_time": "12:59",
       "duration": 3,
-      "reason": "Тренд вниз. SMA5 (219.17640) < SMA10 (219.25670). Волатильність: 0.20%",
-      "timestamp": "2026-01-12 12:40:42",
-      "generated_at": "2026-01-12T12:40:44.270072+02:00",
-      "volatility": 0.2048,
-      "id": "GBPJPY_otc_20260112124044",
+      "reason": "Тренд вгору. SMA5 (219.86940) > SMA10 (219.84180). Волатильність: 0.08%",
+      "timestamp": "2026-01-12 12:57:13",
+      "generated_at": "2026-01-12T12:57:15.383012+02:00",
+      "volatility": 0.0842,
+      "id": "GBPJPY_otc_20260112125715",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-12T10:40:44.270115Z",
-      "expires_at": "2026-01-12T12:50:44.270072+02:00"
+      "generated_at_utc": "2026-01-12T10:57:15.383056Z",
+      "expires_at": "2026-01-12T13:07:15.383012+02:00"
     },
     {
       "asset": "EURUSD_otc",
-      "direction": "DOWN",
+      "direction": "UP",
       "confidence": 0.75,
-      "entry_time": "12:42",
+      "entry_time": "12:59",
       "duration": 3,
-      "reason": "Тренд вниз. SMA5 (1.12371) < SMA10 (1.12382). Волатильність: 0.08%",
-      "timestamp": "2026-01-12 12:40:46",
-      "generated_at": "2026-01-12T12:40:48.420379+02:00",
-      "volatility": 0.0792,
-      "id": "EURUSD_otc_20260112124048",
+      "reason": "Тренд вгору. SMA5 (1.12248) > SMA10 (1.12223). Волатильність: 0.15%",
+      "timestamp": "2026-01-12 12:57:17",
+      "generated_at": "2026-01-12T12:57:19.548249+02:00",
+      "volatility": 0.1533,
+      "id": "EURUSD_otc_20260112125719",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-12T10:40:48.420414Z",
-      "expires_at": "2026-01-12T12:50:48.420379+02:00"
+      "generated_at_utc": "2026-01-12T10:57:19.548285Z",
+      "expires_at": "2026-01-12T13:07:19.548249+02:00"
     },
     {
       "asset": "USDJPY_otc",
-      "direction": "UP",
+      "direction": "DOWN",
       "confidence": 0.75,
-      "entry_time": "12:42",
+      "entry_time": "12:59",
       "duration": 3,
-      "reason": "Тренд вгору. SMA5 (158.48920) > SMA10 (158.47350). Волатильність: 0.06%",
-      "timestamp": "2026-01-12 12:40:50",
-      "generated_at": "2026-01-12T12:40:52.670589+02:00",
-      "volatility": 0.0587,
-      "id": "USDJPY_otc_20260112124052",
+      "reason": "Тренд вниз. SMA5 (158.29980) < SMA10 (158.33260). Волатильність: 0.07%",
+      "timestamp": "2026-01-12 12:57:21",
+      "generated_at": "2026-01-12T12:57:23.716758+02:00",
+      "volatility": 0.0695,
+      "id": "USDJPY_otc_20260112125723",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-12T10:40:52.670627Z",
-      "expires_at": "2026-01-12T12:50:52.670589+02:00"
+      "generated_at_utc": "2026-01-12T10:57:23.716794Z",
+      "expires_at": "2026-01-12T13:07:23.716758+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 3,
   "active_signals": 3,
-  "generation_count": 321
+  "generation_count": 322
 }
