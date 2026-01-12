@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-12T13:55:10.653967+02:00",
+  "last_update": "2026-01-12T13:57:55.039175+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,55 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-12T11:55:08.652506Z",
       "expires_at": "2026-01-12T14:05:08.652466+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.75,
+      "entry_time": "13:59",
+      "duration": 3,
+      "reason": "Тренд вниз. SMA5 (218.94300) < SMA10 (218.95670). Волатильність: 0.15%",
+      "timestamp": "2026-01-12 13:57:45",
+      "generated_at": "2026-01-12T13:57:46.454744+02:00",
+      "volatility": 0.148,
+      "id": "GBPJPY_otc_20260112135746",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-12T11:57:46.454781Z",
+      "expires_at": "2026-01-12T14:07:46.454744+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "UP",
+      "confidence": 0.75,
+      "entry_time": "13:59",
+      "duration": 3,
+      "reason": "Тренд вгору. SMA5 (1.12222) > SMA10 (1.12194). Волатильність: 0.11%",
+      "timestamp": "2026-01-12 13:57:48",
+      "generated_at": "2026-01-12T13:57:49.737276+02:00",
+      "volatility": 0.1061,
+      "id": "EURUSD_otc_20260112135749",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-12T11:57:49.737311Z",
+      "expires_at": "2026-01-12T14:07:49.737276+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.75,
+      "entry_time": "13:59",
+      "duration": 3,
+      "reason": "Тренд вниз. SMA5 (158.43880) < SMA10 (158.47890). Волатильність: 0.12%",
+      "timestamp": "2026-01-12 13:57:52",
+      "generated_at": "2026-01-12T13:57:53.038386+02:00",
+      "volatility": 0.1199,
+      "id": "USDJPY_otc_20260112135753",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-12T11:57:53.038420Z",
+      "expires_at": "2026-01-12T14:07:53.038386+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 326
+  "total_signals": 6,
+  "active_signals": 6,
+  "generation_count": 327
 }
