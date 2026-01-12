@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.86,
+    "entry_time": "18:55",
+    "duration": 2,
+    "reason": "Ціна демонструє чіткий низхідний тренд: послідовність нижчих максимумів і мінімумів, медвежий engulfing на 19:15, EMA 9 нижче EMA 21, MACD у негативній зоні, RSI нижче 50, Stochastic падає, ціна торкається нижньої межі Bollinger Bands. Усі індикатори вказують на подальший спад.",
+    "timestamp": "2026-01-12 18:53:43",
+    "generated_at": "2026-01-12T18:53:45.279954+02:00",
+    "volatility": 0.5707,
+    "id": "GBPJPY_otc_20260112185345",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-12T16:53:45.279998Z",
+    "expires_at": "2026-01-12T19:03:45.279954+02:00",
+    "saved_at": "2026-01-12T18:53:54.994745+02:00",
+    "history_id": "GBPJPY_otc_20260112185354",
+    "status": "saved"
+  },
+  {
+    "asset": "EURUSD_otc",
+    "direction": "DOWN",
+    "confidence": 0.82,
+    "entry_time": "18:55",
+    "duration": 3,
+    "reason": "RSI likely below 50, MACD negative, price trading near lower Bollinger Band, EMA9 below EMA21, Stochastic in oversold zone but still descending, recent candles show a bearish trend with a small bullish blip that failed, no bullish reversal pattern.",
+    "timestamp": "2026-01-12 18:53:47",
+    "generated_at": "2026-01-12T18:53:49.206372+02:00",
+    "volatility": 0.1283,
+    "id": "EURUSD_otc_20260112185349",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-12T16:53:49.206416Z",
+    "expires_at": "2026-01-12T19:03:49.206372+02:00",
+    "saved_at": "2026-01-12T18:53:54.994745+02:00",
+    "history_id": "EURUSD_otc_20260112185354",
+    "status": "saved"
+  },
+  {
+    "asset": "USDJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.82,
+    "entry_time": "18:55",
+    "duration": 3,
+    "reason": "Ціна протягом останніх 8 хвилин спадає з 158.057 до 157.979, EMA‑9 перебуває нижче EMA‑21, MACD показує негативний гістограм і крос під нуль, RSI знаходиться в діапазоні 45‑50 (під середнім), Stochastic нижче 30, ціна торкається нижньої лінії Bollinger Bands, а переважають медвежі свечі (3 з 4 останніх – bearish). Усі індикатори вказують на продовження низхідного руху, тому рекомендація – короткостроковий продаж.",
+    "timestamp": "2026-01-12 18:53:51",
+    "generated_at": "2026-01-12T18:53:52.993156+02:00",
+    "volatility": 0.0854,
+    "id": "USDJPY_otc_20260112185352",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-12T16:53:52.993196Z",
+    "expires_at": "2026-01-12T19:03:52.993156+02:00",
+    "saved_at": "2026-01-12T18:53:54.994745+02:00",
+    "history_id": "USDJPY_otc_20260112185354",
+    "status": "saved"
+  }
+]
