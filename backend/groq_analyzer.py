@@ -142,7 +142,7 @@ class GroqAnalyzer:
                     }
                 ],
                 temperature=0.3,
-                max_tokens=1000,
+                max_tokens=800,
                 response_format={"type": "json_object"}
             )
             
