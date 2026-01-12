@@ -84,10 +84,7 @@ class GroqAnalyzer:
         
         now_kyiv = Config.get_kyiv_time()
         
-        # Розрахунок волатильності для тривалості
-        volatility = self.calculate_volatility(candles_data)
-        
-        # Визначення тривалості за волатильністю (2-3 хвилини)
+        # Розрахунок тривалості за волатильністю (2-3 хвилини)
         if volatility > 0.5:
             duration = 2  # Висока волатильність -> 2 хвилини
         elif volatility > 0.2:
@@ -99,8 +96,9 @@ class GroqAnalyzer:
         entry_time_dt = now_kyiv + timedelta(minutes=2)
         entry_time = entry_time_dt.strftime('%H:%M')
         
+        # Беремо тільки останні 10 свічок для скорочення промту
         candles_str = ""
-        for i, candle in enumerate(candles_data[-20:]):
+        for i, candle in enumerate(candles_data[-10:]):
             if hasattr(candle, 'timestamp'):
                 time_str = candle.timestamp.strftime('%H:%M')
             else:
@@ -119,46 +117,36 @@ class GroqAnalyzer:
 ПРОАНАЛИЗИРУЙ СЛЕДУЮЩИЕ ИНДИКАТОРЫ:
 1. RSI (14) - перекупленность/перепроданность
 2. MACD - момент и тренд
-3. Bollinger Bands %B - волатильность
+3. Bollinger Bands - волатильность
 4. EMA 9/21 - кроссовер
-5. Stochastic - перекупленность/перепроданность
-6. Тренд последних 5 свечей
-7. Паттерны свечей (поглощение, молот, доджи и т.д.)
+5. Тренд последних 5 свечей
+6. Паттерны свечей (молот, поглощение, доджи)
 
-ДАННЫЕ ПОСЛЕДНИХ 20 СВЕЧЕЙ (1 минута):
+ПОСЛЕДНИЕ 10 СВЕЧЕЙ:
 {candles_str}
 
-ВАЖНЫЕ ПРАВИЛА АНАЛИЗА:
-1. Сигнал должен быть четким с минимальной уверенностью 75%
-2. Если тренд неясен (флет) - НЕ давай сигнал
-3. Анализируй все 7 указанных индикаторов комплексно
-4. Чекни свечные паттерны на разворотах/продолжении
-5. Учти уровни поддержки/сопротивления
-
-ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ:
+ТЕХНИЧЕСКИЕ ДАННЫЕ:
+- Текущая цена: {technical_indicators.get('current_price', 0):.5f}
 - Волатильность: {volatility:.4f}%
-- Время экспирации: {duration} мин (рассчитано по волатильности)
-- Время входа: точно через 2 минуты ({entry_time})
+- Тренд: {technical_indicators.get('trend', 'NEUTRAL')}
+
+ВАЖНЫЕ ПРАВИЛА:
+1. Минимальная уверенность: 75%
+2. Если тренд неясен (флет) - НЕ давай сигнал
+3. Максимальная длительность: 5 минут
+4. Время входа: точно через 2 минуты ({entry_time})
+5. Время экспирации: {duration} мин (рассчитано по волатильности)
 
 ДАЙ ПРОГНОЗ НА {duration} МИНУТ ВПЕРЕД:
 
-ОТВЕТ В СТРОГОМ JSON ФОРМАТЕ:
+ОТВЕТ В JSON ФОРМАТЕ:
 {{
     "asset": "{asset}",
     "direction": "UP или DOWN",
-    "confidence": 0.85 (от 0.75 до 0.95),
+    "confidence": 0.85,
     "entry_time": "{entry_time}",
     "duration": {duration},
-    "technical_analysis": {{
-        "rsi_analysis": "анализ RSI",
-        "macd_analysis": "анализ MACD", 
-        "bb_analysis": "анализ Bollinger Bands",
-        "ema_cross": "анализ EMA 9/21",
-        "stochastic_analysis": "анализ Stochastic",
-        "candle_trend": "тренд 5 свечей",
-        "candle_patterns": "обнаруженные паттерны"
-    }},
-    "reason": "Краткое обоснование сигнала на русском",
+    "reason": "Краткий анализ на русском (максимум 50 слов)",
     "timestamp": "{now_kyiv.strftime('%Y-%m-%d %H:%M:%S')}"
 }}
 """
@@ -173,46 +161,36 @@ class GroqAnalyzer:
 ПРОАНАЛІЗУЙ НАСТУПНІ ІНДИКАТОРИ:
 1. RSI (14) - перекупленість/перепроданість
 2. MACD - моментум та тренд
-3. Bollinger Bands %B - волатильність
+3. Bollinger Bands - волатильність
 4. EMA 9/21 - кросовер
-5. Stochastic - перекупленість/перепроданість
-6. Тренд останніх 5 свічок
-7. Патерни свічок (поглинання, молот, доджі тощо)
+5. Тренд останніх 5 свічок
+6. Патерни свічок (молот, поглинання, доджі)
 
-ДАНІ ОСТАННІХ 20 СВІЧОК (1 хвилина):
+ОСТАННІ 10 СВІЧОК:
 {candles_str}
 
-ВАЖЛИВІ ПРАВИЛА АНАЛІЗУ:
-1. Сигнал має бути чітким з мінімальною впевненістю 75%
-2. Якщо тренд неясний (флет) - НЕ давай сигнал
-3. Аналізуй всі 7 вказаних індикаторів комплексно
-4. Перевір свічкові патерни на розворотах/продовженні
-5. Врахуй рівні підтримки/опору
-
-ТЕХНІЧНІ ПАРАМЕТРИ:
+ТЕХНІЧНІ ДАНІ:
+- Поточна ціна: {technical_indicators.get('current_price', 0):.5f}
 - Волатильність: {volatility:.4f}%
-- Час експірації: {duration} хв (розраховано за волатильністю)
-- Час входу: точно через 2 хвилини ({entry_time})
+- Тренд: {technical_indicators.get('trend', 'NEUTRAL')}
+
+ВАЖЛИВІ ПРАВИЛА:
+1. Мінімальна впевненість: 75%
+2. Якщо тренд неясний (флет) - НЕ давай сигнал
+3. Максимальна тривалість: 5 хвилин
+4. Час входу: точно через 2 хвилини ({entry_time})
+5. Час експірації: {duration} хв (розраховано за волатильністю)
 
 ДАЙ ПРОГНОЗ НА {duration} ХВИЛИН ВПЕРЕД:
 
-ВІДПОВІДЬ У СУВОРОМУ JSON ФОРМАТІ:
+ВІДПОВІДЬ У JSON ФОРМАТІ:
 {{
     "asset": "{asset}",
     "direction": "UP або DOWN",
-    "confidence": 0.85 (від 0.75 до 0.95),
+    "confidence": 0.85,
     "entry_time": "{entry_time}",
     "duration": {duration},
-    "technical_analysis": {{
-        "rsi_analysis": "аналіз RSI",
-        "macd_analysis": "аналіз MACD",
-        "bb_analysis": "аналіз Bollinger Bands", 
-        "ema_cross": "аналіз EMA 9/21",
-        "stochastic_analysis": "аналіз Stochastic",
-        "candle_trend": "тренд 5 свічок",
-        "candle_patterns": "виявлені патерни"
-    }},
-    "reason": "Коротке обґрунтування сигналу українською",
+    "reason": "Короткий аналіз українською (максимум 50 слів)",
     "timestamp": "{now_kyiv.strftime('%Y-%m-%d %H:%M:%S')}"
 }}
 """
@@ -225,7 +203,7 @@ class GroqAnalyzer:
                 messages=[
                     {
                         "role": "system", 
-                        "content": "Ти професійний трейдер бінарних опціонів. Використовуй технічний аналіз. Відповідай ТІЛЬКИ у JSON форматі."
+                        "content": "Ти професійний трейдер бінарних опціонів. Використовуй технічний аналіз. Відповідай ТІЛЬКИ у JSON форматі без будь-якого додаткового тексту."
                     },
                     {
                         "role": "user", 
@@ -233,7 +211,7 @@ class GroqAnalyzer:
                     }
                 ],
                 temperature=0.3,
-                max_tokens=800,
+                max_tokens=500,  # Зменшено з 800 до 500
                 response_format={"type": "json_object"}
             )
             
@@ -289,14 +267,14 @@ class GroqAnalyzer:
             direction = "UP"
             confidence = 0.75
             if language == 'ru':
-                reason = f"Тренд вверх. SMA5 ({sma_5:.5f}) > SMA10 ({sma_10:.5f}). Волатильность: {volatility:.2f}%"
+                reason = f"Восходящий тренд. SMA5 ({sma_5:.5f}) > SMA10 ({sma_10:.5f}). Волатильность: {volatility:.2f}%"
             else:
                 reason = f"Тренд вгору. SMA5 ({sma_5:.5f}) > SMA10 ({sma_10:.5f}). Волатильність: {volatility:.2f}%"
         elif trend == "DOWN":
             direction = "DOWN"
             confidence = 0.75
             if language == 'ru':
-                reason = f"Тренд вниз. SMA5 ({sma_5:.5f}) < SMA10 ({sma_10:.5f}). Волатильность: {volatility:.2f}%"
+                reason = f"Нисходящий тренд. SMA5 ({sma_5:.5f}) < SMA10 ({sma_10:.5f}). Волатильность: {volatility:.2f}%"
             else:
                 reason = f"Тренд вниз. SMA5 ({sma_5:.5f}) < SMA10 ({sma_10:.5f}). Волатильність: {volatility:.2f}%"
         else:
