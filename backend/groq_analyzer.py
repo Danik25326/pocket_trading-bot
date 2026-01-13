@@ -174,49 +174,4 @@ class GroqAnalyzer:
             
         except Exception as e:
             logger.error(f"❌ Groq AI error: {e}")
-            logger.info("🔄 Створення простого сигналу через резервний метод...")
-            return self._create_simple_signal(asset, candles_data, volatility, entry_time, duration, now_kyiv, language)
-    
-    def _create_simple_signal(self, asset, candles_data, volatility, entry_time, duration, now_kyiv, language='uk'):
-        """Резервний метод створення простого сигналу"""
-        # Проста логіка на основі останніх 5 свічок
-        if len(candles_data) < 5:
             return None
-        
-        last_5_closes = [candle.close for candle in candles_data[-5:]]
-        if not last_5_closes:
-            return None
-        
-        # Перевіряємо тренд
-        first_price = last_5_closes[0]
-        last_price = last_5_closes[-1]
-        
-        if last_price > first_price:
-            direction = "UP"
-            confidence = 0.75
-            if language == 'ru':
-                reason = f"Восходящий тренд. Волатильность: {volatility:.2f}%"
-            else:
-                reason = f"Тренд вгору. Волатильність: {volatility:.2f}%"
-        elif last_price < first_price:
-            direction = "DOWN"
-            confidence = 0.75
-            if language == 'ru':
-                reason = f"Нисходящий тренд. Волатильность: {volatility:.2f}%"
-            else:
-                reason = f"Тренд вниз. Волатильність: {volatility:.2f}%"
-        else:
-            return None
-        
-        return {
-            "asset": asset,
-            "direction": direction,
-            "confidence": confidence,
-            "entry_time": entry_time,
-            "duration": duration,
-            "reason": reason,
-            "timestamp": now_kyiv.strftime('%Y-%m-%d %H:%M:%S'),
-            "generated_at": now_kyiv.isoformat(),
-            "volatility": volatility,
-            "id": f"{asset}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
-        }
