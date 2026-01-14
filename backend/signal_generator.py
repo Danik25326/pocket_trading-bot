@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import sys
 from datetime import datetime, timedelta
 import pytz
 import random
@@ -8,6 +9,13 @@ from config import Config
 from pocket_client import PocketOptionClient
 from groq_analyzer import GroqAnalyzer
 from data_handler import DataHandler
+
+# НАЛАШТУВАННЯ ЛОГУВАННЯ НА ПОЧАТКУ
+logging.basicConfig(
+    level=getattr(logging, Config.LOG_LEVEL),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 logger = logging.getLogger("signal_bot")
 
@@ -118,6 +126,17 @@ class SignalGenerator:
             logger.info(f"  - Модель AI: {Config.GROQ_MODEL}")
             logger.info(f"  - Мова: {Config.LANGUAGE}")
             
+            # ПЕРЕВІРКА ТОКЕНА ПЕРЕД ПІДКЛЮЧЕННЯМ
+            logger.info("🔍 Перевірка токена...")
+            ssid = Config.get_validated_ssid()
+            if not ssid:
+                logger.error("❌ Не вдалося отримати валідний SSID!")
+                logger.error("❌ Перевірте .env або GitHub Secrets")
+                return []
+            
+            logger.info(f"✅ Токен знайдено (довжина: {len(ssid)} символів)")
+            logger.info(f"📝 Початок токена: {ssid[:100]}...")
+            
             logger.info("🔗 Підключення до рахунку...")
             
             connection_result = await self.pocket_client.connect()
@@ -197,16 +216,24 @@ async def main():
     print(f"🌐 Мова: {Config.LANGUAGE}")
     print("="*60)
     
+    # СПОЧАТКУ ПЕРЕВІРИТИ ЧИ Є ТОКЕН
+    print("🔍 Перевірка змінних середовища...")
+    print(f"📋 POCKET_SSID встановлено: {'✅' if Config.POCKET_SSID else '❌'}")
+    print(f"📋 GROQ_API_KEY встановлено: {'✅' if Config.GROQ_API_KEY else '❌'}")
+    
+    if not Config.POCKET_SSID:
+        print("❌ ПОМИЛКА: POCKET_SSID не знайдено!")
+        print("❌ Перевірте .env файл або GitHub Secrets")
+        print("❌ Поточний токен: None")
+        return []
+    
+    print(f"📝 Довжина POCKET_SSID: {len(Config.POCKET_SSID)} символів")
+    print(f"📝 Перші 100 символів: {Config.POCKET_SSID[:100]}")
+    
     if not Config.validate():
         print("❌ Помилка валідації конфігурації")
         print("❌ Перевірте токен та налаштування")
         return []
-    
-    logging.basicConfig(
-        level=getattr(logging, Config.LOG_LEVEL),
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
     
     generator = SignalGenerator()
     signals = await generator.generate_all_signals()
@@ -227,7 +254,8 @@ async def main():
     print(f"\n✅ Генерація сигналів завершена")
     print("="*60)
     
-    generator.data_handler.auto_cleanup_old_signals()
+    if hasattr(generator, 'data_handler'):
+        generator.data_handler.auto_cleanup_old_signals()
 
 if __name__ == "__main__":
     asyncio.run(main())
