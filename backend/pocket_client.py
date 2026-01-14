@@ -58,20 +58,32 @@ class PocketOptionClient:
                 return False
             
             logger.info("🔗 Підключення до реального рахунку...")
+            logger.info(f"📋 Формат токена: {'sessionToken' if 'sessionToken' in str(self.client) else 'session'}")
             
-            connection_result = await self.client.connect()
+            # Таймаут 15 секунд
+            connection_result = await asyncio.wait_for(
+                self.client.connect(), 
+                timeout=15
+            )
             
             if connection_result:
                 logger.info("✅ Підключення успішне")
                 await asyncio.sleep(1)
             else:
                 logger.error("❌ Не вдалося підключитися")
+                logger.error("ℹ️ Можливі причини:")
+                logger.error("   - Прострочений токен")
+                logger.error("   - Неправильний формат токена")
+                logger.error("   - Проблеми з мережею")
                 return False
             
             # Перевірка підключення через баланс
             try:
                 logger.info("🔄 Отримання балансу...")
-                balance = await self.client.get_balance()
+                balance = await asyncio.wait_for(
+                    self.client.get_balance(),
+                    timeout=10
+                )
                 
                 if balance and hasattr(balance, 'balance'):
                     self.connected = True
@@ -86,23 +98,32 @@ class PocketOptionClient:
                     return True
                 else:
                     logger.error("❌ Не вдалося отримати баланс")
+                    logger.error(f"📋 Результат балансу: {balance}")
                     return False
                     
+            except asyncio.TimeoutError:
+                logger.error("⏱️ Таймаут отримання балансу")
+                return False
             except Exception as e:
                 logger.error(f"❌ Помилка отримання балансу: {e}")
                 return False
         
+        except asyncio.TimeoutError:
+            logger.error("⏱️ Таймаут підключення (15 секунд)")
+            return False
         except Exception as e:
             logger.error(f"❌ Помилка підключення: {e}")
             self.connected = False
             
-            error_msg = str(e)
+            error_msg = str(e).lower()
             if "session" in error_msg:
                 logger.error("💥 Токен прострочений або невірний!")
             elif "timeout" in error_msg:
                 logger.error("⏱️ Таймаут підключення")
-            elif "WebSocket" in error_msg:
+            elif "websocket" in error_msg:
                 logger.error("🌐 Проблема з WebSocket з'єднанням")
+            elif "auth" in error_msg:
+                logger.error("🔐 Помилка автентифікації")
             
             return False
     
