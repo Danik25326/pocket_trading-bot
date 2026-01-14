@@ -18,20 +18,19 @@ class SignalGenerator:
         self.data_handler = DataHandler()
         self.signals = []
         
-        # Обмеження для реального рахунку
         self.MAX_SIGNALS_PER_GENERATION = 3
         self.REQUEST_DELAY = 2
 
     async def generate_signal(self, asset):
-        """Генерація сигналу для РЕАЛЬНОГО рахунку"""
+        """Генерація сигналу"""
         try:
-            logger.info(f"📈 Аналіз активу для РЕАЛЬНОГО рахунку: {asset}")
+            logger.info(f"📈 Аналіз активу: {asset}")
             
             if not hasattr(self.pocket_client, 'client') or not self.pocket_client.client:
                 logger.error("❌ PocketOptionClient не ініціалізований")
                 return None
             
-            logger.info(f"📊 Запит РЕАЛЬНИХ свічок для {asset}...")
+            logger.info(f"📊 Запит свічок для {asset}...")
             candles = await self.pocket_client.get_candles(
                 asset=asset,
                 timeframe=Config.TIMEFRAMES,
@@ -39,10 +38,10 @@ class SignalGenerator:
             )
             
             if not candles or len(candles) == 0:
-                logger.error(f"❌ Не вдалося отримати РЕАЛЬНІ свічки для {asset}")
+                logger.error(f"❌ Не вдалося отримати свічки для {asset}")
                 return None
 
-            logger.info(f"✅ Отримано {len(candles)} РЕАЛЬНИХ свічок для {asset}")
+            logger.info(f"✅ Отримано {len(candles)} свічок для {asset}")
             
             # Перевірка актуальності
             if hasattr(candles[-1], 'timestamp'):
@@ -56,21 +55,19 @@ class SignalGenerator:
                 time_diff = (current_time - last_candle_time_kyiv).total_seconds()
                 
                 if time_diff > 300:
-                    logger.warning(f"⚠️ Остання РЕАЛЬНА свічка застаріла: {time_diff:.0f} сек тому")
-                else:
-                    logger.info(f"🕐 Остання РЕАЛЬНА свічка актуальна: {time_diff:.0f} сек тому")
+                    logger.warning(f"⚠️ Остання свічка застаріла: {time_diff:.0f} сек тому")
             
-            logger.info(f"🧠 Аналіз через AI для РЕАЛЬНОГО рахунку...")
+            logger.info(f"🧠 Аналіз через AI для {asset}...")
             signal = self.analyzer.analyze_market(asset, candles, language=Config.LANGUAGE)
 
             if signal:
                 confidence = signal.get('confidence', 0)
-                logger.info(f"📝 AI повернув сигнал для РЕАЛЬНОГО рахунку: confidence={confidence*100:.1f}%")
+                logger.info(f"📝 AI повернув сигнал: confidence={confidence*100:.1f}%")
                 
                 if confidence >= Config.MIN_CONFIDENCE:
                     duration = signal.get('duration', 2)
                     if duration > Config.MAX_DURATION:
-                        logger.warning(f"⚠️ Сигнал для {asset} має завелику тривалість: {duration} > {Config.MAX_DURATION}")
+                        logger.warning(f"⚠️ Сигнал має завелику тривалість: {duration} > {Config.MAX_DURATION}")
                         signal['duration'] = Config.MAX_DURATION
                     
                     now_kyiv = Config.get_kyiv_time()
@@ -85,37 +82,35 @@ class SignalGenerator:
                     signal['generated_at_utc'] = datetime.utcnow().isoformat() + 'Z'
                     signal['asset'] = asset
                     signal['id'] = f"{asset}_{now_kyiv.strftime('%Y%m%d%H%M%S')}"
-                    signal['is_real_account'] = True  # Позначка що це реальний рахунок
                     
                     if 'volatility' not in signal:
                         signal['volatility'] = 0.0
                     
-                    logger.info(f"✅ Створено РЕАЛЬНИЙ сигнал: {signal['direction']} ({signal['confidence']*100:.1f}%)")
+                    logger.info(f"✅ Створено сигнал: {signal['direction']} ({signal['confidence']*100:.1f}%)")
                     logger.info(f"   📅 Вхід через {delay_minutes} хв о {signal['entry_time']}")
                     return signal
                 else:
-                    logger.warning(f"⚠️ Низька впевненість для РЕАЛЬНОГО рахунку: {confidence*100:.1f}%")
+                    logger.warning(f"⚠️ Низька впевненість: {confidence*100:.1f}%")
             else:
-                logger.warning(f"⚠️ AI не повернув сигнал для РЕАЛЬНОГО рахунку {asset}")
+                logger.warning(f"⚠️ AI не повернув сигнал для {asset}")
                     
         except Exception as e:
-            logger.error(f"❌ Помилка генерації РЕАЛЬНОГО сигналу: {e}")
+            logger.error(f"❌ Помилка генерації сигналу: {e}")
             import traceback
             logger.error(f"📋 Трейс: {traceback.format_exc()}")
 
         return None
 
     async def generate_all_signals(self):
-        """Генерація сигналів для РЕАЛЬНОГО рахунку"""
+        """Генерація всіх сигналів"""
         logger.info("=" * 60)
-        logger.info("🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ ДЛЯ РЕАЛЬНОГО РАХУНКУ")
+        logger.info("🚀 ПОЧАТОК ГЕНЕРАЦІЇ СИГНАЛІВ")
         logger.info(f"🌐 Мова: {Config.LANGUAGE}")
         logger.info(f"🕐 Час: {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')} (Київ)")
         logger.info("=" * 60)
 
         try:
-            logger.info("⚙️ КОНФІГУРАЦІЯ РЕАЛЬНОГО РАХУНКУ:")
-            logger.info(f"  - Режим: РЕАЛЬНИЙ (isDemo=0)")
+            logger.info("⚙️ КОНФІГУРАЦІЯ:")
             logger.info(f"  - Активи: {Config.ASSETS}")
             logger.info(f"  - Таймфрейм: {Config.TIMEFRAMES} сек")
             logger.info(f"  - Мін. впевненість: {Config.MIN_CONFIDENCE*100}%")
@@ -123,17 +118,17 @@ class SignalGenerator:
             logger.info(f"  - Модель AI: {Config.GROQ_MODEL}")
             logger.info(f"  - Мова: {Config.LANGUAGE}")
             
-            logger.info("🔗 Підключення до РЕАЛЬНОГО рахунку PocketOption...")
+            logger.info("🔗 Підключення до рахунку...")
             
             connection_result = await self.pocket_client.connect()
             
             if not connection_result:
-                logger.error("❌ НЕ ВДАЛОСЯ підключитися до РЕАЛЬНОГО рахунку!")
+                logger.error("❌ Не вдалося підключитися до рахунку!")
                 logger.error("❌ Перевірте токен та інтернет з'єднання")
                 return []
             
-            logger.info("✅ Успішно підключено до РЕАЛЬНОГО рахунку!")
-            logger.info(f"🎯 Генерую РЕАЛЬНІ сигнали для {self.MAX_SIGNALS_PER_GENERATION} активів...")
+            logger.info("✅ Успішно підключено!")
+            logger.info(f"🎯 Генерую сигнали для {self.MAX_SIGNALS_PER_GENERATION} активів...")
             
             valid_signals = []
             failed_assets = []
@@ -143,69 +138,67 @@ class SignalGenerator:
             
             for asset in assets_to_process:
                 logger.info(f"\n{'='*30}")
-                logger.info(f"💰 ОБРОБКА РЕАЛЬНОГО АКТИВУ: {asset}")
+                logger.info(f"💰 Обробка активу: {asset}")
                 logger.info(f"{'='*30}")
                 
                 signal = await self.generate_signal(asset)
                 if signal:
                     valid_signals.append(signal)
-                    logger.info(f"✅ РЕАЛЬНИЙ сигнал для {asset} успішно створений")
+                    logger.info(f"✅ Сигнал для {asset} успішно створений")
                 else:
-                    logger.warning(f"⚠️ Не створено РЕАЛЬНИЙ сигнал для {asset}")
+                    logger.warning(f"⚠️ Не створено сигнал для {asset}")
                     failed_assets.append(asset)
                 
                 await asyncio.sleep(self.REQUEST_DELAY)
 
             if valid_signals:
-                logger.info(f"\n💾 Збереження {len(valid_signals)} РЕАЛЬНИХ сигналів...")
+                logger.info(f"\n💾 Збереження {len(valid_signals)} сигналів...")
                 save_result = self.data_handler.save_signals(valid_signals)
                 
                 if save_result:
-                    logger.info(f"✅ Збережено {len(valid_signals)} РЕАЛЬНИХ сигналів")
+                    logger.info(f"✅ Збережено {len(valid_signals)} сигналів")
                     
-                    logger.info(f"\n🎯 ЗГЕНЕРОВАНО {len(valid_signals)} РЕАЛЬНИХ СИГНАЛІВ:")
+                    logger.info(f"\n🎯 ЗГЕНЕРОВАНО {len(valid_signals)} СИГНАЛІВ:")
                     for i, signal in enumerate(valid_signals, 1):
                         entry_delay = signal.get('entry_delay', 0)
                         logger.info(f"   {i}. {signal['asset']}: {signal['direction']} ({signal['confidence']*100:.1f}%)")
                         logger.info(f"      Вхід через {entry_delay} хв о {signal.get('entry_time', 'N/A')}")
-                        logger.info(f"      РЕАЛЬНИЙ рахунок")
                 else:
-                    logger.error("❌ Помилка збереження РЕАЛЬНИХ сигналів")
+                    logger.error("❌ Помилка збереження сигналів")
             else:
-                logger.warning("⚠️  Не створено жодного РЕАЛЬНОГО сигналу")
+                logger.warning("⚠️ Не створено жодного сигналу")
                 
                 if failed_assets:
-                    logger.info(f"📉 Активи без РЕАЛЬНИХ сигналів: {', '.join(failed_assets)}")
+                    logger.info(f"📉 Активи без сигналів: {', '.join(failed_assets)}")
 
-            logger.info("🔌 Відключення від РЕАЛЬНОГО рахунку...")
+            logger.info("🔌 Відключення від рахунку...")
             await self.pocket_client.disconnect()
-            logger.info("✅ Відключено від РЕАЛЬНОГО рахунку")
+            logger.info("✅ Відключено від рахунку")
             
-            logger.info("🧹 Автоматичне очищення...")
+            logger.info("🧹 Очищення старих сигналів...")
             self.data_handler.auto_cleanup_old_signals()
             
-            logger.info(f"\n⏱️  Час виконання: {Config.get_kyiv_time().strftime('%H:%M:%S')}")
-            logger.info(f"📊 Підсумок: {len(valid_signals)} РЕАЛЬНИХ сигналів")
+            logger.info(f"\n⏱️ Час виконання: {Config.get_kyiv_time().strftime('%H:%M:%S')}")
+            logger.info(f"📊 Підсумок: {len(valid_signals)} сигналів")
             logger.info("=" * 60)
             
             return valid_signals
 
         except Exception as e:
-            logger.error(f"💥 КРИТИЧНА помилка для РЕАЛЬНОГО рахунку: {e}")
+            logger.error(f"💥 Критична помилка: {e}")
             import traceback
             logger.error(f"📋 Трейс: {traceback.format_exc()}")
             return []
 
 async def main():
     print("\n" + "="*60)
-    print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ ДЛЯ РЕАЛЬНОГО РАХУНКУ")
+    print(f"🚀 ЗАПУСК ГЕНЕРАЦІЇ СИГНАЛІВ")
     print(f"📅 Поточний час: {Config.get_kyiv_time().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🌐 Мова: {Config.LANGUAGE}")
-    print(f"💰 Режим: РЕАЛЬНИЙ РАХУНОК (isDemo=0)")
     print("="*60)
     
     if not Config.validate():
-        print("❌ Помилка валідації для РЕАЛЬНОГО рахунку")
+        print("❌ Помилка валідації конфігурації")
         print("❌ Перевірте токен та налаштування")
         return []
     
@@ -219,20 +212,19 @@ async def main():
     signals = await generator.generate_all_signals()
     
     if signals:
-        print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} РЕАЛЬНИХ СИГНАЛІВ:")
+        print(f"\n🎯 ЗГЕНЕРОВАНО {len(signals)} СИГНАЛІВ:")
         for signal in signals:
             entry_delay = signal.get('entry_delay', 0)
             print(f"   • {signal['asset']}: {signal['direction']} ({signal.get('confidence', 0)*100:.1f}%)")
             print(f"     Вхід через {entry_delay} хв о {signal.get('entry_time', 'N/A')}")
-            print(f"     РЕАЛЬНИЙ рахунок")
     else:
-        print("\n⚠️  РЕАЛЬНИХ СИГНАЛІВ НЕ ЗНАЙДЕНО")
-        print("ℹ️  Можливі причини:")
-        print("   - Проблема з підключенням до реального рахунку")
+        print("\n⚠️ СИГНАЛІВ НЕ ЗНАЙДЕНО")
+        print("ℹ️ Можливі причини:")
+        print("   - Проблема з підключенням до рахунку")
         print("   - Токен прострочений або невірний")
         print("   - AI не повернув сигнали з достатньою впевненістю")
     
-    print(f"\n✅ Генерація РЕАЛЬНИХ сигналів завершена")
+    print(f"\n✅ Генерація сигналів завершена")
     print("="*60)
     
     generator.data_handler.auto_cleanup_old_signals()
