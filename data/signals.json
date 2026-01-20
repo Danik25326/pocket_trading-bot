@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-20T23:39:27.675579+02:00",
+  "last_update": "2026-01-20T23:50:38.210920+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "23:41",
+      "entry_time": "23:52",
       "duration": 3,
-      "reason": "Price showed a sharp bullish spike at 00:01 (210.605) followed by a steady decline over the next six minutes, closing below the spike at 210.274. EMA9 is below EMA21, MACD histogram is negative, RSI is falling from overbought levels, Bollinger Bands show price moving from the upper band toward the middle, and stochastic is descending. All indicators point to a bearish short‑term momentum.",
-      "timestamp": "2026-01-20 23:39:16",
-      "generated_at": "2026-01-20T23:39:18.123723+02:00",
-      "volatility": 0.2524,
-      "id": "GBPJPY_otc_20260120233918",
+      "reason": "Recent candles show a downtrend (EMA9 < EMA21, MACD histogram negative, RSI ~45). Price is near the lower Bollinger Band and a bearish engulfing pattern appeared at 00:16, indicating further downside. Stochastic is below 20 and falling, supporting oversold conditions. Confidence meets the 75% threshold.",
+      "timestamp": "2026-01-20 23:50:26",
+      "generated_at": "2026-01-20T23:50:28.105005+02:00",
+      "volatility": 0.1494,
+      "id": "GBPJPY_otc_20260120235028",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T21:39:18.123762Z",
-      "expires_at": "2026-01-20T23:49:18.123723+02:00"
+      "generated_at_utc": "2026-01-20T21:50:28.105043Z",
+      "expires_at": "2026-01-21T00:00:28.105005+02:00"
     },
     {
-      "asset": "USDJPY_otc",
-      "direction": "UP",
-      "confidence": 0.86,
-      "entry_time": "23:41",
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "23:52",
       "duration": 3,
-      "reason": "Price has risen from 157.757 to 157.868 in the last 8 min, EMA9 is above EMA21, MACD histogram is positive, RSI is around 62 (bullish but not extreme), Stochastic %K is above %D (~78/70) and price is touching the upper Bollinger Band. A bullish engulfing pattern appears at 00:05‑00:06 and the last candle (00:07) is bullish. All indicators point to a short‑term upward move.",
-      "timestamp": "2026-01-20 23:39:24",
-      "generated_at": "2026-01-20T23:39:25.674200+02:00",
-      "volatility": 0.0963,
-      "id": "USDJPY_otc_20260120233925",
+      "reason": "RSI≈50 (neutral), MACD≈0 (no momentum), price slipped below the 9‑EMA and is near the lower Bollinger Band, Stochastic around 45‑55 (no overbought), EMA9 below EMA21 indicating slight bearish bias, and the last three candles form a bearish engulfing pattern. Combined these suggest a short‑term down move with sufficient confidence.",
+      "timestamp": "2026-01-20 23:50:30",
+      "generated_at": "2026-01-20T23:50:31.844860+02:00",
+      "volatility": 0.0463,
+      "id": "EURUSD_otc_20260120235031",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T21:39:25.674237Z",
-      "expires_at": "2026-01-20T23:49:25.674200+02:00"
+      "generated_at_utc": "2026-01-20T21:50:31.844900Z",
+      "expires_at": "2026-01-21T00:00:31.844860+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 411
+  "generation_count": 412
 }
