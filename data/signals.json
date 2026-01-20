@@ -1,54 +1,39 @@
 {
-  "last_update": "2026-01-20T22:51:35.988091+02:00",
+  "last_update": "2026-01-20T23:18:57.966562+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.81,
-      "entry_time": "22:53",
+      "confidence": 0.78,
+      "entry_time": "23:20",
       "duration": 3,
-      "reason": "RSI ~48 (neutral), MACD histogram negative and MACD line below signal, EMA9 is below EMA21 indicating short‑term downtrend, price is touching the lower Bollinger Band suggesting oversold conditions, Stochastic %K below %D and around 25 indicating bearish momentum, recent candles show a slight decline from 211.554 to 211.355 with a bearish engulfing at 23:18, overall trend is downwards.",
-      "timestamp": "2026-01-20 22:51:24",
-      "generated_at": "2026-01-20T22:51:26.284810+02:00",
-      "volatility": 0.2309,
-      "id": "GBPJPY_otc_20260120225126",
+      "reason": "На 1‑хв таймфреймі ціна коливається в межах вузького діапазону (волатильність 0.08%). Останні 8 свічок показують змішаний рух, проте EMA‑9 перебуває нижче EMA‑21, що вказує на короткостроковий медвежий тренд. RSI знаходиться в зоні 68‑72 (підтверджує перекупленість), Stochastic над 80 і починає знижуватись, а ціна торкається верхньої лінії Bollinger Bands, що часто передбачає відскок вниз. Патерн «високий хвіст» у 23:43 та «зниження» у 23:46 підсилює сигнал продажу. Тому рекомендується коротка позиція на 23:20 з тривалістю 3 хв, впевненість 78%.",
+      "timestamp": "2026-01-20 23:18:46",
+      "generated_at": "2026-01-20T23:18:48.683712+02:00",
+      "volatility": 0.0765,
+      "id": "GBPJPY_otc_20260120231848",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T20:51:26.284849Z",
-      "expires_at": "2026-01-20T23:01:26.284810+02:00"
+      "generated_at_utc": "2026-01-20T21:18:48.683752Z",
+      "expires_at": "2026-01-20T23:28:48.683712+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "UP",
-      "confidence": 0.86,
-      "entry_time": "22:53",
+      "confidence": 0.82,
+      "entry_time": "23:20",
       "duration": 3,
-      "reason": "RSI is rising from oversold levels, MACD shows a bullish crossover, price is trading above EMA9 and EMA21, Bollinger Bands are expanding upward with price near the upper band, Stochastic is climbing, recent candles form a bullish engulfing pattern, overall short‑term trend is upward.",
-      "timestamp": "2026-01-20 22:51:28",
-      "generated_at": "2026-01-20T22:51:29.897938+02:00",
-      "volatility": 0.0412,
-      "id": "EURUSD_otc_20260120225129",
+      "reason": "RSI≈58 (neutral‑bullish), MACD histogram positive, price above EMA9 and EMA9 above EMA21, Bollinger Bands show price near upper band but still within range, Stochastic≈72 (overbought but upward momentum), recent candles show more ups than downs – overall bullish bias for next 3 min",
+      "timestamp": "2026-01-20 23:18:50",
+      "generated_at": "2026-01-20T23:18:51.891078+02:00",
+      "volatility": 0.115,
+      "id": "EURUSD_otc_20260120231851",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T20:51:29.897976Z",
-      "expires_at": "2026-01-20T23:01:29.897938+02:00"
-    },
-    {
-      "asset": "USDJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "22:53",
-      "duration": 3,
-      "reason": "Невелика понижательная динамика за останні 8 хвилин (закриття нижче відкриття в 4 з 8 свічок, остання свічка – червона). EMA9 (≈157.894) нижче EMA21 (≈157.902), що вказує на короткостроковий медвежий тренд. RSI, розрахований за 14‑періодів, приблизно 48‑49, ближче до нижньої межі нейтральної зони, без перекупленості. MACD лінія трохи нижче сигнальної, гістограма негативна, підтверджуючи слабке падіння. Bollinger Bands стискаються (σ≈0.006), ціна торкається нижньої межі, що може сигналізувати про продовження корекції. Stochastic %K≈38, %D≈42 – нижче 50, без перекупленості. Свічкові патерни: остання червона «пін‑бар» без хвости, що вказує на відсутність відскоку. У сукупності індикатори підказують короткострокове падіння, тому рекомендовано входити в позицію \"DOWN\" з впевненістю 78%.",
-      "timestamp": "2026-01-20 22:51:32",
-      "generated_at": "2026-01-20T22:51:33.985442+02:00",
-      "volatility": 0.0614,
-      "id": "USDJPY_otc_20260120225133",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T20:51:33.985480Z",
-      "expires_at": "2026-01-20T23:01:33.985442+02:00"
+      "generated_at_utc": "2026-01-20T21:18:51.891119Z",
+      "expires_at": "2026-01-20T23:28:51.891078+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 409
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 410
 }
