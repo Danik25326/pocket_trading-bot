@@ -1,39 +1,54 @@
 {
-  "last_update": "2026-01-20T18:35:22.503177+02:00",
+  "last_update": "2026-01-20T19:03:10.892297+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
+      "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "18:37",
+      "entry_time": "19:05",
       "duration": 3,
-      "reason": "Price shows strong upward momentum with higher highs, EMA9 above EMA21, RSI above 70, MACD histogram expanding positive, price near upper Bollinger Band, bullish engulfing pattern at 19:01‑19:02.",
-      "timestamp": "2026-01-20 18:35:10",
-      "generated_at": "2026-01-20T18:35:12.579228+02:00",
-      "volatility": 0.0783,
-      "id": "GBPJPY_otc_20260120183512",
+      "reason": "Bearish engulfing on 19:29 after mixed recent candles, RSI near neutral/slightly overbought, MACD turning negative, price near upper Bollinger Band, EMA9 below EMA21 indicating downtrend",
+      "timestamp": "2026-01-20 19:03:00",
+      "generated_at": "2026-01-20T19:03:01.593118+02:00",
+      "volatility": 0.1368,
+      "id": "GBPJPY_otc_20260120190301",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T16:35:12.579252Z",
-      "expires_at": "2026-01-20T18:45:12.579228+02:00"
+      "generated_at_utc": "2026-01-20T17:03:01.593164Z",
+      "expires_at": "2026-01-20T19:13:01.593118+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "18:37",
+      "entry_time": "19:05",
       "duration": 3,
-      "reason": "Price has been falling across the last 8 one‑minute candles (1.17041→1.16915). EMA9 is below EMA21, MACD histogram is shrinking and trending negative, RSI is around 38 (below 40) indicating bearish momentum, Stochastic is below 20 and turning down, the price is touching the lower Bollinger Band, and recent candles show lower closes with a bearish engulfing pattern at 19:02. All signals align for a short move over the next 3 minutes.",
-      "timestamp": "2026-01-20 18:35:14",
-      "generated_at": "2026-01-20T18:35:15.954495+02:00",
-      "volatility": 0.1086,
-      "id": "EURUSD_otc_20260120183515",
+      "reason": "Ціни протягом останніх 8 хвилин знижуються (від 1.16920 до 1.16813). EMA9 знаходиться нижче EMA21, MACD показує негативний гістограм, RSI ближче до нижньої межі, а ціна торкається нижньої лінії Bollinger Bands, що підтверджує слабкий медвежий тренд. При низькій волатильності (0.10%) ризик обмежений, тому рекомендація – короткостроковий продаж.",
+      "timestamp": "2026-01-20 19:03:03",
+      "generated_at": "2026-01-20T19:03:04.898719+02:00",
+      "volatility": 0.095,
+      "id": "EURUSD_otc_20260120190304",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-20T16:35:15.954549Z",
-      "expires_at": "2026-01-20T18:45:15.954495+02:00"
+      "generated_at_utc": "2026-01-20T17:03:04.898761Z",
+      "expires_at": "2026-01-20T19:13:04.898719+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "19:05",
+      "duration": 3,
+      "reason": "Останні 8 хвилинних свічок показують змішаний, але переважає низхідний рух (зниження з 157.863 до 157.817). RSI приблизно 48‑50, MACD близький до нуля з легким негативним схилом, EMA9 нижче EMA21, що вказує на слабку медвальну тенденцію. Стохастик знаходиться в нейтральній зоні (≈45), Bollinger Bands – ціна торкається середньої лінії, без явного виходу за межі. Немає чітких розворотних патернів, лише незначний «doji» на 19:30, що підтверджує невизначеність, але з нахилом до падіння.",
+      "timestamp": "2026-01-20 19:03:07",
+      "generated_at": "2026-01-20T19:03:08.891237+02:00",
+      "volatility": 0.0716,
+      "id": "USDJPY_otc_20260120190308",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-20T17:03:08.891280Z",
+      "expires_at": "2026-01-20T19:13:08.891237+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 403
+  "total_signals": 3,
+  "active_signals": 3,
+  "generation_count": 404
 }
