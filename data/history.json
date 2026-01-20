@@ -1,23 +1,5 @@
 [
   {
-    "asset": "USDJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "00:53",
-    "duration": 3,
-    "reason": "Bearish momentum: last three 1‑min candles close lower, EMA9 is below EMA21, RSI is falling around 45, MACD histogram is negative, price is near the lower Bollinger Band and Stochastic is below 20 indicating oversold but still in a downtrend.",
-    "timestamp": "2026-01-13 00:51:47",
-    "generated_at": "2026-01-13T00:51:48.650156+02:00",
-    "volatility": 0.092,
-    "id": "USDJPY_otc_20260113005148",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-12T22:51:48.650199Z",
-    "expires_at": "2026-01-13T01:01:48.650156+02:00",
-    "saved_at": "2026-01-13T00:51:50.652148+02:00",
-    "history_id": "USDJPY_otc_20260113005150",
-    "status": "saved"
-  },
-  {
     "asset": "GBPJPY_otc",
     "direction": "DOWN",
     "confidence": 0.82,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-20T11:50:33.001885+02:00",
     "saved_at": "2026-01-20T11:40:35.004308+02:00",
     "history_id": "USDJPY_otc_20260120114035",
+    "status": "saved"
+  },
+  {
+    "asset": "USDJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.78,
+    "entry_time": "12:01",
+    "duration": 3,
+    "reason": "RSI near overbought (~68), MACD histogram shrinking, price touching upper Bollinger Band, EMA9 below EMA21 indicating weakening uptrend, stochastic >80 turning down, recent bearish candle at 12:27 suggests reversal.",
+    "timestamp": "2026-01-20 11:59:35",
+    "generated_at": "2026-01-20T11:59:36.560334+02:00",
+    "volatility": 0.0494,
+    "id": "USDJPY_otc_20260120115936",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-20T09:59:36.560368Z",
+    "expires_at": "2026-01-20T12:09:36.560334+02:00",
+    "saved_at": "2026-01-20T11:59:38.562347+02:00",
+    "history_id": "USDJPY_otc_20260120115938",
     "status": "saved"
   }
 ]
