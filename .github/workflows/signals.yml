@@ -102,13 +102,14 @@ jobs:
         TZ: 'Europe/Kiev'
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        POCKET_DEMO: 'false'
         SIGNAL_INTERVAL: '600'
-        MIN_CONFIDENCE: '0.75'  # Змінено з 0.7 на 0.75
+        MIN_CONFIDENCE: '0.75'
         MAX_DURATION: '5.0'
         SIGNAL_VALIDITY_MINUTES: '10'
         MAX_SIGNALS_ON_SITE: '6'
         ASSETS: 'GBPJPY_otc,EURUSD_otc,USDJPY_otc'
-        TIMEFRAMES: '60'  # Змінено з 120 на 60 (1 хвилина)
+        TIMEFRAMES: '60'
         LOG_LEVEL: 'INFO'
         GROQ_MODEL: 'openai/gpt-oss-120b'
         LANGUAGE: ${{ inputs.language || 'uk' }}
