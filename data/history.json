@@ -1,23 +1,5 @@
 [
   {
-    "asset": "GBPJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "01:16",
-    "duration": 3,
-    "reason": "RSI is falling below 55, MACD histogram is negative and narrowing, price is touching the upper Bollinger Band and starting to reverse, EMA9 is below EMA21 indicating a downtrend, Stochastic is above 80 and turning down, and the last candle (01:42) forms a bearish pin‑bar engulfing the prior bullish candle. All signals point to short‑term weakness.",
-    "timestamp": "2026-01-13 01:14:55",
-    "generated_at": "2026-01-13T01:14:57.589890+02:00",
-    "volatility": 0.1834,
-    "id": "GBPJPY_otc_20260113011457",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-12T23:14:57.589932Z",
-    "expires_at": "2026-01-13T01:24:57.589890+02:00",
-    "saved_at": "2026-01-13T01:15:07.005781+02:00",
-    "history_id": "GBPJPY_otc_20260113011507",
-    "status": "saved"
-  },
-  {
     "asset": "EURUSD_otc",
     "direction": "DOWN",
     "confidence": 0.78,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-20T12:09:36.560334+02:00",
     "saved_at": "2026-01-20T11:59:38.562347+02:00",
     "history_id": "USDJPY_otc_20260120115938",
+    "status": "saved"
+  },
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.78,
+    "entry_time": "12:38",
+    "duration": 3,
+    "reason": "Останні три свічки (13:02‑13:04) показують низхідний рух (закриття нижче відкриття) і формують короткостроковий медвежий патерн. RSI, розрахований за останні 14 періодів, перебуває близько 55‑60, що вказує на відсутність сильної перекупленості, а MACD показує негативний гістограмний розрив, підтверджуючи слабкість. Bollinger Bands стискаються, ціна торкається нижньої межі, що часто передбачає подальший спад. EMA9 лежить під EMA21, що підкреслює медвежий тренд. Stochastic знаходиться в зоні 20‑30, підтверджуючи можливий продовження вниз. Враховуючи низьку волатильність (0.24 %) і підтвердження з кількох індикаторів, рекомендація – короткостроковий продаж.",
+    "timestamp": "2026-01-20 12:36:32",
+    "generated_at": "2026-01-20T12:36:33.949265+02:00",
+    "volatility": 0.2387,
+    "id": "GBPJPY_otc_20260120123633",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-20T10:36:33.949321Z",
+    "expires_at": "2026-01-20T12:46:33.949265+02:00",
+    "saved_at": "2026-01-20T12:36:44.321912+02:00",
+    "history_id": "GBPJPY_otc_20260120123644",
     "status": "saved"
   }
 ]
