@@ -1,39 +1,54 @@
 {
-  "last_update": "2026-01-22T00:56:51.834010+02:00",
+  "last_update": "2026-01-22T01:25:57.125188+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
+      "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "00:58",
+      "entry_time": "01:27",
       "duration": 3,
-      "reason": "Recent candles show a higher high and higher close overall, EMA 9/21 are sloping upward, RSI is in the mid‑50s indicating bullish momentum without being overbought, price is near the upper Bollinger Band but still within range, and stochastic is approaching overbought but not yet reversed. Combined with low volatility, the short‑term bias is bullish.",
-      "timestamp": "2026-01-22 00:56:40",
-      "generated_at": "2026-01-22T00:56:41.884641+02:00",
-      "volatility": 0.0916,
-      "id": "GBPJPY_otc_20260122005641",
+      "reason": "EMA9 is below EMA21 indicating a short‑term downtrend; MACD histogram turned negative and the signal line crossed below the MACD line; RSI is falling from ~58 toward 50, showing loss of momentum; Stochastic %K crossed below %D in the overbought region; price is trading below the Bollinger middle band and near the lower band; a bearish engulfing pattern appeared at 01:48‑01:49. All indicators point to further downside for the next 3 minutes.",
+      "timestamp": "2026-01-22 01:25:45",
+      "generated_at": "2026-01-22T01:25:47.490767+02:00",
+      "volatility": 0.2478,
+      "id": "GBPJPY_otc_20260122012547",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T22:56:41.884684Z",
-      "expires_at": "2026-01-22T01:06:41.884641+02:00"
+      "generated_at_utc": "2026-01-21T23:25:47.490795Z",
+      "expires_at": "2026-01-22T01:35:47.490767+02:00"
     },
     {
       "asset": "EURUSD_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "00:58",
+      "direction": "UP",
+      "confidence": 0.85,
+      "entry_time": "01:27",
       "duration": 3,
-      "reason": "RSI≈48 (slightly bearish), MACD histogram negative, price below EMA9 and EMA21, Bollinger Bands price near lower band, Stochastic <50, recent 1‑minute candles show more down closes than up, overall short‑term trend downwards",
-      "timestamp": "2026-01-22 00:56:44",
-      "generated_at": "2026-01-22T00:56:45.594253+02:00",
-      "volatility": 0.0638,
-      "id": "EURUSD_otc_20260122005645",
+      "reason": "RSI≈68 and rising, MACD histogram positive with bullish crossover, EMA9 above EMA21 indicating uptrend, price staying above middle Bollinger Band (near upper band but not breaking), Stochastic in overbought zone without bearish divergence, recent strong bullish candle at 01:52 supports continuation",
+      "timestamp": "2026-01-22 01:25:49",
+      "generated_at": "2026-01-22T01:25:51.452214+02:00",
+      "volatility": 0.0998,
+      "id": "EURUSD_otc_20260122012551",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T22:56:45.594288Z",
-      "expires_at": "2026-01-22T01:06:45.594253+02:00"
+      "generated_at_utc": "2026-01-21T23:25:51.452251Z",
+      "expires_at": "2026-01-22T01:35:51.452214+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "01:27",
+      "duration": 3,
+      "reason": "Three consecutive bearish 1‑min candles after a short up‑trend, RSI falling from overbought, MACD histogram turning negative, price breaking below EMA9/EMA21 crossover and moving toward lower Bollinger Band; stochastic also descending – suggests short‑term down move.",
+      "timestamp": "2026-01-22 01:25:53",
+      "generated_at": "2026-01-22T01:25:55.123703+02:00",
+      "volatility": 0.0679,
+      "id": "USDJPY_otc_20260122012555",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-21T23:25:55.123741Z",
+      "expires_at": "2026-01-22T01:35:55.123703+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 455
+  "total_signals": 3,
+  "active_signals": 3,
+  "generation_count": 456
 }
