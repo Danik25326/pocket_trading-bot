@@ -1,39 +1,24 @@
 {
-  "last_update": "2026-01-21T12:13:57.267454+02:00",
+  "last_update": "2026-01-21T12:50:27.652908+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.82,
-      "entry_time": "12:15",
-      "duration": 3,
-      "reason": "Bearish momentum: price fell from 211.904 to 211.536 over the last 8 minutes, EMA9 is below EMA21, MACD histogram is negative, RSI is below 40, Stochastic is under 20, price is near the lower Bollinger Band, and recent candles show lower closes indicating a downtrend.",
-      "timestamp": "2026-01-21 12:13:45",
-      "generated_at": "2026-01-21T12:13:47.460093+02:00",
-      "volatility": 0.1918,
-      "id": "GBPJPY_otc_20260121121347",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T10:13:47.460133Z",
-      "expires_at": "2026-01-21T12:23:47.460093+02:00"
-    },
-    {
-      "asset": "EURUSD_otc",
       "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "12:15",
+      "confidence": 0.82,
+      "entry_time": "12:52",
       "duration": 3,
-      "reason": "Recent candles show higher closes (1.16424→1.16465), EMA9 is above EMA21 indicating short‑term uptrend, MACD histogram turned positive, RSI around 55 suggests modest momentum, price is near the lower Bollinger Band and moving upward, Stochastic is rising but not yet overbought, and a small bullish engulfing pattern appears at 12:41. All signals point to a short‑term bullish move.",
-      "timestamp": "2026-01-21 12:13:49",
-      "generated_at": "2026-01-21T12:13:51.089351+02:00",
-      "volatility": 0.0498,
-      "id": "EURUSD_otc_20260121121351",
+      "reason": "Ціна демонструє чіткий висхідний тренд: EMA9 перебуває вище EMA21, останні 5 свічок мають більшість закриттів вище відкриттів, RSI (≈62) вказує на сильний, але не перекуплений імпульс, MACD показує позитивний гістограм і перетин лінії сигналу вгору, Bollinger Bands розширені і ціна торкається верхньої межі, а Stochastic (~78) підказує можливу корекцію, проте загальна динаміка залишається bullish. Тому очікуємо короткостроковий рух вгору протягом наступних 3 хвилин.",
+      "timestamp": "2026-01-21 12:50:16",
+      "generated_at": "2026-01-21T12:50:17.442305+02:00",
+      "volatility": 0.1871,
+      "id": "GBPJPY_otc_20260121125017",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T10:13:51.089391Z",
-      "expires_at": "2026-01-21T12:23:51.089351+02:00"
+      "generated_at_utc": "2026-01-21T10:50:17.442347Z",
+      "expires_at": "2026-01-21T13:00:17.442305+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 433
+  "total_signals": 1,
+  "active_signals": 1,
+  "generation_count": 434
 }
