@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-21T12:50:27.652908+02:00",
+  "last_update": "2026-01-21T13:13:31.778478+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "12:52",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "13:15",
       "duration": 3,
-      "reason": "Ціна демонструє чіткий висхідний тренд: EMA9 перебуває вище EMA21, останні 5 свічок мають більшість закриттів вище відкриттів, RSI (≈62) вказує на сильний, але не перекуплений імпульс, MACD показує позитивний гістограм і перетин лінії сигналу вгору, Bollinger Bands розширені і ціна торкається верхньої межі, а Stochastic (~78) підказує можливу корекцію, проте загальна динаміка залишається bullish. Тому очікуємо короткостроковий рух вгору протягом наступних 3 хвилин.",
-      "timestamp": "2026-01-21 12:50:16",
-      "generated_at": "2026-01-21T12:50:17.442305+02:00",
-      "volatility": 0.1871,
-      "id": "GBPJPY_otc_20260121125017",
+      "reason": "Short-term overbought conditions: RSI >70, Stochastic >80, price near upper Bollinger Band, EMA9 and EMA21 are bullish but price touching upper band, recent bullish candles suggest exhaustion and possible reversal.",
+      "timestamp": "2026-01-21 13:13:20",
+      "generated_at": "2026-01-21T13:13:21.748886+02:00",
+      "volatility": 0.4859,
+      "id": "GBPJPY_otc_20260121131321",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T10:50:17.442347Z",
-      "expires_at": "2026-01-21T13:00:17.442305+02:00"
+      "generated_at_utc": "2026-01-21T11:13:21.748924Z",
+      "expires_at": "2026-01-21T13:23:21.748886+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "13:15",
+      "duration": 3,
+      "reason": "Ціна знизилась після локального максимуму (156.728) і закривається нижче середньої лінії EMA9/EMA21. EMA9 трохи нижчий за EMA21, MACD близький до нуля або негативний, RSI ~48 (нейтрально‑знижено), Bollinger Bands показують, що ціна торкається середньої смуги, Stochastic ~42 (непереборений). Останні свічки формують короткий bearish engulfing, що підтверджує можливий подальший спад.",
+      "timestamp": "2026-01-21 13:13:28",
+      "generated_at": "2026-01-21T13:13:29.776587+02:00",
+      "volatility": 0.0606,
+      "id": "USDJPY_otc_20260121131329",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-21T11:13:29.776625Z",
+      "expires_at": "2026-01-21T13:23:29.776587+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 434
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 435
 }
