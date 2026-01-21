@@ -1,39 +1,24 @@
 {
-  "last_update": "2026-01-21T21:17:15.544166+02:00",
+  "last_update": "2026-01-21T21:45:46.108599+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "21:19",
+      "direction": "UP",
+      "confidence": 0.84,
+      "entry_time": "21:47",
       "duration": 3,
-      "reason": "RSI приблизно 73 (overbought), MACD позитивний але зменшується, ціна торкається верхньої межі Bollinger Bands, EMA9 вище EMA21, Stochastic над 80 (overbought). Остання свічка 21:44 – bearish pin bar після серії підвищень, що вказує на можливий короткостроковий розворот. При низькій волатильності (0.28%) ризик обмежений, тому рекомендація – коротка позиція.",
-      "timestamp": "2026-01-21 21:17:02",
-      "generated_at": "2026-01-21T21:17:04.331401+02:00",
-      "volatility": 0.277,
-      "id": "GBPJPY_otc_20260121211704",
+      "reason": "Price is above EMA9 and EMA21, RSI likely >50, MACD histogram positive, Bollinger Bands show price near upper band but still rising, recent candles form bullish continuation (bullish candle after a doji) indicating short‑term upward momentum.",
+      "timestamp": "2026-01-21 21:45:34",
+      "generated_at": "2026-01-21T21:45:35.654233+02:00",
+      "volatility": 0.1398,
+      "id": "GBPJPY_otc_20260121214535",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T19:17:04.331429Z",
-      "expires_at": "2026-01-21T21:27:04.331401+02:00"
-    },
-    {
-      "asset": "EURUSD_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "21:19",
-      "duration": 3,
-      "reason": "Ціна спускається під EMA9/EMA21, MACD у негативній зоні, RSI ~48 (нейтрально), але Stochastic під 20 і ціна торкається нижньої лінії Bollinger, що вказує на можливе короткострокове відновлення. Оскільки переважає медвежий тренд і остання свічка (21:44) була низхідна, рекомендація – короткостроковий продаж на 3 хв.",
-      "timestamp": "2026-01-21 21:17:06",
-      "generated_at": "2026-01-21T21:17:08.491869+02:00",
-      "volatility": 0.0972,
-      "id": "EURUSD_otc_20260121211708",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T19:17:08.491913Z",
-      "expires_at": "2026-01-21T21:27:08.491869+02:00"
+      "generated_at_utc": "2026-01-21T19:45:35.654272Z",
+      "expires_at": "2026-01-21T21:55:35.654233+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 447
+  "total_signals": 1,
+  "active_signals": 1,
+  "generation_count": 448
 }

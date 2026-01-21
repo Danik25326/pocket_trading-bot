@@ -1,23 +1,5 @@
 [
   {
-    "asset": "GBPJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "21:11",
-    "duration": 3,
-    "reason": "Price shows descending bias on 1‑min candles, EMA9 is below EMA21, RSI is below 50, MACD histogram is negative, Bollinger Bands are narrowing with price near the upper band turning down, and a bearish engulfing pattern appeared at 21:35‑21:36.",
-    "timestamp": "2026-01-20 21:09:10",
-    "generated_at": "2026-01-20T21:09:11.456956+02:00",
-    "volatility": 0.1683,
-    "id": "GBPJPY_otc_20260120210911",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-20T19:09:11.456995Z",
-    "expires_at": "2026-01-20T21:19:11.456956+02:00",
-    "saved_at": "2026-01-20T21:09:20.940740+02:00",
-    "history_id": "GBPJPY_otc_20260120210920",
-    "status": "saved"
-  },
-  {
     "asset": "USDJPY_otc",
     "direction": "UP",
     "confidence": 0.86,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-21T21:27:08.491869+02:00",
     "saved_at": "2026-01-21T21:17:15.545443+02:00",
     "history_id": "EURUSD_otc_20260121211715",
+    "status": "saved"
+  },
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "UP",
+    "confidence": 0.84,
+    "entry_time": "21:47",
+    "duration": 3,
+    "reason": "Price is above EMA9 and EMA21, RSI likely >50, MACD histogram positive, Bollinger Bands show price near upper band but still rising, recent candles form bullish continuation (bullish candle after a doji) indicating short‑term upward momentum.",
+    "timestamp": "2026-01-21 21:45:34",
+    "generated_at": "2026-01-21T21:45:35.654233+02:00",
+    "volatility": 0.1398,
+    "id": "GBPJPY_otc_20260121214535",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-21T19:45:35.654272Z",
+    "expires_at": "2026-01-21T21:55:35.654233+02:00",
+    "saved_at": "2026-01-21T21:45:46.109818+02:00",
+    "history_id": "GBPJPY_otc_20260121214546",
     "status": "saved"
   }
 ]
