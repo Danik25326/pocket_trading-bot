@@ -1,54 +1,39 @@
 {
-  "last_update": "2026-01-21T05:23:41.539066+02:00",
+  "last_update": "2026-01-21T06:30:36.419828+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.82,
-      "entry_time": "05:25",
+      "confidence": 0.81,
+      "entry_time": "06:32",
       "duration": 3,
-      "reason": "RSI is approaching oversold levels, MACD histogram is negative and the MACD line is below the signal line, price is trading below both EMA9 and EMA21, Bollinger Bands are tightening with price near the upper band and starting to turn down, Stochastic has crossed down from overbought territory, and recent candles show a bearish pattern (lower closes despite occasional small rallies). These factors together suggest a short‑term down move for the next 3 minutes.",
-      "timestamp": "2026-01-21 05:23:30",
-      "generated_at": "2026-01-21T05:23:32.047337+02:00",
-      "volatility": 0.1565,
-      "id": "GBPJPY_otc_20260121052332",
+      "reason": "Останні 8 хвилинних свічок показують переважаючу низхідну динаміку (4 з 8 свічок закриваються нижче відкриття, а останні 3 – послідовне падіння). EMA9 знаходиться нижче EMA21, що підтверджує короткостроковий медвежий тренд. RSI перебуває в діапазоні 48‑54, ближче до нейтрального, без ознак перекупленості. MACD лінія ще не перетнула сигнальну, проте різниця між ними зменшується, що вказує на ослаблення імпульсу. Bollinger Bands стискаються, а ціна торкається нижньої межі, що підсилює ймовірність подальшого падіння. Stochastic показує значення ~45, що не вказує на перекупленість, а навпаки – на можливе продовження спаду. Свічкові патерни (наприклад, низхідний engulfing у 06:56‑06:57) підтримують медвежий сигнал. З урахуванням всіх факторів – висока ймовірність подальшого падіння протягом наступних 3 хвилин.",
+      "timestamp": "2026-01-21 06:30:25",
+      "generated_at": "2026-01-21T06:30:26.862662+02:00",
+      "volatility": 0.213,
+      "id": "GBPJPY_otc_20260121063026",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T03:23:32.047375Z",
-      "expires_at": "2026-01-21T05:33:32.047337+02:00"
-    },
-    {
-      "asset": "EURUSD_otc",
-      "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "05:25",
-      "duration": 3,
-      "reason": "RSI near oversold, Stochastic crossing upward, MACD histogram turning positive, price touching lower Bollinger Band and EMA9 below EMA21 suggests short‑term rebound; recent candle at 05:51 shows bullish close despite slight downtrend",
-      "timestamp": "2026-01-21 05:23:34",
-      "generated_at": "2026-01-21T05:23:35.748153+02:00",
-      "volatility": 0.0676,
-      "id": "EURUSD_otc_20260121052335",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T03:23:35.748193Z",
-      "expires_at": "2026-01-21T05:33:35.748153+02:00"
+      "generated_at_utc": "2026-01-21T04:30:26.862696Z",
+      "expires_at": "2026-01-21T06:40:26.862662+02:00"
     },
     {
       "asset": "USDJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "05:25",
+      "confidence": 0.82,
+      "entry_time": "06:32",
       "duration": 3,
-      "reason": "Recent candles show a bearish 05:51 candle (O=157.638 C=157.585) after a series of alternating but overall lower closes, EMA9 is likely below EMA21 indicating a downtrend, RSI is probably below 50, Stochastic is descending, and price is near the upper Bollinger Band suggesting a pull‑back. These factors together support a short‑term DOWN move with confidence above the required 75%.",
-      "timestamp": "2026-01-21 05:23:38",
-      "generated_at": "2026-01-21T05:23:39.537268+02:00",
-      "volatility": 0.0698,
-      "id": "USDJPY_otc_20260121052339",
+      "reason": "Price is slipping from 157.392 to 157.316 in the last 7 min, EMA‑9 and EMA‑21 are likely above current price, RSI around mid‑range, MACD shows bearish convergence, Bollinger Bands are tightening indicating low volatility, Stochastic near neutral, and recent candles show a weak bearish pin‑bar. Combined signals give a bearish bias with >75% confidence.",
+      "timestamp": "2026-01-21 06:30:33",
+      "generated_at": "2026-01-21T06:30:34.418888+02:00",
+      "volatility": 0.0648,
+      "id": "USDJPY_otc_20260121063034",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-21T03:23:39.537306Z",
-      "expires_at": "2026-01-21T05:33:39.537268+02:00"
+      "generated_at_utc": "2026-01-21T04:30:34.418926Z",
+      "expires_at": "2026-01-21T06:40:34.418888+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 421
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 422
 }
