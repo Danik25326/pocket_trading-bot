@@ -1,23 +1,5 @@
 [
   {
-    "asset": "GBPJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "08:01",
-    "duration": 3,
-    "reason": "Bearish momentum: price fell from 211.90 to 211.27 over the last 8 min, EMA 9 is below EMA 21, MACD histogram turning negative, RSI below 50, Stochastic in oversold‑down zone, price touching/under the lower Bollinger Band and recent candles show lower‑high/lower‑low pattern. All indicators point to a short‑term down move.",
-    "timestamp": "2026-01-21 07:59:57",
-    "generated_at": "2026-01-21T07:59:58.675432+02:00",
-    "volatility": 0.4436,
-    "id": "GBPJPY_otc_20260121075958",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-21T05:59:58.675472Z",
-    "expires_at": "2026-01-21T08:09:58.675432+02:00",
-    "saved_at": "2026-01-21T08:00:07.396054+02:00",
-    "history_id": "GBPJPY_otc_20260121080007",
-    "status": "saved"
-  },
-  {
     "asset": "EURUSD_otc",
     "direction": "DOWN",
     "confidence": 0.82,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-22T10:38:26.443128+02:00",
     "saved_at": "2026-01-22T10:28:28.445618+02:00",
     "history_id": "USDJPY_otc_20260122102828",
+    "status": "saved"
+  },
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.78,
+    "entry_time": "11:01",
+    "duration": 3,
+    "reason": "Recent 1‑min candles show a slight bearish reversal after a brief uptrend. EMA9 has slipped below EMA21, price is near the upper Bollinger Band, RSI and Stochastic are in overbought zones, and the MACD histogram has turned negative, indicating weakening momentum. The short‑term trend points down, supporting a brief sell entry.",
+    "timestamp": "2026-01-22 10:59:10",
+    "generated_at": "2026-01-22T10:59:11.565174+02:00",
+    "volatility": 0.3251,
+    "id": "GBPJPY_otc_20260122105911",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-22T08:59:11.565202Z",
+    "expires_at": "2026-01-22T11:09:11.565174+02:00",
+    "saved_at": "2026-01-22T10:59:22.084908+02:00",
+    "history_id": "GBPJPY_otc_20260122105922",
     "status": "saved"
   }
 ]
