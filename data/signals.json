@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-22T12:34:31.198355+02:00",
+  "last_update": "2026-01-22T12:58:09.376895+02:00",
   "signals": [
     {
-      "asset": "GBPJPY_otc",
-      "direction": "DOWN",
+      "asset": "EURUSD_otc",
+      "direction": "UP",
       "confidence": 0.78,
-      "entry_time": "12:36",
+      "entry_time": "13:00",
       "duration": 3,
-      "reason": "RSI падає під 50, MACD показує медвежий кросовер, ціна торкається нижньої межі Bollinger Bands, EMA9 розташована нижче EMA21, Stochastic спускається з рівня понад 80, спостерігаються патерни Bearish Engulfing, що підтверджує медвежий тренд",
-      "timestamp": "2026-01-22 12:34:19",
-      "generated_at": "2026-01-22T12:34:21.435290+02:00",
-      "volatility": 0.2119,
-      "id": "GBPJPY_otc_20260122123421",
+      "reason": "Recent candles show a brief downtrend (EMA9 < EMA21) and price touching the lower Bollinger Band. RSI is around 48 (neutral) and Stochastic is near 15, indicating oversold conditions. These suggest a short‑term rebound despite the slight bearish pressure.",
+      "timestamp": "2026-01-22 12:58:02",
+      "generated_at": "2026-01-22T12:58:03.797440+02:00",
+      "volatility": 0.0893,
+      "id": "EURUSD_otc_20260122125803",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-22T10:34:21.435328Z",
-      "expires_at": "2026-01-22T12:44:21.435290+02:00"
+      "generated_at_utc": "2026-01-22T10:58:03.797480Z",
+      "expires_at": "2026-01-22T13:08:03.797440+02:00"
     },
     {
-      "asset": "EURUSD_otc",
+      "asset": "USDJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "12:36",
+      "confidence": 0.82,
+      "entry_time": "13:00",
       "duration": 3,
-      "reason": "Bearish short‑term momentum: price fell steadily over the last 8 one‑minute candles, EMA9 is below EMA21, RSI is likely under 50, MACD histogram is negative, price is near the lower Bollinger Band and candles show lower closes, indicating a downtrend.",
-      "timestamp": "2026-01-22 12:34:23",
-      "generated_at": "2026-01-22T12:34:24.954183+02:00",
-      "volatility": 0.1395,
-      "id": "EURUSD_otc_20260122123424",
+      "reason": "Bearish short‑term trend confirmed by decreasing EMA9/EMA21, negative MACD histogram, RSI around 48, Stochastic below 50, series of bearish candles and a doji at 13:23 indicating weakening momentum.",
+      "timestamp": "2026-01-22 12:58:06",
+      "generated_at": "2026-01-22T12:58:07.375785+02:00",
+      "volatility": 0.0664,
+      "id": "USDJPY_otc_20260122125807",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-22T10:34:24.954221Z",
-      "expires_at": "2026-01-22T12:44:24.954183+02:00"
+      "generated_at_utc": "2026-01-22T10:58:07.375844Z",
+      "expires_at": "2026-01-22T13:08:07.375785+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 471
+  "generation_count": 472
 }
