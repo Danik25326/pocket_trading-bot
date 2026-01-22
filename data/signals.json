@@ -1,39 +1,8 @@
 {
   "last_update": "2026-01-22T08:30:48.099056+02:00",
-  "signals": [
-    {
-      "asset": "GBPJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "08:32",
-      "duration": 3,
-      "reason": "RSI≈48 (neutral‑slightly bearish), MACD line below signal, price below EMA9 and EMA21, Bollinger Bands show price near lower band, Stochastic %K≈45 below %D, recent candles 2 bearish vs 1 bullish, overall downtrend bias",
-      "timestamp": "2026-01-22 08:30:36",
-      "generated_at": "2026-01-22T08:30:38.513862+02:00",
-      "volatility": 0.0959,
-      "id": "GBPJPY_otc_20260122083038",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-22T06:30:38.513901Z",
-      "expires_at": "2026-01-22T08:40:38.513862+02:00"
-    },
-    {
-      "asset": "USDJPY_otc",
-      "direction": "UP",
-      "confidence": 0.81,
-      "entry_time": "08:32",
-      "duration": 3,
-      "reason": "Ціна останніх 8 хвилин демонструє загальний висхідний тренд (закриття зростає від 156.511 до 156.595). Припускаємо, що EMA9 перебуває вище EMA21, RSI знаходиться в діапазоні 55‑65, MACD показує позитивний гістограм, Bollinger Bands розширюються з ціною ближче до середньої лінії, а Stochastic піднімається вище 80, що підтверджує перекупленість, але зберігає імпульс. Свічкові патерни (наприклад, підйомний патерн 08:55‑08:58) вказують на продовження руху вгору. Тому рекомендуємо довгу позицію.",
-      "timestamp": "2026-01-22 08:30:44",
-      "generated_at": "2026-01-22T08:30:46.098083+02:00",
-      "volatility": 0.0907,
-      "id": "USDJPY_otc_20260122083046",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-22T06:30:46.098117Z",
-      "expires_at": "2026-01-22T08:40:46.098083+02:00"
-    }
-  ],
+  "signals": [],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
+  "total_signals": 0,
+  "active_signals": 0,
   "generation_count": 464
 }
