@@ -1,54 +1,54 @@
 {
-  "last_update": "2026-01-24T13:55:19.906855+02:00",
+  "last_update": "2026-01-24T14:35:43.901574+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "13:57",
+      "confidence": 0.82,
+      "entry_time": "14:37",
       "duration": 3,
-      "reason": "RSI near 70 (overbought), MACD histogram turning negative, price touching the upper Bollinger Band, EMA9 crossed below EMA21, Stochastic above 80, bearish engulfing pattern on the last candle, overall slight downtrend.",
-      "timestamp": "2026-01-24 13:55:09",
-      "generated_at": "2026-01-24T13:55:10.865233+02:00",
-      "volatility": 0.1533,
-      "id": "GBPJPY_otc_20260124135510",
+      "reason": "RSI ~48 (нейтраль‑нижний), MACD histogram від'ємний і зменшується, ціна торкається нижньої межі Bollinger Bands, EMA9 нижче EMA21, Stochastic під 20, останні 5 свічок переважає низхідний рух, немає сильних патернів розвороту – підтверджує короткостроковий медвежий тренд",
+      "timestamp": "2026-01-24 14:35:33",
+      "generated_at": "2026-01-24T14:35:34.613139+02:00",
+      "volatility": 0.0944,
+      "id": "GBPJPY_otc_20260124143534",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-24T11:55:10.865273Z",
-      "expires_at": "2026-01-24T14:05:10.865233+02:00"
+      "generated_at_utc": "2026-01-24T12:35:34.613181Z",
+      "expires_at": "2026-01-24T14:45:34.613139+02:00"
     },
     {
       "asset": "EURUSD_otc",
-      "direction": "UP",
+      "direction": "DOWN",
       "confidence": 0.78,
-      "entry_time": "13:57",
+      "entry_time": "14:37",
       "duration": 3,
-      "reason": "Ціна демонструє легкий висхідний тренд (EMA9 > EMA21, останні закриття вище відкриттів), RSI в діапазоні 55‑60, Stochastic не надто перекуплений, Bollinger Bands показують, що ціна торкається середньої лінії, а остання свічка – маленька біда, що вказує на можливий продовження росту. При низькій волатильності (0.10%) ризик мінімальний, тому рекомендація – купити.",
-      "timestamp": "2026-01-24 13:55:13",
-      "generated_at": "2026-01-24T13:55:14.231067+02:00",
-      "volatility": 0.1028,
-      "id": "EURUSD_otc_20260124135514",
+      "reason": "Слабкий медвежий тренд, RSI ~50, MACD близько нуля, ціна торкається нижньої частини Bollinger Bands, EMA9 нижче EMA21, останні свічки показують невеликий спад, можливий патерн doji",
+      "timestamp": "2026-01-24 14:35:36",
+      "generated_at": "2026-01-24T14:35:38.506833+02:00",
+      "volatility": 0.0674,
+      "id": "EURUSD_otc_20260124143538",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-24T11:55:14.231108Z",
-      "expires_at": "2026-01-24T14:05:14.231067+02:00"
+      "generated_at_utc": "2026-01-24T12:35:38.506873Z",
+      "expires_at": "2026-01-24T14:45:38.506833+02:00"
     },
     {
       "asset": "USDJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "13:57",
+      "confidence": 0.82,
+      "entry_time": "14:37",
       "duration": 3,
-      "reason": "Recent candles show 3 consecutive bearish closes (14:23, 14:21, 14:20) with decreasing closes, EMA9 has slipped below EMA21, MACD histogram is negative, RSI is around 48 (neutral‑bearish) and Stochastic is near 45, indicating momentum shift to the downside. Bollinger Bands place price near the middle‑lower band, supporting a short‑term pull‑back. Low volatility (0.07%) suggests a bounded move, fitting a 3‑minute trade.",
-      "timestamp": "2026-01-24 13:55:16",
-      "generated_at": "2026-01-24T13:55:17.905588+02:00",
-      "volatility": 0.0743,
-      "id": "USDJPY_otc_20260124135517",
+      "reason": "Recent candles show a short‑term uptrend that peaked around 15:01 and then reversed, with price moving from the upper Bollinger Band toward the middle, RSI and Stochastic indicating overbought conditions turning down, and MACD crossing bearish. The EMA9 is below EMA21, confirming a downtrend. Confidence meets the 75% minimum.",
+      "timestamp": "2026-01-24 14:35:40",
+      "generated_at": "2026-01-24T14:35:41.900329+02:00",
+      "volatility": 0.0529,
+      "id": "USDJPY_otc_20260124143541",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-24T11:55:17.905642Z",
-      "expires_at": "2026-01-24T14:05:17.905588+02:00"
+      "generated_at_utc": "2026-01-24T12:35:41.900371Z",
+      "expires_at": "2026-01-24T14:45:41.900329+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 3,
   "active_signals": 3,
-  "generation_count": 493
+  "generation_count": 494
 }
