@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-25T01:47:34.688309+02:00",
+  "last_update": "2026-01-25T01:56:35.802710+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,55 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-24T23:47:32.685887Z",
       "expires_at": "2026-01-25T01:57:32.685848+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.81,
+      "entry_time": "01:58",
+      "duration": 3,
+      "reason": "Price shows slight downtrend on 1‑min candles, EMA9 is below EMA21, RSI around 48 indicating neutral‑bearish, MACD histogram is negative, price is near the lower Bollinger Band and a bearish engulfing pattern appeared, all pointing to a short bias.",
+      "timestamp": "2026-01-25 01:56:25",
+      "generated_at": "2026-01-25T01:56:26.845301+02:00",
+      "volatility": 0.1757,
+      "id": "GBPJPY_otc_20260125015626",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-24T23:56:26.845337Z",
+      "expires_at": "2026-01-25T02:06:26.845301+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "01:58",
+      "duration": 3,
+      "reason": "Ціна поступово знижується (від 1.15446 до 1.15342), RSI близько 48‑50, MACD показує негативний розбіжність, Bollinger Bands стискаються, EMA9 нижче EMA21, Stochastic в діапазоні 40‑55, відсутні яскраві bullish‑патерни – все вказує на короткостроковий спад.",
+      "timestamp": "2026-01-25 01:56:29",
+      "generated_at": "2026-01-25T01:56:30.401060+02:00",
+      "volatility": 0.0693,
+      "id": "EURUSD_otc_20260125015630",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-24T23:56:30.401099Z",
+      "expires_at": "2026-01-25T02:06:30.401060+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "UP",
+      "confidence": 0.78,
+      "entry_time": "01:58",
+      "duration": 3,
+      "reason": "Recent price action shows a short‑term uptrend after a pull‑back (02:20‑02:23 lower closes, then a bullish candle at 02:17). EMA‑9 is above EMA‑21, Bollinger Bands are narrowing with price near the lower band, suggesting a bounce. RSI is around 55‑60, not overbought, supporting further upside. Stochastic is crossing upward from oversold region. Overall indicators align for a modest upward move.",
+      "timestamp": "2026-01-25 01:56:32",
+      "generated_at": "2026-01-25T01:56:33.801445+02:00",
+      "volatility": 0.156,
+      "id": "USDJPY_otc_20260125015633",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-24T23:56:33.801483Z",
+      "expires_at": "2026-01-25T02:06:33.801445+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 527
+  "total_signals": 6,
+  "active_signals": 6,
+  "generation_count": 528
 }
