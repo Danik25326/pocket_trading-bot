@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-24T20:26:05.358854+02:00",
+  "last_update": "2026-01-24T20:52:27.839634+02:00",
   "signals": [
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "20:54",
+      "duration": 3,
+      "reason": "Останні 8 хвилинних свічок показують переважаючу понижену ціну (закриття нижче відкриття), короткострокові EMA 9 нижче EMA 21, MACD у негативній зоні, RSI близько 45 (надлишок продажу), Bollinger Bands стискаються з ціною під середньою лінією, а Stochastic вказує на перепроданість. Усі сигнали підтримують низхідний рух, тому рекомендація – короткостроковий SELL з впевненістю ~82%.",
+      "timestamp": "2026-01-24 20:52:17",
+      "generated_at": "2026-01-24T20:52:18.494051+02:00",
+      "volatility": 0.3641,
+      "id": "GBPJPY_otc_20260124205218",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-24T18:52:18.494091Z",
+      "expires_at": "2026-01-24T21:02:18.494051+02:00"
+    },
     {
       "asset": "USDJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "20:28",
+      "confidence": 0.84,
+      "entry_time": "20:54",
       "duration": 3,
-      "reason": "Price shows slight upward momentum over the last 8 minutes with higher closes, low volatility, bullish EMA9 above EMA21, RSI likely above 50, MACD histogram positive, Bollinger Bands narrowing indicating a potential breakout, and a series of higher highs and higher lows suggesting a bullish candlestick pattern.",
-      "timestamp": "2026-01-24 20:26:02",
-      "generated_at": "2026-01-24T20:26:03.357566+02:00",
-      "volatility": 0.0459,
-      "id": "USDJPY_otc_20260124202603",
+      "reason": "Price shows a clear short‑term uptrend: recent candles are mostly bullish, a strong bullish candle at 21:19 pushes price toward the upper Bollinger Band, EMA‑9 is above EMA‑21, MACD histogram is positive, RSI is in the high‑70s but not yet extreme, and Stochastic is near overbought without a reversal signal. These factors together suggest a continuation upward for the next 3 minutes.",
+      "timestamp": "2026-01-24 20:52:24",
+      "generated_at": "2026-01-24T20:52:25.838727+02:00",
+      "volatility": 0.1105,
+      "id": "USDJPY_otc_20260124205225",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-24T18:26:03.357592Z",
-      "expires_at": "2026-01-24T20:36:03.357566+02:00"
+      "generated_at_utc": "2026-01-24T18:52:25.838766Z",
+      "expires_at": "2026-01-24T21:02:25.838727+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 509
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 510
 }
