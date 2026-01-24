@@ -107,7 +107,7 @@ jobs:
         TZ: 'Europe/Kiev'
         POCKET_SSID: ${{ secrets.POCKET_SSID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        POCKET_DEMO: 'true'
+        POCKET_DEMO: 'false'
         SIGNAL_INTERVAL: '600'
         MIN_CONFIDENCE: '0.75'
         MAX_DURATION: '5.0'
