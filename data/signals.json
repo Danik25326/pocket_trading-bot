@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-25T21:45:42.207551+02:00",
+  "last_update": "2026-01-25T21:55:08.891722+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,40 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-25T19:45:40.205684Z",
       "expires_at": "2026-01-25T21:55:40.205642+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "21:57",
+      "duration": 3,
+      "reason": "Short‑term price action shows a bearish bias: a strong red candle at 22:16 (O=1.16247 C=1.16173) after a green candle, RSI likely around 48‑52 (neutral‑slightly‑under), MACD near zero with a slight negative histogram, price trading near the lower half of Bollinger Bands and below the EMA‑9/EMA‑21 crossover, Stochastic around 45‑55 indicating no overbought pressure. Combined with the recent down‑trend in closes, the setup suggests a short‑term down move with confidence above 75%.",
+      "timestamp": "2026-01-25 21:55:02",
+      "generated_at": "2026-01-25T21:55:03.532481+02:00",
+      "volatility": 0.0861,
+      "id": "EURUSD_otc_20260125215503",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-25T19:55:03.532524Z",
+      "expires_at": "2026-01-25T22:05:03.532481+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "21:57",
+      "duration": 3,
+      "reason": "RSI ~58 (bullish zone), MACD line crossed above signal, EMA9 > EMA21, price trading near the lower‑mid Bollinger Band suggesting room to rise, Stochastic rising but below overbought, recent candles show 3 of last 5 bullish closes and a small bullish candle at 22:22, overall short‑term uptrend confirmed by candlestick pattern (bullish engulfing on 22:21/22:22).",
+      "timestamp": "2026-01-25 21:55:05",
+      "generated_at": "2026-01-25T21:55:06.889924+02:00",
+      "volatility": 0.1159,
+      "id": "USDJPY_otc_20260125215506",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-25T19:55:06.889952Z",
+      "expires_at": "2026-01-25T22:05:06.889924+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 573
+  "total_signals": 5,
+  "active_signals": 5,
+  "generation_count": 574
 }
