@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-25T13:32:43.094974+02:00",
+  "last_update": "2026-01-25T13:46:10.181405+02:00",
   "signals": [
     {
-      "asset": "USDJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.81,
-      "entry_time": "13:34",
+      "asset": "GBPJPY_otc",
+      "direction": "UP",
+      "confidence": 0.86,
+      "entry_time": "13:48",
       "duration": 3,
-      "reason": "Останні 8 хвилинних свічок показують зниження ціни (закриття нижче відкриття у 14:00, 13:57, 13:55). EMA9 знаходиться нижче EMA21, що вказує на короткостроковий медвежий тренд. RSI, розрахований за останні 14 періодів, знаходиться близько 48‑50, а Stochastic перебуває в зоні 80‑85, що свідчить про потенційну корекцію вниз. Ціна торкається нижньої частини смуги Боллінджера, що підтверджує слабкість. Усі сигнали схиляються до продажу, тому рекомендація – короткостроковий SELL з високою впевненістю.",
-      "timestamp": "2026-01-25 13:32:39",
-      "generated_at": "2026-01-25T13:32:41.093743+02:00",
-      "volatility": 0.0239,
-      "id": "USDJPY_otc_20260125133241",
+      "reason": "RSI is around 55 and trending upward, MACD line is above signal with a positive histogram, price is above both EMA‑9 and EMA‑21 indicating bullish momentum, Bollinger Bands are widening with price near the upper band, Stochastic has crossed above 80 showing strong upward pressure, and a bullish engulfing pattern appeared between 14:11 and 14:10. All indicators point to a short‑term uptrend, confidence 86%.",
+      "timestamp": "2026-01-25 13:45:59",
+      "generated_at": "2026-01-25T13:46:00.205052+02:00",
+      "volatility": 0.1702,
+      "id": "GBPJPY_otc_20260125134600",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T11:32:41.093771Z",
-      "expires_at": "2026-01-25T13:42:41.093743+02:00"
+      "generated_at_utc": "2026-01-25T11:46:00.205087Z",
+      "expires_at": "2026-01-25T13:56:00.205052+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "UP",
+      "confidence": 0.84,
+      "entry_time": "13:48",
+      "duration": 3,
+      "reason": "RSI~58 (neutral‑bullish), MACD slightly positive, price near middle of Bollinger Bands with recent touch of lower band suggesting bounce, EMA9 above EMA21 indicating short‑term uptrend, Stochastic ~65 (no overbought), recent candles form a bullish reversal after a small bearish candle (14:08). All signals align for a short‑term upward move.",
+      "timestamp": "2026-01-25 13:46:02",
+      "generated_at": "2026-01-25T13:46:04.045134+02:00",
+      "volatility": 0.087,
+      "id": "EURUSD_otc_20260125134604",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-25T11:46:04.045174Z",
+      "expires_at": "2026-01-25T13:56:04.045134+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 550
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 551
 }
