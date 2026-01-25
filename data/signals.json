@@ -1,54 +1,39 @@
 {
-  "last_update": "2026-01-25T23:35:48.919463+02:00",
+  "last_update": "2026-01-25T23:47:33.402544+02:00",
   "signals": [
-    {
-      "asset": "GBPJPY_otc",
-      "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "23:37",
-      "duration": 3,
-      "reason": "Price shows a clear upward bias: last candle (00:03) closed 0.23% above its open, EMA‑9 is above EMA‑21, MACD histogram turned positive, RSI is likely in the 55‑65 range indicating momentum without being overbought, Bollinger Bands are expanding with price hugging the lower band and moving toward the middle, Stochastic is rising from oversold levels, and bullish candle patterns (higher highs and higher lows) dominate. Combined with low volatility (0.13%) the setup supports a short‑term long entry.",
-      "timestamp": "2026-01-25 23:35:38",
-      "generated_at": "2026-01-25T23:35:39.402606+02:00",
-      "volatility": 0.1333,
-      "id": "GBPJPY_otc_20260125233539",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T21:35:39.402636Z",
-      "expires_at": "2026-01-25T23:45:39.402606+02:00"
-    },
     {
       "asset": "EURUSD_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "23:37",
+      "confidence": 0.78,
+      "entry_time": "23:49",
       "duration": 3,
-      "reason": "Ціни показують легкий висхідний тренд: EMA 9 перебуває вище EMA 21, RSI трохи вище 50, MACD позитивний, Bollinger Bands ширші і ціна торкається верхньої частини смуги, Stochastic близько 70‑80 (переважно над 50). Остання свічка 00:01 – bullish engulfing, що підтверджує можливий підйом. Враховуючи низьку волатильність (0.07%) і короткостроковий горизонт, рекомендація – купити.",
-      "timestamp": "2026-01-25 23:35:41",
-      "generated_at": "2026-01-25T23:35:42.958036+02:00",
-      "volatility": 0.0673,
-      "id": "EURUSD_otc_20260125233542",
+      "reason": "RSI ~39 (near oversold), price closing above recent lows, slight upward momentum in last 4 candles, Bollinger Bands middle, MACD near zero but trending positive, EMA9 likely above EMA21, bullish candle pattern (higher closes). Combined indicators suggest a short‑term upside move with moderate confidence.",
+      "timestamp": "2026-01-25 23:47:26",
+      "generated_at": "2026-01-25T23:47:27.792881+02:00",
+      "volatility": 0.0484,
+      "id": "EURUSD_otc_20260125234727",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T21:35:42.958080Z",
-      "expires_at": "2026-01-25T23:45:42.958036+02:00"
+      "generated_at_utc": "2026-01-25T21:47:27.792918Z",
+      "expires_at": "2026-01-25T23:57:27.792881+02:00"
     },
     {
       "asset": "USDJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.84,
-      "entry_time": "23:37",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "23:49",
       "duration": 3,
-      "reason": "RSI ~40 (bearish), MACD negative, price below EMA9 and EMA21, Bollinger Bands price near lower band, Stochastic below 20, descending closes and bearish candlesticks indicate downtrend.",
-      "timestamp": "2026-01-25 23:35:45",
-      "generated_at": "2026-01-25T23:35:46.918277+02:00",
-      "volatility": 0.1106,
-      "id": "USDJPY_otc_20260125233546",
+      "reason": "RSI≈73 (still rising), MACD histogram positive, price above EMA9 and EMA21, Bollinger Bands expanding with price near the upper band, Stochastic >80 showing strong momentum, higher highs/lows and a bullish engulfing pattern on 00:14‑00:15 confirm short‑term uptrend",
+      "timestamp": "2026-01-25 23:47:30",
+      "generated_at": "2026-01-25T23:47:31.400131+02:00",
+      "volatility": 0.1374,
+      "id": "USDJPY_otc_20260125234731",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T21:35:46.918318Z",
-      "expires_at": "2026-01-25T23:45:46.918277+02:00"
+      "generated_at_utc": "2026-01-25T21:47:31.400171Z",
+      "expires_at": "2026-01-25T23:57:31.400131+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 579
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 580
 }
