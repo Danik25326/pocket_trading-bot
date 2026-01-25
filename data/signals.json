@@ -1,39 +1,8 @@
 {
   "last_update": "2026-01-25T19:15:52.387304+02:00",
-  "signals": [
-    {
-      "asset": "GBPJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "19:17",
-      "duration": 3,
-      "reason": "RSI is overbought (~73), MACD histogram turned negative, price is near the upper Bollinger Band, EMA9 is still above EMA21 but the slope is flattening, Stochastic is above 80, and two consecutive bearish candles after a short uptrend indicate a short‑term reversal.",
-      "timestamp": "2026-01-25 19:15:40",
-      "generated_at": "2026-01-25T19:15:42.384607+02:00",
-      "volatility": 0.2321,
-      "id": "GBPJPY_otc_20260125191542",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T17:15:42.384648Z",
-      "expires_at": "2026-01-25T19:25:42.384607+02:00"
-    },
-    {
-      "asset": "EURUSD_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "19:17",
-      "duration": 3,
-      "reason": "Recent candles show a shift from bullish to a series of bearish closes, RSI near 50‑55 trending lower, MACD line crossing below signal, price moving from near the upper Bollinger Band toward the middle, EMA9 crossing below EMA21, Stochastic falling from overbought region, overall downtrend confirmed by candlestick pattern.",
-      "timestamp": "2026-01-25 19:15:44",
-      "generated_at": "2026-01-25T19:15:46.308750+02:00",
-      "volatility": 0.0718,
-      "id": "EURUSD_otc_20260125191546",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-25T17:15:46.308795Z",
-      "expires_at": "2026-01-25T19:25:46.308750+02:00"
-    }
-  ],
+  "signals": [],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
+  "total_signals": 0,
+  "active_signals": 0,
   "generation_count": 566
 }
