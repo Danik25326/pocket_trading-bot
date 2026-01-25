@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-25T11:48:57.062546+02:00",
+  "last_update": "2026-01-25T11:57:51.414031+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,40 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-25T09:48:55.061437Z",
       "expires_at": "2026-01-25T11:58:55.061399+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "11:59",
+      "duration": 3,
+      "reason": "EMA9 is above EMA21, price is holding above the 20‑period SMA and near the upper Bollinger Band, RSI ~68 and Stochastic %K above %D in overbought zone but still rising. Recent candles show a bullish engulfing at 12:25 after a short pull‑back, indicating momentum continuation. Trend on 1‑minute chart is mildly bullish, supporting a short‑term long entry.",
+      "timestamp": "2026-01-25 11:57:40",
+      "generated_at": "2026-01-25T11:57:41.575010+02:00",
+      "volatility": 0.2555,
+      "id": "GBPJPY_otc_20260125115741",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-25T09:57:41.575050Z",
+      "expires_at": "2026-01-25T12:07:41.575010+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.85,
+      "entry_time": "11:59",
+      "duration": 3,
+      "reason": "Останні 8 хвилинних свічок показують послідовність падіння (12:24, 12:25 – bearish), EMA9 перебуває нижче EMA21, RSI < 50, MACD в негативній зоні, ціна торкається нижньої межі Bollinger Bands, Stochastic близько до нижньої межі, що підтверджує переважаючий медвежий тренд при низькій волатильності 0.09%.",
+      "timestamp": "2026-01-25 11:57:43",
+      "generated_at": "2026-01-25T11:57:45.400420+02:00",
+      "volatility": 0.0915,
+      "id": "EURUSD_otc_20260125115745",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-25T09:57:45.400461Z",
+      "expires_at": "2026-01-25T12:07:45.400420+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 544
+  "total_signals": 5,
+  "active_signals": 5,
+  "generation_count": 545
 }
