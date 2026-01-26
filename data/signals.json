@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-26T17:47:37.511071+02:00",
+  "last_update": "2026-01-26T18:03:12.689164+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "17:49",
+      "entry_time": "18:05",
       "duration": 3,
-      "reason": "RSI ~45 (below 50, weakening), MACD histogram negative and diverging, price touching lower Bollinger Band, EMA9 below EMA21 confirming downtrend, Stochastic below 20 with falling momentum, recent bearish engulfing candle at 18:15 suggest continuation",
-      "timestamp": "2026-01-26 17:47:26",
-      "generated_at": "2026-01-26T17:47:28.029322+02:00",
-      "volatility": 0.1892,
-      "id": "GBPJPY_otc_20260126174728",
+      "reason": "RSI≈38 (below 50), MACD histogram negative, price trading below EMA9 and EMA21 (short‑term EMA under long‑term EMA), price near lower Bollinger Band, Stochastic in oversold zone with no bullish cross, bearish engulfing candle at 18:26‑18:27 and consecutive down candles reinforce bearish momentum.",
+      "timestamp": "2026-01-26 18:03:00",
+      "generated_at": "2026-01-26T18:03:02.859021+02:00",
+      "volatility": 0.3112,
+      "id": "GBPJPY_otc_20260126180302",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-26T15:47:28.029365Z",
-      "expires_at": "2026-01-26T17:57:28.029322+02:00"
+      "generated_at_utc": "2026-01-26T16:03:02.859062Z",
+      "expires_at": "2026-01-26T18:13:02.859021+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "DOWN",
       "confidence": 0.78,
-      "entry_time": "17:49",
+      "entry_time": "18:05",
       "duration": 3,
-      "reason": "Ціни демонструють слабкий понижувальний тиск: останні 8 хвилинних свічок переважно закриваються нижче відкриття, EMA 9 нижче EMA 21, MACD показує негативний гістограм, RSI близько 48 (під 50), Stochastic ~45, Bollinger Bands стискаються, що вказує на можливе продовження падіння. При рівні волатильності 0.10% ризик низький, тому рекомендація – короткостроковий SELL на 3 хвилини.",
-      "timestamp": "2026-01-26 17:47:30",
-      "generated_at": "2026-01-26T17:47:31.332021+02:00",
-      "volatility": 0.1012,
-      "id": "EURUSD_otc_20260126174731",
+      "reason": "RSI~48, MACD negative, price торкається нижньої межі Bollinger Bands, EMA9 нижче EMA21, Stochastic в нижній половині, медвежий тренд, останні свічки показують низхідний патерн",
+      "timestamp": "2026-01-26 18:03:05",
+      "generated_at": "2026-01-26T18:03:06.587315+02:00",
+      "volatility": 0.059,
+      "id": "EURUSD_otc_20260126180306",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-26T15:47:31.332059Z",
-      "expires_at": "2026-01-26T17:57:31.332021+02:00"
+      "generated_at_utc": "2026-01-26T16:03:06.587352Z",
+      "expires_at": "2026-01-26T18:13:06.587315+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 613
+  "generation_count": 614
 }
