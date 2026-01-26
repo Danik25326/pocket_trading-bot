@@ -1,24 +1,54 @@
 {
-  "last_update": "2026-01-26T10:38:34.624263+02:00",
+  "last_update": "2026-01-26T11:03:17.432825+02:00",
   "signals": [
     {
-      "asset": "EURUSD_otc",
+      "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.84,
-      "entry_time": "10:40",
+      "confidence": 0.82,
+      "entry_time": "11:05",
       "duration": 3,
-      "reason": "Bullish momentum observed: recent candles show higher closes, EMA9 above EMA21, price near upper Bollinger Band, RSI around 58, Stochastic crossing upward, bullish engulfing pattern at 11:05‑11:06.",
-      "timestamp": "2026-01-26 10:38:27",
-      "generated_at": "2026-01-26T10:38:28.660018+02:00",
-      "volatility": 0.1092,
-      "id": "EURUSD_otc_20260126103828",
+      "reason": "Price shows a clear short‑term uptrend: last two 1‑min candles close higher (220.934→221.196→221.215). EMA‑9 is above EMA‑21, MACD histogram turned positive, RSI is around 62 (above 50 but below overbought), Bollinger Bands indicate price near the upper band but still within range, Stochastic is high (~78) suggesting momentum. No bearish reversal patterns observed; recent candles form a bullish continuation. Confidence meets the 75% threshold.",
+      "timestamp": "2026-01-26 11:03:06",
+      "generated_at": "2026-01-26T11:03:08.041721+02:00",
+      "volatility": 0.2561,
+      "id": "GBPJPY_otc_20260126110308",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-26T08:38:28.660060Z",
-      "expires_at": "2026-01-26T10:48:28.660018+02:00"
+      "generated_at_utc": "2026-01-26T09:03:08.041776Z",
+      "expires_at": "2026-01-26T11:13:08.041721+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "11:05",
+      "duration": 3,
+      "reason": "Low volatility (0.08%), mixed recent 1‑minute candles with a slight bearish bias, RSI around 50, MACD near zero, price touching the lower Bollinger Band, EMA9 below EMA21, and a neutral Stochastic indicate a modest probability of a short move.",
+      "timestamp": "2026-01-26 11:03:10",
+      "generated_at": "2026-01-26T11:03:11.827965+02:00",
+      "volatility": 0.0754,
+      "id": "EURUSD_otc_20260126110311",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-26T09:03:11.828003Z",
+      "expires_at": "2026-01-26T11:13:11.827965+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "11:05",
+      "duration": 3,
+      "reason": "Price shows upward momentum: recent candles close higher, EMA9 is above EMA21 indicating bullish trend, MACD histogram is positive, RSI is around 65 (still bullish), price is near the upper Bollinger Band but continues to rise, and bullish candlestick patterns (higher highs and closes) are present.",
+      "timestamp": "2026-01-26 11:03:14",
+      "generated_at": "2026-01-26T11:03:15.431563+02:00",
+      "volatility": 0.0721,
+      "id": "USDJPY_otc_20260126110315",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-26T09:03:15.431600Z",
+      "expires_at": "2026-01-26T11:13:15.431563+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 598
+  "total_signals": 3,
+  "active_signals": 3,
+  "generation_count": 599
 }
