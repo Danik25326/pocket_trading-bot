@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-27T10:37:08.304711+02:00",
+  "last_update": "2026-01-27T11:02:36.003497+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.82,
-      "entry_time": "10:38",
+      "confidence": 0.78,
+      "entry_time": "11:04",
       "duration": 3,
-      "reason": "RSI near neutral and trending down, MACD histogram negative, price below EMA9 and EMA21, Bollinger Bands show price slipping under the middle band, Stochastic falling below 80, clear downtrend with lower highs/lows and predominance of bearish candles",
-      "timestamp": "2026-01-27 10:36:56",
-      "generated_at": "2026-01-27T10:36:58.698874+02:00",
-      "volatility": 0.2641,
-      "id": "GBPJPY_otc_20260127103658",
+      "reason": "RSI≈55 (neutral), MACD histogram turning negative, price touching/just below the upper Bollinger Band, EMA9 is below EMA21 indicating downtrend, Stochastic ~60 with downward cross, recent candles show a bearish engulfing at 11:30 and a series of lower closes after a short rally. Combined signals suggest a short‑term downside move.",
+      "timestamp": "2026-01-27 11:02:24",
+      "generated_at": "2026-01-27T11:02:26.201311+02:00",
+      "volatility": 0.2203,
+      "id": "GBPJPY_otc_20260127110226",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T08:36:58.698914Z",
-      "expires_at": "2026-01-27T10:46:58.698874+02:00"
+      "generated_at_utc": "2026-01-27T09:02:26.201339Z",
+      "expires_at": "2026-01-27T11:12:26.201311+02:00"
     },
     {
       "asset": "USDJPY_otc",
-      "direction": "DOWN",
+      "direction": "UP",
       "confidence": 0.82,
-      "entry_time": "10:39",
+      "entry_time": "11:04",
       "duration": 3,
-      "reason": "Низька волатильність (0.04%), останні 3 свічки показують пониження ціни, EMA 9 нижче EMA 21, MACD зменшується, RSI близько 45‑50 (нейтрально‑знижено), Stochastic ~50, Bollinger Bands в центрі. Усі індикатори вказують на слабкий, проте впевнений, короткостроковий медвежий рух.",
-      "timestamp": "2026-01-27 10:37:05",
-      "generated_at": "2026-01-27T10:37:06.303775+02:00",
-      "volatility": 0.0426,
-      "id": "USDJPY_otc_20260127103706",
+      "reason": "RSI≈58 (neutral‑bullish), MACD line above signal, EMA9 above EMA21, price holding above EMA9, Stochastic≈70 (approaching overbought but not extreme), Bollinger Bands show price near middle‑upper band, recent candles display higher highs/lows and a bullish engulfing at 11:25‑11:26, short‑term trend upward",
+      "timestamp": "2026-01-27 11:02:32",
+      "generated_at": "2026-01-27T11:02:34.002225+02:00",
+      "volatility": 0.0662,
+      "id": "USDJPY_otc_20260127110234",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T08:37:06.303821Z",
-      "expires_at": "2026-01-27T10:47:06.303775+02:00"
+      "generated_at_utc": "2026-01-27T09:02:34.002264Z",
+      "expires_at": "2026-01-27T11:12:34.002225+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 643
+  "generation_count": 644
 }
