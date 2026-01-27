@@ -1,23 +1,5 @@
 [
   {
-    "asset": "USDJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "01:02",
-    "duration": 3,
-    "reason": "Ціна поступово знижується: останні 8 хвилинних свічок переважно червоні, 01:24‑01:22 – сильне падіння, 01:21‑01:20 – маленькі корекції. EMA9 перебуває нижче EMA21, що вказує на медвежий тренд. MACD показує негативний гістограм і останнє медвеже перетинання лінії сигналу. RSI знаходиться в діапазоні 55‑60, ближче до верхньої межі, що свідчить про можливе переохолодження. Stochastic над 80 і вже починає падати, підтверджуючи потенціал розвороту вниз. Ціна торкається верхньої межі Bollinger Bands і починає відхилятись до середини, що також вказує на скорочення імпульсу. Патерн – кілька послідовних низьких свічок і можливий bearish engulfing на 01:24‑01:23. Враховуючи всі індикатори, ймовірність подальшого падіння вище 75 %.",
-    "timestamp": "2026-01-27 01:00:03",
-    "generated_at": "2026-01-27T01:00:05.291615+02:00",
-    "volatility": 0.1025,
-    "id": "USDJPY_otc_20260127010005",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-26T23:00:05.291653Z",
-    "expires_at": "2026-01-27T01:10:05.291615+02:00",
-    "saved_at": "2026-01-27T01:00:07.294090+02:00",
-    "history_id": "USDJPY_otc_20260127010007",
-    "status": "saved"
-  },
-  {
     "asset": "GBPJPY_otc",
     "direction": "DOWN",
     "confidence": 0.82,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-28T00:56:18.470400+02:00",
     "saved_at": "2026-01-28T00:46:20.472715+02:00",
     "history_id": "USDJPY_otc_20260128004620",
+    "status": "saved"
+  },
+  {
+    "asset": "USDJPY_otc",
+    "direction": "DOWN",
+    "confidence": 0.78,
+    "entry_time": "00:59",
+    "duration": 3,
+    "reason": "RSI near 45 indicating slight bearish momentum, MACD histogram negative and MACD line below signal, price below EMA9 and EMA9 below EMA21, Bollinger Bands show price near lower band, Stochastic below 20 suggesting oversold but still bearish pressure, recent candles display lower highs and a bearish engulfing pattern, overall downtrend confidence 78%",
+    "timestamp": "2026-01-28 00:57:54",
+    "generated_at": "2026-01-28T00:57:56.429157+02:00",
+    "volatility": 0.0877,
+    "id": "USDJPY_otc_20260128005756",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-27T22:57:56.429198Z",
+    "expires_at": "2026-01-28T01:07:56.429157+02:00",
+    "saved_at": "2026-01-28T00:57:58.431774+02:00",
+    "history_id": "USDJPY_otc_20260128005758",
     "status": "saved"
   }
 ]
