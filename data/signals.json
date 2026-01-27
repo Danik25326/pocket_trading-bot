@@ -1,8 +1,39 @@
 {
-  "last_update": "2026-01-27T19:16:18.989795+02:00",
-  "signals": [],
+  "last_update": "2026-01-27T20:02:13.025291+02:00",
+  "signals": [
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "20:04",
+      "duration": 3,
+      "reason": "Short‑term downtrend confirmed by EMA9 below EMA21, bearish MACD histogram, RSI around 48 (neutral‑slightly‑bearish), Stochastic below 50, price near the lower Bollinger Band and a series of recent bearish candles.",
+      "timestamp": "2026-01-27 20:01:56",
+      "generated_at": "2026-01-27T20:02:00.477270+02:00",
+      "volatility": 0.3792,
+      "id": "GBPJPY_otc_20260127200200",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-27T18:02:00.477312Z",
+      "expires_at": "2026-01-27T20:12:00.477270+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "20:04",
+      "duration": 3,
+      "reason": "RSI ~58 (neutral‑bullish), MACD histogram turning positive and MACD line above signal, EMA9 > EMA21 indicating bullish trend, Stochastic ~70 showing upward momentum, price hugging the upper Bollinger Band after a series of higher closes, recent candles form a bullish engulfing pattern (20:28‑20:29). All indicators point to short‑term upside with >75% confidence.",
+      "timestamp": "2026-01-27 20:02:09",
+      "generated_at": "2026-01-27T20:02:11.023341+02:00",
+      "volatility": 0.0569,
+      "id": "USDJPY_otc_20260127200211",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-27T18:02:11.023382Z",
+      "expires_at": "2026-01-27T20:12:11.023341+02:00"
+    }
+  ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 0,
-  "active_signals": 0,
-  "generation_count": 659
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 660
 }
