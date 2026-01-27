@@ -1,23 +1,5 @@
 [
   {
-    "asset": "GBPJPY_otc",
-    "direction": "DOWN",
-    "confidence": 0.82,
-    "entry_time": "01:33",
-    "duration": 3,
-    "reason": "Recent candles show a clear downtrend with consecutive red bars, EMA9 below EMA21, bearish MACD histogram, RSI likely below 50, and price pressing toward the lower Bollinger Band. Stochastic is in the lower zone, indicating continued weakness.",
-    "timestamp": "2026-01-27 01:31:15",
-    "generated_at": "2026-01-27T01:31:17.106931+02:00",
-    "volatility": 0.1403,
-    "id": "GBPJPY_otc_20260127013117",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-26T23:31:17.106971Z",
-    "expires_at": "2026-01-27T01:41:17.106931+02:00",
-    "saved_at": "2026-01-27T01:31:26.464485+02:00",
-    "history_id": "GBPJPY_otc_20260127013126",
-    "status": "saved"
-  },
-  {
     "asset": "EURUSD_otc",
     "direction": "DOWN",
     "confidence": 0.82,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-28T01:07:56.429157+02:00",
     "saved_at": "2026-01-28T00:57:58.431774+02:00",
     "history_id": "USDJPY_otc_20260128005758",
+    "status": "saved"
+  },
+  {
+    "asset": "USDJPY_otc",
+    "direction": "UP",
+    "confidence": 0.86,
+    "entry_time": "01:27",
+    "duration": 3,
+    "reason": "RSI≈58 shows modest bullish momentum, MACD histogram turned positive, price crossed above EMA9 and stays near the upper Bollinger Band, Stochastic %K crossed above %D indicating upward shift, a bullish engulfing candle appeared at 01:53, and the short‑term trend is slightly up despite low volatility (0.05%).",
+    "timestamp": "2026-01-28 01:25:54",
+    "generated_at": "2026-01-28T01:25:55.974105+02:00",
+    "volatility": 0.0497,
+    "id": "USDJPY_otc_20260128012555",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-27T23:25:55.974140Z",
+    "expires_at": "2026-01-28T01:35:55.974105+02:00",
+    "saved_at": "2026-01-28T01:25:57.976138+02:00",
+    "history_id": "USDJPY_otc_20260128012557",
     "status": "saved"
   }
 ]

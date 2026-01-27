@@ -1,24 +1,24 @@
 {
-  "last_update": "2026-01-28T00:57:58.430501+02:00",
+  "last_update": "2026-01-28T01:25:57.974914+02:00",
   "signals": [
     {
       "asset": "USDJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "00:59",
+      "direction": "UP",
+      "confidence": 0.86,
+      "entry_time": "01:27",
       "duration": 3,
-      "reason": "RSI near 45 indicating slight bearish momentum, MACD histogram negative and MACD line below signal, price below EMA9 and EMA9 below EMA21, Bollinger Bands show price near lower band, Stochastic below 20 suggesting oversold but still bearish pressure, recent candles display lower highs and a bearish engulfing pattern, overall downtrend confidence 78%",
-      "timestamp": "2026-01-28 00:57:54",
-      "generated_at": "2026-01-28T00:57:56.429157+02:00",
-      "volatility": 0.0877,
-      "id": "USDJPY_otc_20260128005756",
+      "reason": "RSI≈58 shows modest bullish momentum, MACD histogram turned positive, price crossed above EMA9 and stays near the upper Bollinger Band, Stochastic %K crossed above %D indicating upward shift, a bullish engulfing candle appeared at 01:53, and the short‑term trend is slightly up despite low volatility (0.05%).",
+      "timestamp": "2026-01-28 01:25:54",
+      "generated_at": "2026-01-28T01:25:55.974105+02:00",
+      "volatility": 0.0497,
+      "id": "USDJPY_otc_20260128012555",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T22:57:56.429198Z",
-      "expires_at": "2026-01-28T01:07:56.429157+02:00"
+      "generated_at_utc": "2026-01-27T23:25:55.974140Z",
+      "expires_at": "2026-01-28T01:35:55.974105+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 1,
   "active_signals": 1,
-  "generation_count": 673
+  "generation_count": 674
 }
