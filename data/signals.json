@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-27T09:44:15.664476+02:00",
+  "last_update": "2026-01-27T09:57:48.839516+02:00",
   "signals": [
     {
-      "asset": "EURUSD_otc",
+      "asset": "GBPJPY_otc",
       "direction": "UP",
       "confidence": 0.82,
-      "entry_time": "09:46",
+      "entry_time": "09:59",
       "duration": 3,
-      "reason": "Price shows a slight bullish bias: EMA9 is above EMA21, MACD histogram is marginally positive, RSI is around 55‑60, Stochastic is near 70, and the last candle (10:11) forms a bullish engulfing after a small pull‑back. Bollinger Bands indicate price near the upper band but not extreme, supporting a short‑term upside move. Confidence meets the 75% minimum.",
-      "timestamp": "2026-01-27 09:44:08",
-      "generated_at": "2026-01-27T09:44:09.545144+02:00",
-      "volatility": 0.1303,
-      "id": "EURUSD_otc_20260127094409",
+      "reason": "Recent 1‑min candles show a higher‑high and higher‑low pattern (210.743→210.795→210.836). EMA‑9 is above EMA‑21, indicating short‑term bullish momentum. MACD histogram turned positive in the last two periods, and RSI is around 58, staying below overbought. Bollinger Bands are expanding with price testing the upper band, while Stochastic %K is above %D but below 80, suggesting continued upward pressure. Overall bullish bias with confidence >75%.",
+      "timestamp": "2026-01-27 09:57:37",
+      "generated_at": "2026-01-27T09:57:38.591230+02:00",
+      "volatility": 0.1922,
+      "id": "GBPJPY_otc_20260127095738",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T07:44:09.545179Z",
-      "expires_at": "2026-01-27T09:54:09.545144+02:00"
+      "generated_at_utc": "2026-01-27T07:57:38.591264Z",
+      "expires_at": "2026-01-27T10:07:38.591230+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "09:59",
+      "duration": 3,
+      "reason": "Слабка понижальна динаміка на 1‑хв таймфреймі: останні 8 закриттів показують зниження з 1.19848 до 1.19802, EMA9 нижче EMA21, MACD‑лінія під сигнальною, RSI≈48, Stochastic≈45, ціна торкається нижньої частини смуги Bollinger, що вказує на можливий короткостроковий спад.",
+      "timestamp": "2026-01-27 09:57:40",
+      "generated_at": "2026-01-27T09:57:42.517268+02:00",
+      "volatility": 0.0734,
+      "id": "EURUSD_otc_20260127095742",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-27T07:57:42.517312Z",
+      "expires_at": "2026-01-27T10:07:42.517268+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 641
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 642
 }
