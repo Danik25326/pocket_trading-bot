@@ -1,39 +1,54 @@
 {
-  "last_update": "2026-01-27T11:46:21.396059+02:00",
+  "last_update": "2026-01-27T12:01:29.190001+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "11:48",
+      "confidence": 0.82,
+      "entry_time": "12:03",
       "duration": 3,
-      "reason": "Short‑term bullish reversal signs: EMA9 crossed above EMA21, MACD histogram turning positive, RSI rising from ~38 to ~45, Bollinger Bands narrowing with price near lower band, stochastic exiting oversold, and a bullish candle at 12:13 after several bearish candles.",
-      "timestamp": "2026-01-27 11:46:09",
-      "generated_at": "2026-01-27T11:46:11.329989+02:00",
-      "volatility": 0.1326,
-      "id": "GBPJPY_otc_20260127114611",
+      "reason": "Recent 1‑minute candles show a short‑term uptrend (price rose from 208.916 to 209.097). EMA9 is above EMA21, MACD histogram is positive, RSI is around 55‑60 (momentum still bullish), Bollinger Bands are expanding upward, and Stochastic is near the upper‑mid range without being overbought. The slight bearish candle at 12:29 appears as a minor pull‑back, offering a potential entry point.",
+      "timestamp": "2026-01-27 12:01:17",
+      "generated_at": "2026-01-27T12:01:19.423158+02:00",
+      "volatility": 0.2233,
+      "id": "GBPJPY_otc_20260127120119",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T09:46:11.330030Z",
-      "expires_at": "2026-01-27T11:56:11.329989+02:00"
+      "generated_at_utc": "2026-01-27T10:01:19.423217Z",
+      "expires_at": "2026-01-27T12:11:19.423158+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.81,
+      "entry_time": "12:03",
+      "duration": 3,
+      "reason": "RSI≈45 (slightly bearish), EMA9 crossed below EMA21, MACD histogram turning negative, price near lower Bollinger Band, recent 12:29 candle is a bearish pin bar, overall short‑term trend weakening",
+      "timestamp": "2026-01-27 12:01:21",
+      "generated_at": "2026-01-27T12:01:23.439207+02:00",
+      "volatility": 0.0352,
+      "id": "EURUSD_otc_20260127120123",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-27T10:01:23.439249Z",
+      "expires_at": "2026-01-27T12:11:23.439207+02:00"
     },
     {
       "asset": "USDJPY_otc",
       "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "11:48",
+      "confidence": 0.84,
+      "entry_time": "12:03",
       "duration": 3,
-      "reason": "Останні три свічки – два підйомні (12:13, 12:14) і один нейтральний (12:12). EMA‑9 розташована вище EMA‑21, що вказує на короткостроковий висхідний тренд. Ціна торгується вище середньої лінії Bollinger Bands, а стохастик піднімається з‑нижчого до середнього рівня, підтверджуючи імпульс. RSI≈55 % – нейтрально‑позитивний, MACD лінія трохи вище сигнальної, що також підтримує BUY. Враховуючи всі індикатори, ймовірність росту ≥75 %.",
-      "timestamp": "2026-01-27 11:46:17",
-      "generated_at": "2026-01-27T11:46:19.394774+02:00",
-      "volatility": 0.0628,
-      "id": "USDJPY_otc_20260127114619",
+      "reason": "EMA9 is above EMA21, MACD histogram positive, RSI ~58 indicating mild bullish momentum, price trading near the upper Bollinger Band but still within range, Stochastic %K around 75 showing upward pressure, and recent candles form higher highs/lows with bullish closes, supporting a short‑term up move.",
+      "timestamp": "2026-01-27 12:01:25",
+      "generated_at": "2026-01-27T12:01:27.188748+02:00",
+      "volatility": 0.0602,
+      "id": "USDJPY_otc_20260127120127",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-27T09:46:19.394813Z",
-      "expires_at": "2026-01-27T11:56:19.394774+02:00"
+      "generated_at_utc": "2026-01-27T10:01:27.188787Z",
+      "expires_at": "2026-01-27T12:11:27.188748+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 645
+  "total_signals": 3,
+  "active_signals": 3,
+  "generation_count": 646
 }
