@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-28T06:31:03.802518+02:00",
+  "last_update": "2026-01-28T07:03:37.026178+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
-      "confidence": 0.86,
-      "entry_time": "06:32",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "07:05",
       "duration": 3,
-      "reason": "Price shows steady upward movement across last candles, EMA9 is above EMA21, price trading above the middle Bollinger Band, RSI likely above 50, MACD histogram positive, Stochastic in bullish zone, and a bullish engulfing pattern appears at 06:58, all indicating a short‑term long bias.",
-      "timestamp": "2026-01-28 06:30:49",
-      "generated_at": "2026-01-28T06:30:50.620495+02:00",
-      "volatility": 0.3385,
-      "id": "GBPJPY_otc_20260128063050",
+      "reason": "Short analysis: price is in a downtrend with lower highs and lower lows, recent candles are mostly bearish, EMA9 is below EMA21, MACD histogram is negative, RSI is approaching oversold levels, Stochastic is below 20, Bollinger Bands are tightening, all indicating further downside pressure.",
+      "timestamp": "2026-01-28 07:03:25",
+      "generated_at": "2026-01-28T07:03:27.227108+02:00",
+      "volatility": 0.3146,
+      "id": "GBPJPY_otc_20260128070327",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T04:30:50.620534Z",
-      "expires_at": "2026-01-28T06:40:50.620495+02:00"
+      "generated_at_utc": "2026-01-28T05:03:27.227141Z",
+      "expires_at": "2026-01-28T07:13:27.227108+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.84,
+      "entry_time": "07:05",
+      "duration": 3,
+      "reason": "Bearish downtrend confirmed by lower lows, price below EMA9/21, RSI below 30, MACD negative, price near lower Bollinger Band and Stochastic oversold",
+      "timestamp": "2026-01-28 07:03:29",
+      "generated_at": "2026-01-28T07:03:30.828343+02:00",
+      "volatility": 0.0843,
+      "id": "EURUSD_otc_20260128070330",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-28T05:03:30.828380Z",
+      "expires_at": "2026-01-28T07:13:30.828343+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 679
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 680
 }
