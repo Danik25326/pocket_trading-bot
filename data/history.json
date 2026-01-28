@@ -1,23 +1,5 @@
 [
   {
-    "asset": "EURUSD_otc",
-    "direction": "UP",
-    "confidence": 0.78,
-    "entry_time": "17:20",
-    "duration": 3,
-    "reason": "RSI≈50 (neutral), MACD flat, Bollinger Bands tight (low volatility 0.02%), EMA9≈EMA21 showing no strong divergence, Stochastic around 50, mixed candlesticks but recent price recovered from a brief dip (17:41‑17:42) and closed higher on 17:45, indicating slight upward bias.",
-    "timestamp": "2026-01-27 17:18:00",
-    "generated_at": "2026-01-27T17:18:06.204984+02:00",
-    "volatility": 0.0243,
-    "id": "EURUSD_otc_20260127171806",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-27T15:18:06.205025Z",
-    "expires_at": "2026-01-27T17:28:06.204984+02:00",
-    "saved_at": "2026-01-27T17:18:13.969647+02:00",
-    "history_id": "EURUSD_otc_20260127171813",
-    "status": "saved"
-  },
-  {
     "asset": "GBPJPY_otc",
     "direction": "UP",
     "confidence": 0.84,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-28T18:03:45.730899+02:00",
     "saved_at": "2026-01-28T17:53:47.733263+02:00",
     "history_id": "USDJPY_otc_20260128175347",
+    "status": "saved"
+  },
+  {
+    "asset": "EURUSD_otc",
+    "direction": "UP",
+    "confidence": 0.81,
+    "entry_time": "18:34",
+    "duration": 3,
+    "reason": "RSI ~79 (overbought) but price shows strong upward momentum; MACD line positive and rising; EMA9 above EMA21 indicating bullish trend; price hugging upper Bollinger Band suggesting continuation; Stochastic %K >80 confirming overbought yet bullish pressure; recent candles display bullish engulfing and higher highs. Combined indicators give >75% confidence for a short‑term upward move.",
+    "timestamp": "2026-01-28 18:32:52",
+    "generated_at": "2026-01-28T18:32:54.741657+02:00",
+    "volatility": 0.0675,
+    "id": "EURUSD_otc_20260128183254",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-28T16:32:54.741735Z",
+    "expires_at": "2026-01-28T18:42:54.741657+02:00",
+    "saved_at": "2026-01-28T18:33:01.087802+02:00",
+    "history_id": "EURUSD_otc_20260128183301",
     "status": "saved"
   }
 ]
