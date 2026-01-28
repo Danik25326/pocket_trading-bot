@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-28T16:06:11.484074+02:00",
+  "last_update": "2026-01-28T16:48:45.395264+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "16:08",
+      "confidence": 0.84,
+      "entry_time": "16:50",
       "duration": 3,
-      "reason": "Ціна демонструє чіткий висхідний тренд: 8 послідовних підвищень закриття, EMA‑9 перебуває вище EMA‑21, формуються три білих солдати та bullish engulfing. RSI та Stochastic піднялися вище 70, Bollinger Bands показують торгівлю біля верхньої смуги, що свідчить про короткострокове перекуплення, проте сила тренду залишає перевагу BUY на наступні 3 хв. ",
-      "timestamp": "2026-01-28 16:05:59",
-      "generated_at": "2026-01-28T16:06:01.505113+02:00",
-      "volatility": 0.3689,
-      "id": "GBPJPY_otc_20260128160601",
+      "reason": "Ціна зростає від 208.509 до 209.204, EMA 9 та EMA 21 нахилені вгору, RSI близько 68 (підтримує силу тренду), MACD позитивний, Bollinger Bands показують торгівлю біля верхньої смуги, а останні свічки утворюють bullish engulfing та три підйомні зелені бари, що підтверджує bullish імпульс.",
+      "timestamp": "2026-01-28 16:48:32",
+      "generated_at": "2026-01-28T16:48:34.532802+02:00",
+      "volatility": 0.2631,
+      "id": "GBPJPY_otc_20260128164834",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T14:06:01.505157Z",
-      "expires_at": "2026-01-28T16:16:01.505113+02:00"
+      "generated_at_utc": "2026-01-28T14:48:34.532840Z",
+      "expires_at": "2026-01-28T16:58:34.532802+02:00"
     },
     {
-      "asset": "EURUSD_otc",
+      "asset": "USDJPY_otc",
       "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "16:08",
+      "entry_time": "16:50",
       "duration": 3,
-      "reason": "RSI≈48 (slightly below 50) shows bearish pressure; MACD line is below its signal and trending down; price is under EMA9 and EMA21 with EMA9 under EMA21 confirming downtrend; price is near the lower Bollinger Band indicating continuation potential; Stochastic is below 20 (oversold) but still descending; recent 1‑minute candles show decreasing highs and a bearish candle at 16:33, supporting a short‑term down move.",
-      "timestamp": "2026-01-28 16:06:03",
-      "generated_at": "2026-01-28T16:06:05.360704+02:00",
-      "volatility": 0.1386,
-      "id": "EURUSD_otc_20260128160605",
+      "reason": "RSI≈48 (neutral), MACD line slightly negative with bearish histogram, EMA9 is below EMA21, price sits near the lower Bollinger Band, recent candles show a bearish engulfing and continuation pattern, indicating a short‑term down move.",
+      "timestamp": "2026-01-28 16:48:41",
+      "generated_at": "2026-01-28T16:48:43.394115+02:00",
+      "volatility": 0.066,
+      "id": "USDJPY_otc_20260128164843",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T14:06:05.360747Z",
-      "expires_at": "2026-01-28T16:16:05.360704+02:00"
+      "generated_at_utc": "2026-01-28T14:48:43.394153Z",
+      "expires_at": "2026-01-28T16:58:43.394115+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 697
+  "generation_count": 698
 }
