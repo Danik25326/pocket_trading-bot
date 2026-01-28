@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-28T15:37:41.781390+02:00",
+  "last_update": "2026-01-28T16:06:11.484074+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.86,
-      "entry_time": "15:39",
-      "duration": 2,
-      "reason": "Higher highs and higher lows on the 1‑min chart, EMA9 is above EMA21, MACD line is above signal with a growing positive histogram, Bollinger Bands are widening with price near the upper band, Stochastic is above 80 but not showing a clear bearish divergence, RSI is around 68 indicating bullish momentum, and no bearish candlestick patterns are present.",
-      "timestamp": "2026-01-28 15:37:27",
-      "generated_at": "2026-01-28T15:37:28.620594+02:00",
-      "volatility": 0.5376,
-      "id": "GBPJPY_otc_20260128153728",
+      "confidence": 0.82,
+      "entry_time": "16:08",
+      "duration": 3,
+      "reason": "Ціна демонструє чіткий висхідний тренд: 8 послідовних підвищень закриття, EMA‑9 перебуває вище EMA‑21, формуються три білих солдати та bullish engulfing. RSI та Stochastic піднялися вище 70, Bollinger Bands показують торгівлю біля верхньої смуги, що свідчить про короткострокове перекуплення, проте сила тренду залишає перевагу BUY на наступні 3 хв. ",
+      "timestamp": "2026-01-28 16:05:59",
+      "generated_at": "2026-01-28T16:06:01.505113+02:00",
+      "volatility": 0.3689,
+      "id": "GBPJPY_otc_20260128160601",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T13:37:28.620650Z",
-      "expires_at": "2026-01-28T15:47:28.620594+02:00"
+      "generated_at_utc": "2026-01-28T14:06:01.505157Z",
+      "expires_at": "2026-01-28T16:16:01.505113+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "15:39",
+      "confidence": 0.82,
+      "entry_time": "16:08",
       "duration": 3,
-      "reason": "RSI around 50, MACD flat near zero, price trading below EMA9 and EMA21, near the middle of Bollinger Bands, recent two bearish candles after a short bullish run indicate a short‑term downtrend",
-      "timestamp": "2026-01-28 15:37:30",
-      "generated_at": "2026-01-28T15:37:35.665871+02:00",
-      "volatility": 0.0641,
-      "id": "EURUSD_otc_20260128153735",
+      "reason": "RSI≈48 (slightly below 50) shows bearish pressure; MACD line is below its signal and trending down; price is under EMA9 and EMA21 with EMA9 under EMA21 confirming downtrend; price is near the lower Bollinger Band indicating continuation potential; Stochastic is below 20 (oversold) but still descending; recent 1‑minute candles show decreasing highs and a bearish candle at 16:33, supporting a short‑term down move.",
+      "timestamp": "2026-01-28 16:06:03",
+      "generated_at": "2026-01-28T16:06:05.360704+02:00",
+      "volatility": 0.1386,
+      "id": "EURUSD_otc_20260128160605",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T13:37:35.665911Z",
-      "expires_at": "2026-01-28T15:47:35.665871+02:00"
+      "generated_at_utc": "2026-01-28T14:06:05.360747Z",
+      "expires_at": "2026-01-28T16:16:05.360704+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 696
+  "generation_count": 697
 }
