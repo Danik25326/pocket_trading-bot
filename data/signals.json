@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-28T21:28:10.948946+02:00",
+  "last_update": "2026-01-28T21:52:17.210576+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "UP",
       "confidence": 0.82,
-      "entry_time": "21:30",
+      "entry_time": "21:54",
       "duration": 3,
-      "reason": "Bullish trend confirmed by rising EMA9/21, MACD histogram turning positive, RSI above 55, price breaking above Bollinger middle band, Stochastic climbing above 80, and recent bullish engulfing candles.",
-      "timestamp": "2026-01-28 21:27:59",
-      "generated_at": "2026-01-28T21:28:01.417225+02:00",
-      "volatility": 0.2558,
-      "id": "GBPJPY_otc_20260128212801",
+      "reason": "Bullish momentum: EMA9 is above EMA21, MACD shows recent bullish crossover, price broke recent highs forming a bullish engulfing candle, RSI around 58 indicating strength, Stochastic high but not overbought, Bollinger Bands suggest price near upper band but still rising.",
+      "timestamp": "2026-01-28 21:52:05",
+      "generated_at": "2026-01-28T21:52:07.569694+02:00",
+      "volatility": 0.2242,
+      "id": "GBPJPY_otc_20260128215207",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T19:28:01.417263Z",
-      "expires_at": "2026-01-28T21:38:01.417225+02:00"
+      "generated_at_utc": "2026-01-28T19:52:07.569731Z",
+      "expires_at": "2026-01-28T22:02:07.569694+02:00"
     },
     {
-      "asset": "USDJPY_otc",
+      "asset": "EURUSD_otc",
       "direction": "UP",
       "confidence": 0.84,
-      "entry_time": "21:30",
+      "entry_time": "21:54",
       "duration": 3,
-      "reason": "Бачимо підвищення EMA9 над EMA21, RSI ~58 (середній), MACD позитивний, остання свічка bullish, ціна торкається верхньої межі Bollinger, але волатильність низька – підтверджує короткостроковий up‑тренд",
-      "timestamp": "2026-01-28 21:28:07",
-      "generated_at": "2026-01-28T21:28:08.947890+02:00",
-      "volatility": 0.0574,
-      "id": "USDJPY_otc_20260128212808",
+      "reason": "Recent candles show a recovery after a brief dip, with EMA9 crossing above EMA21, RSI around 55‑60 indicating bullish momentum, MACD histogram turning positive, price holding near the middle of Bollinger Bands and no overbought Stochastic signals. Trend appears short‑term upward.",
+      "timestamp": "2026-01-28 21:52:09",
+      "generated_at": "2026-01-28T21:52:10.932474+02:00",
+      "volatility": 0.0657,
+      "id": "EURUSD_otc_20260128215210",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-28T19:28:08.947926Z",
-      "expires_at": "2026-01-28T21:38:08.947890+02:00"
+      "generated_at_utc": "2026-01-28T19:52:10.932511Z",
+      "expires_at": "2026-01-28T22:02:10.932474+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 706
+  "generation_count": 707
 }
