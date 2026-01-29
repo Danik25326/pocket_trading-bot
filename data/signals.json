@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-29T23:34:49.284255+02:00",
+  "last_update": "2026-01-29T23:56:29.763834+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
-      "confidence": 0.78,
-      "entry_time": "23:36",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "23:58",
       "duration": 3,
-      "reason": "RSI≈34 (oversold) while price shows slight downtrend on 1‑min candles; low volatility suggests a short‑term bounce. EMA9/EMA21 still above price but converging, supporting a brief upward move.",
-      "timestamp": "2026-01-29 23:34:37",
-      "generated_at": "2026-01-29T23:34:39.198286+02:00",
-      "volatility": 0.0885,
-      "id": "GBPJPY_otc_20260129233439",
+      "reason": "Bearish momentum: recent candles show 5 of 8 closing lower, price below EMA9 and EMA21, MACD histogram turning negative, RSI around 55‑60 indicating no overbought, price near upper Bollinger Band and forming descending pattern, stochastic below 50. Trend is down.",
+      "timestamp": "2026-01-29 23:56:18",
+      "generated_at": "2026-01-29T23:56:20.160669+02:00",
+      "volatility": 0.1304,
+      "id": "GBPJPY_otc_20260129235620",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-29T21:34:39.198324Z",
-      "expires_at": "2026-01-29T23:44:39.198286+02:00"
+      "generated_at_utc": "2026-01-29T21:56:20.160715Z",
+      "expires_at": "2026-01-30T00:06:20.160669+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "23:58",
+      "duration": 3,
+      "reason": "RSI ~50, MACD near zero, Bollinger Bands tight, EMA9 slightly below EMA21, Stochastic around 50, recent candles show slight downtrend with more lower closes than higher.",
+      "timestamp": "2026-01-29 23:56:26",
+      "generated_at": "2026-01-29T23:56:27.762142+02:00",
+      "volatility": 0.0631,
+      "id": "USDJPY_otc_20260129235627",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-29T21:56:27.762181Z",
+      "expires_at": "2026-01-30T00:06:27.762142+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 742
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 743
 }
