@@ -1,54 +1,54 @@
 {
-  "last_update": "2026-01-29T11:23:34.955490+02:00",
+  "last_update": "2026-01-29T12:04:33.495045+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.81,
-      "entry_time": "11:25",
+      "direction": "UP",
+      "confidence": 0.78,
+      "entry_time": "12:06",
       "duration": 3,
-      "reason": "Bearish momentum: price fell from 216.66 to 216.307 in the last 8 minutes, EMA9 is below EMA21 indicating downtrend, RSI appears to be slipping below 50, MACD histogram is negative with a bearish crossover, price is touching the lower Bollinger Band, Stochastic is below 20 showing oversold conditions, and a bearish engulfing pattern formed at 11:51, all supporting a short move.",
-      "timestamp": "2026-01-29 11:23:24",
-      "generated_at": "2026-01-29T11:23:26.114448+02:00",
-      "volatility": 0.1848,
-      "id": "GBPJPY_otc_20260129112326",
+      "reason": "RSI≈55 (neutral‑bullish), MACD line slightly above signal, EMA9 is above EMA21 indicating short‑term uptrend, price is near the lower Bollinger Band suggesting room to rise, Stochastic is climbing above 50, recent candles show three of four bullish closes with a bullish continuation pattern, overall momentum points upward.",
+      "timestamp": "2026-01-29 12:04:22",
+      "generated_at": "2026-01-29T12:04:24.645576+02:00",
+      "volatility": 0.1583,
+      "id": "GBPJPY_otc_20260129120424",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-29T09:23:26.114484Z",
-      "expires_at": "2026-01-29T11:33:26.114448+02:00"
+      "generated_at_utc": "2026-01-29T10:04:24.645614Z",
+      "expires_at": "2026-01-29T12:14:24.645576+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "UP",
       "confidence": 0.82,
-      "entry_time": "11:25",
+      "entry_time": "12:06",
       "duration": 3,
-      "reason": "RSI~55 (neutral‑slightly bullish), MACD line above signal, price above EMA9 and EMA21, Bollinger Bands middle band support, stochastic ~60 (no overbought), recent candles show more ups than downs and a slight upward bias. Combined indicators give a bullish bias with confidence above 75%.",
-      "timestamp": "2026-01-29 11:23:28",
-      "generated_at": "2026-01-29T11:23:29.519429+02:00",
-      "volatility": 0.0478,
-      "id": "EURUSD_otc_20260129112329",
+      "reason": "Recent candles show a clear upward bias with higher highs and higher lows, EMA9 is above EMA21, price is near the upper Bollinger Band but still trending up, RSI is approaching overbought (~68) and Stochastic is in the 80‑85 range indicating momentum continuation. Low volatility suggests a short‑term move is likely. Confidence meets the 75% threshold.",
+      "timestamp": "2026-01-29 12:04:27",
+      "generated_at": "2026-01-29T12:04:27.969060+02:00",
+      "volatility": 0.0906,
+      "id": "EURUSD_otc_20260129120427",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-29T09:23:29.519467Z",
-      "expires_at": "2026-01-29T11:33:29.519429+02:00"
+      "generated_at_utc": "2026-01-29T10:04:27.969103Z",
+      "expires_at": "2026-01-29T12:14:27.969060+02:00"
     },
     {
       "asset": "USDJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "11:25",
+      "confidence": 0.84,
+      "entry_time": "12:06",
       "duration": 3,
-      "reason": "Price shows a slight uptrend on 1‑min candles (152.349→152.408), bullish engulfing at 11:51, EMA‑9 above EMA‑21, RSI around 55‑60, MACD histogram turning positive and Stochastic near 70, indicating momentum to the upside.",
-      "timestamp": "2026-01-29 11:23:31",
-      "generated_at": "2026-01-29T11:23:32.953437+02:00",
-      "volatility": 0.0505,
-      "id": "USDJPY_otc_20260129112332",
+      "reason": "Consistent higher closes across the last 8 candles, EMA9 is above EMA21 indicating an uptrend, MACD histogram stays positive, RSI is around 68 (still below overbought), price is near the upper Bollinger Band but with expanding width, and recent bullish candle patterns (e.g., bullish engulfing) support continuation.",
+      "timestamp": "2026-01-29 12:04:30",
+      "generated_at": "2026-01-29T12:04:31.493921+02:00",
+      "volatility": 0.1134,
+      "id": "USDJPY_otc_20260129120431",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-29T09:23:32.953475Z",
-      "expires_at": "2026-01-29T11:33:32.953437+02:00"
+      "generated_at_utc": "2026-01-29T10:04:31.493956Z",
+      "expires_at": "2026-01-29T12:14:31.493921+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 3,
   "active_signals": 3,
-  "generation_count": 724
+  "generation_count": 725
 }
