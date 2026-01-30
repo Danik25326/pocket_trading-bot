@@ -1,23 +1,5 @@
 [
   {
-    "asset": "EURUSD_otc",
-    "direction": "UP",
-    "confidence": 0.84,
-    "entry_time": "21:54",
-    "duration": 3,
-    "reason": "Recent candles show a recovery after a brief dip, with EMA9 crossing above EMA21, RSI around 55‑60 indicating bullish momentum, MACD histogram turning positive, price holding near the middle of Bollinger Bands and no overbought Stochastic signals. Trend appears short‑term upward.",
-    "timestamp": "2026-01-28 21:52:09",
-    "generated_at": "2026-01-28T21:52:10.932474+02:00",
-    "volatility": 0.0657,
-    "id": "EURUSD_otc_20260128215210",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-28T19:52:10.932511Z",
-    "expires_at": "2026-01-28T22:02:10.932474+02:00",
-    "saved_at": "2026-01-28T21:52:17.211851+02:00",
-    "history_id": "EURUSD_otc_20260128215217",
-    "status": "saved"
-  },
-  {
     "asset": "GBPJPY_otc",
     "direction": "UP",
     "confidence": 0.82,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-30T01:58:53.089658+02:00",
     "saved_at": "2026-01-30T01:48:55.092578+02:00",
     "history_id": "USDJPY_otc_20260130014855",
+    "status": "saved"
+  },
+  {
+    "asset": "EURUSD_otc",
+    "direction": "DOWN",
+    "confidence": 0.82,
+    "entry_time": "02:03",
+    "duration": 3,
+    "reason": "Price shows a slight downtrend over the last 8 one‑minute candles (from 1.19001 to 1.18954). EMA‑9 is below EMA‑21, MACD histogram is marginally negative, RSI is around 48 indicating neutral‑to‑bearish momentum, Stochastic is near 45‑50 (no overbought), and price is trading near the lower half of the Bollinger Bands. Recent candles form a small bearish continuation pattern, supporting a short‑term downward move.",
+    "timestamp": "2026-01-30 02:01:26",
+    "generated_at": "2026-01-30T02:01:28.102301+02:00",
+    "volatility": 0.0395,
+    "id": "EURUSD_otc_20260130020128",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-30T00:01:28.102339Z",
+    "expires_at": "2026-01-30T02:11:28.102301+02:00",
+    "saved_at": "2026-01-30T02:01:34.507489+02:00",
+    "history_id": "EURUSD_otc_20260130020134",
     "status": "saved"
   }
 ]
