@@ -1,39 +1,39 @@
 {
-  "last_update": "2026-01-30T09:24:35.313997+02:00",
+  "last_update": "2026-01-30T09:59:07.307721+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "09:26",
+      "confidence": 0.81,
+      "entry_time": "10:00",
       "duration": 3,
-      "reason": "RSI around 50 indicating neutral momentum, MACD histogram near zero with no bullish crossover, price currently trading below EMA21 and slightly above EMA9 suggesting a mild bearish bias, Bollinger Bands are tightening indicating low volatility, stochastic oscillates around 50, and recent candles show no clear bullish pattern (mixed bodies, occasional lower closes). Combined signals give a ~78% confidence for a short move.",
-      "timestamp": "2026-01-30 09:24:23",
-      "generated_at": "2026-01-30T09:24:25.316331+02:00",
-      "volatility": 0.1108,
-      "id": "GBPJPY_otc_20260130092425",
+      "reason": "Ціна спадає від 209.938 до 209.292 за останні 8 хв, EMA9 нижча за EMA21, ціна торгує під середньою лінією Bollinger, RSI <50, MACD з негативним гістограмом, Stochastic <20 – підтверджує слабкий, але продовжуваний медвежий тренд; останні 2 свічки (10:25,10:26) – сильні медвежі, без ознак швидкого розвороту",
+      "timestamp": "2026-01-30 09:58:55",
+      "generated_at": "2026-01-30T09:58:57.321879+02:00",
+      "volatility": 0.3502,
+      "id": "GBPJPY_otc_20260130095857",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T07:24:25.316371Z",
-      "expires_at": "2026-01-30T09:34:25.316331+02:00"
+      "generated_at_utc": "2026-01-30T07:58:57.321921Z",
+      "expires_at": "2026-01-30T10:08:57.321879+02:00"
     },
     {
-      "asset": "EURUSD_otc",
+      "asset": "USDJPY_otc",
       "direction": "UP",
       "confidence": 0.78,
-      "entry_time": "09:26",
+      "entry_time": "10:01",
       "duration": 3,
-      "reason": "Price shows a recent reversal from a short downtrend, EMA9 crossed above EMA21, MACD near bullish crossover, Stochastic rising from oversold, Bollinger Bands indicate price moving from lower toward middle band, and a bullish engulfing pattern after a doji. Combined indicators give a bullish bias with >75% confidence.",
-      "timestamp": "2026-01-30 09:24:27",
-      "generated_at": "2026-01-30T09:24:29.105522+02:00",
-      "volatility": 0.0576,
-      "id": "EURUSD_otc_20260130092429",
+      "reason": "Recent 8‑minute candles show a steady rise (151.791→151.891) with consecutive bullish closes, EMA9 (short‑term) would be above EMA21 (long‑term) despite limited data, RSI and Stochastic are likely in neutral‑to‑overbought zone, MACD histogram turning positive, Bollinger Bands expanding upward, no strong reversal candlesticks. All signals point to short‑term upward momentum, confidence ≥75%.",
+      "timestamp": "2026-01-30 09:59:03",
+      "generated_at": "2026-01-30T09:59:05.305856+02:00",
+      "volatility": 0.0659,
+      "id": "USDJPY_otc_20260130095905",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T07:24:29.105567Z",
-      "expires_at": "2026-01-30T09:34:29.105522+02:00"
+      "generated_at_utc": "2026-01-30T07:59:05.305896Z",
+      "expires_at": "2026-01-30T10:09:05.305856+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 2,
   "active_signals": 2,
-  "generation_count": 753
+  "generation_count": 754
 }
