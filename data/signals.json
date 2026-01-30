@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-31T00:52:50.929547+02:00",
+  "last_update": "2026-01-31T01:22:26.162545+02:00",
   "signals": [
     {
-      "asset": "USDJPY_otc",
+      "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "00:54",
+      "confidence": 0.86,
+      "entry_time": "01:24",
       "duration": 3,
-      "reason": "RSI ~55 (neutral‑slightly bullish), MACD line above signal, price holding above EMA9 and EMA21, Bollinger Bands showing price near middle‑upper band, Stochastic around 60 indicating upward momentum, recent bullish candle at 01:20 after a short down‑trend suggests continuation. Low volatility supports a short‑term move up.",
-      "timestamp": "2026-01-31 00:52:47",
-      "generated_at": "2026-01-31T00:52:48.928120+02:00",
-      "volatility": 0.087,
-      "id": "USDJPY_otc_20260131005248",
+      "reason": "Ціна зростає від 208.196 до 208.990, EMA9 і EMA21 нахилені вгору, RSI приблизно 68 % (підтримує тренд, ще не перекуплений), MACD позитивний і розширюється, Bollinger Bands розширюються вгору, Stochastic у зоні 80‑90, спостерігаються послідовні bullish candles, що підтверджує сигнал на BUY",
+      "timestamp": "2026-01-31 01:22:14",
+      "generated_at": "2026-01-31T01:22:16.317251+02:00",
+      "volatility": 0.3454,
+      "id": "GBPJPY_otc_20260131012216",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T22:52:48.928147Z",
-      "expires_at": "2026-01-31T01:02:48.928120+02:00"
+      "generated_at_utc": "2026-01-30T23:22:16.317291Z",
+      "expires_at": "2026-01-31T01:32:16.317251+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "01:24",
+      "duration": 3,
+      "reason": "The last 8 one‑minute candles show a gradual decline from 1.18579 to 1.18481. EMA9 is positioned below EMA21, indicating a bearish short‑term trend. RSI (calculated on the available data) is around 45, below the 50‑level, and the MACD line is under the signal line with a negative histogram. Price is touching the lower Bollinger Band in the most recent candles, while the Stochastic oscillator is below 50 and falling. A bearish engulfing pattern appears between 01:48 (open 1.18516, close 1.18481) and 01:47 (open 1.18537, close 1.18517), reinforcing downside bias. Combined, these factors give a confident (≈78%) expectation of a short‑term move down for the next 3 minutes.",
+      "timestamp": "2026-01-31 01:22:18",
+      "generated_at": "2026-01-31T01:22:20.038846+02:00",
+      "volatility": 0.0827,
+      "id": "EURUSD_otc_20260131012220",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-30T23:22:20.038885Z",
+      "expires_at": "2026-01-31T01:32:20.038846+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 778
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 779
 }
