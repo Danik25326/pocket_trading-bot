@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-30T19:33:53.291165+02:00",
+  "last_update": "2026-01-30T20:02:53.761176+02:00",
   "signals": [
     {
-      "asset": "USDJPY_otc",
+      "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "19:35",
+      "confidence": 0.78,
+      "entry_time": "20:04",
       "duration": 3,
-      "reason": "Ціна демонструє чіткий висхідний тренд на 1‑хв таймфреймі: EMA9 перебуває вище EMA21, MACD позитивний, RSI близько 68 % (під рівнем перекупленості), Stochastic ~78 % і ціна торкається верхньої межі Bollinger Bands, що підтверджує силу руху. Останні свічки показують послідовне підвищення закриття, лише незначне корекційне падіння в 20:01, що виглядає як короткочасна консолидація. При такій конфігурації з високою впевненістю (≥75 %) рекомендується купити на рівні 19:35 на 3‑хв період.",
-      "timestamp": "2026-01-30 19:33:49",
-      "generated_at": "2026-01-30T19:33:51.289514+02:00",
-      "volatility": 0.106,
-      "id": "USDJPY_otc_20260130193351",
+      "reason": "Ціни демонструють легкий висхідний тренд: EMA9 перебуває вище EMA21, RSI ~55‑60 (не перекуплений), MACD позитивний, Stochastic ~60 (підтримує bullish momentum). Останні свічки показують чергування, але остання (20:30) закрита вище попередньої, а Bollinger Bands розширюються, що вказує на можливий подальший рух вгору. При низькій волатильності (0.22%) ризик обмежений, тому рекомендація – купити.",
+      "timestamp": "2026-01-30 20:02:42",
+      "generated_at": "2026-01-30T20:02:43.856586+02:00",
+      "volatility": 0.2243,
+      "id": "GBPJPY_otc_20260130200243",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T17:33:51.289549Z",
-      "expires_at": "2026-01-30T19:43:51.289514+02:00"
+      "generated_at_utc": "2026-01-30T18:02:43.856614Z",
+      "expires_at": "2026-01-30T20:12:43.856586+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "20:04",
+      "duration": 3,
+      "reason": "Price is in a short‑term downtrend: EMA9 is below EMA21, MACD histogram is negative, RSI is below 40, price is near the lower Bollinger Band, and recent candles show lower highs/lows with a bearish engulfing pattern. All indicators align for further decline.",
+      "timestamp": "2026-01-30 20:02:50",
+      "generated_at": "2026-01-30T20:02:51.760045+02:00",
+      "volatility": 0.0948,
+      "id": "USDJPY_otc_20260130200251",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-30T18:02:51.760074Z",
+      "expires_at": "2026-01-30T20:12:51.760045+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 768
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 769
 }
