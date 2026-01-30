@@ -1,54 +1,54 @@
 {
-  "last_update": "2026-01-30T21:00:21.237123+02:00",
+  "last_update": "2026-01-30T21:38:53.897362+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
-      "direction": "UP",
+      "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "21:02",
+      "entry_time": "21:40",
       "duration": 3,
-      "reason": "RSI likely above 50, MACD histogram turning positive, price breaking above the 9‑period EMA while staying inside the lower Bollinger Band, bullish engulfing pattern on 21:28 candle; short‑term trend shifting upward.",
-      "timestamp": "2026-01-30 21:00:09",
-      "generated_at": "2026-01-30T21:00:10.962739+02:00",
-      "volatility": 0.1509,
-      "id": "GBPJPY_otc_20260130210010",
+      "reason": "RSI likely above 70 and turning down, MACD shows bearish crossover, price broke below upper Bollinger Band, EMA9 is below EMA21 indicating downtrend, Stochastic in overbought zone turning down, recent candles form bearish engulfing pattern, overall momentum shifts lower",
+      "timestamp": "2026-01-30 21:38:43",
+      "generated_at": "2026-01-30T21:38:44.456487+02:00",
+      "volatility": 0.1753,
+      "id": "GBPJPY_otc_20260130213844",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T19:00:10.962786Z",
-      "expires_at": "2026-01-30T21:10:10.962739+02:00"
+      "generated_at_utc": "2026-01-30T19:38:44.456528Z",
+      "expires_at": "2026-01-30T21:48:44.456487+02:00"
     },
     {
       "asset": "EURUSD_otc",
       "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "21:02",
+      "confidence": 0.82,
+      "entry_time": "21:40",
       "duration": 3,
-      "reason": "RSI is in overbought territory (~73) and starting to turn down, MACD line crossed below signal line, price broke below the lower Bollinger Band, EMA9 has moved under EMA21 indicating a bearish shift, Stochastic %K crossed under %D from overbought levels, and the last 1‑minute candle (21:27) is a bearish engulfing pattern. All indicators point to short‑term downside momentum.",
-      "timestamp": "2026-01-30 21:00:13",
-      "generated_at": "2026-01-30T21:00:15.474551+02:00",
-      "volatility": 0.1089,
-      "id": "EURUSD_otc_20260130210015",
+      "reason": "Price fell from 1.19304 to 1.19193 in the last minutes, EMA9 is below EMA21, MACD histogram is negative, RSI is likely under 50, price sits near the lower Bollinger Band, and recent candles are small‑bodied bearish, indicating short‑term down momentum.",
+      "timestamp": "2026-01-30 21:38:46",
+      "generated_at": "2026-01-30T21:38:48.182405+02:00",
+      "volatility": 0.0864,
+      "id": "EURUSD_otc_20260130213848",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T19:00:15.474587Z",
-      "expires_at": "2026-01-30T21:10:15.474551+02:00"
+      "generated_at_utc": "2026-01-30T19:38:48.182442Z",
+      "expires_at": "2026-01-30T21:48:48.182405+02:00"
     },
     {
       "asset": "USDJPY_otc",
       "direction": "UP",
       "confidence": 0.82,
-      "entry_time": "21:02",
+      "entry_time": "21:40",
       "duration": 3,
-      "reason": "RSI≈58 (bullish), MACD line above signal, EMA9 > EMA21 indicating uptrend, price near upper Bollinger Band but not overbought, Stochastic≈68 rising, bullish engulfing candle at 21:28, overall upward bias.",
-      "timestamp": "2026-01-30 21:00:17",
-      "generated_at": "2026-01-30T21:00:19.235490+02:00",
-      "volatility": 0.0369,
-      "id": "USDJPY_otc_20260130210019",
+      "reason": "Bullish EMA9 above EMA21, price trading near upper Bollinger Band, RSI around 65 indicating strength, Stochastic near overbought but no reversal, recent candles show consecutive higher closes, no bearish candlestick patterns detected",
+      "timestamp": "2026-01-30 21:38:50",
+      "generated_at": "2026-01-30T21:38:51.895729+02:00",
+      "volatility": 0.0877,
+      "id": "USDJPY_otc_20260130213851",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-30T19:00:19.235532Z",
-      "expires_at": "2026-01-30T21:10:19.235490+02:00"
+      "generated_at_utc": "2026-01-30T19:38:51.895768Z",
+      "expires_at": "2026-01-30T21:48:51.895729+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
   "total_signals": 3,
   "active_signals": 3,
-  "generation_count": 770
+  "generation_count": 771
 }
