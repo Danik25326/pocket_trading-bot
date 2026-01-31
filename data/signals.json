@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-01-31T21:48:10.349776+02:00",
+  "last_update": "2026-01-31T21:57:31.779143+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
@@ -45,10 +45,55 @@
       "entry_delay": 2,
       "generated_at_utc": "2026-01-31T19:48:08.348873Z",
       "expires_at": "2026-01-31T21:58:08.348835+02:00"
+    },
+    {
+      "asset": "GBPJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "21:59",
+      "duration": 3,
+      "reason": "Bearish EMA crossover, price breaking recent lows, RSI below 50, MACD negative histogram, stochastic turning down, bearish engulfing pattern on recent candles",
+      "timestamp": "2026-01-31 21:57:20",
+      "generated_at": "2026-01-31T21:57:22.781663+02:00",
+      "volatility": 0.1623,
+      "id": "GBPJPY_otc_20260131215722",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-31T19:57:22.781698Z",
+      "expires_at": "2026-01-31T22:07:22.781663+02:00"
+    },
+    {
+      "asset": "EURUSD_otc",
+      "direction": "DOWN",
+      "confidence": 0.82,
+      "entry_time": "21:59",
+      "duration": 3,
+      "reason": "Price has been sliding from 1.18224 to 1.18179, EMA9 is below EMA21 indicating bearish trend, RSI is around 45‑48 showing weakening momentum, MACD histogram is negative, price is hugging the lower Bollinger Band and recent candles form lower highs with a bearish engulfing pattern, Stochastic is falling below 50. All indicators point to short‑term downside.",
+      "timestamp": "2026-01-31 21:57:25",
+      "generated_at": "2026-01-31T21:57:26.257242+02:00",
+      "volatility": 0.077,
+      "id": "EURUSD_otc_20260131215726",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-31T19:57:26.257275Z",
+      "expires_at": "2026-01-31T22:07:26.257242+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.78,
+      "entry_time": "21:59",
+      "duration": 3,
+      "reason": "Price action shows consecutive lower closes, EMA9 below EMA21, MACD histogram negative, RSI near 45 indicating neutral‑bearish, price touching lower Bollinger Band and bearish candlestick patterns (close below open, lower shadow).",
+      "timestamp": "2026-01-31 21:57:28",
+      "generated_at": "2026-01-31T21:57:29.777811+02:00",
+      "volatility": 0.0571,
+      "id": "USDJPY_otc_20260131215729",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-31T19:57:29.777860Z",
+      "expires_at": "2026-01-31T22:07:29.777811+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 3,
-  "active_signals": 3,
-  "generation_count": 815
+  "total_signals": 6,
+  "active_signals": 6,
+  "generation_count": 816
 }
