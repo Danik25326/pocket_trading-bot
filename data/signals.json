@@ -1,24 +1,8 @@
 {
   "last_update": "2026-01-31T14:44:53.875387+02:00",
-  "signals": [
-    {
-      "asset": "USDJPY_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "14:46",
-      "duration": 3,
-      "reason": "Останні 8 свічок показують короткостроковий підйом до верхньої межі Bollinger Bands, RSI та Stochastic перебувають у зоні перекупленості (>70). EMA 9/21 підтверджує висхідний тренд, проте різке падіння на 15:06 та зниження ціни на 15:09‑15:10 вказують на можливу корекцію. Тому вважаємо, що протягом наступних 3 хвилин ймовірний короткостроковий розворот вниз.",
-      "timestamp": "2026-01-31 14:44:50",
-      "generated_at": "2026-01-31T14:44:51.874201+02:00",
-      "volatility": 0.0745,
-      "id": "USDJPY_otc_20260131144451",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T12:44:51.874234Z",
-      "expires_at": "2026-01-31T14:54:51.874201+02:00"
-    }
-  ],
+  "signals": [],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
+  "total_signals": 0,
+  "active_signals": 0,
   "generation_count": 800
 }
