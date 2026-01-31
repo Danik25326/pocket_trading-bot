@@ -1,39 +1,54 @@
 {
-  "last_update": "2026-01-31T21:34:59.687876+02:00",
+  "last_update": "2026-01-31T21:48:10.349776+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
-      "confidence": 0.81,
-      "entry_time": "21:36",
+      "confidence": 0.78,
+      "entry_time": "21:50",
       "duration": 3,
-      "reason": "RSI≈45 (below 50) shows bearish momentum; MACD histogram negative and MACD line below signal; price trading below EMA9 (~212.30) and EMA21 (~212.35) indicating downtrend; Bollinger Bands narrowing with price near lower band; Stochastic below 20 suggesting oversold but still downward pressure; recent two consecutive bearish candles (22:02 and 22:01) form a bearish continuation pattern; overall trend appears bearish.",
-      "timestamp": "2026-01-31 21:34:48",
-      "generated_at": "2026-01-31T21:34:50.133410+02:00",
-      "volatility": 0.1676,
-      "id": "GBPJPY_otc_20260131213450",
+      "reason": "RSI (short‑term) below 50, MACD histogram turning negative, price below both EMA9 and EMA21, Bollinger Bands showing price near the lower band, Stochastic %K below %D and under 20, recent candles show bearish closes and lower lows, indicating a weakening uptrend and emerging downtrend.",
+      "timestamp": "2026-01-31 21:47:58",
+      "generated_at": "2026-01-31T21:48:00.537364+02:00",
+      "volatility": 0.1905,
+      "id": "GBPJPY_otc_20260131214800",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T19:34:50.133463Z",
-      "expires_at": "2026-01-31T21:44:50.133410+02:00"
+      "generated_at_utc": "2026-01-31T19:48:00.537400Z",
+      "expires_at": "2026-01-31T21:58:00.537364+02:00"
     },
     {
       "asset": "EURUSD_otc",
+      "direction": "UP",
+      "confidence": 0.82,
+      "entry_time": "21:50",
+      "duration": 3,
+      "reason": "Price shows a slight bullish bias: recent candles close higher, EMA9 is above EMA21, MACD is turning positive, RSI around mid‑50s, Stochastic not overbought, and a bullish engulfing pattern at 22:14‑22:15 support the upward move.",
+      "timestamp": "2026-01-31 21:48:02",
+      "generated_at": "2026-01-31T21:48:04.442603+02:00",
+      "volatility": 0.0448,
+      "id": "EURUSD_otc_20260131214804",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-31T19:48:04.442640Z",
+      "expires_at": "2026-01-31T21:58:04.442603+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
       "direction": "DOWN",
       "confidence": 0.78,
-      "entry_time": "21:36",
+      "entry_time": "21:50",
       "duration": 3,
-      "reason": "Слабка низхідна динаміка на 1‑хв таймфреймі, EMA9 нижче EMA21, ціна ближче до нижньої межі Bollinger Bands, Stochastic показує надмірну продаж, RSI трохи нижче 50, MACD з негативним гістограмом. Умови вказують на короткострокове падіння.",
-      "timestamp": "2026-01-31 21:34:52",
-      "generated_at": "2026-01-31T21:34:53.458598+02:00",
-      "volatility": 0.1065,
-      "id": "EURUSD_otc_20260131213453",
+      "reason": "Нижчий закриття 22:15 (C=150.650 < O=150.653) вказує на короткостроковий медвежий патерн. EMA‑9 знаходиться під EMA‑21, що підтверджує слабку медвежу тенденцію. Ціна торгує ближче до нижньої межі Bollinger Bands, а Stochastic показує надлишок продажу (під 20). RSI приблизно 48‑50, MACD близько нуля – відсутня сильна імпульсивність, але поточна динаміка схильна до подальшого падіння. Волатильність низька (0.06 %), тому очікується короткостроковий рух вниз протягом 3 хвилин.",
+      "timestamp": "2026-01-31 21:48:06",
+      "generated_at": "2026-01-31T21:48:08.348835+02:00",
+      "volatility": 0.0577,
+      "id": "USDJPY_otc_20260131214808",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T19:34:53.458636Z",
-      "expires_at": "2026-01-31T21:44:53.458598+02:00"
+      "generated_at_utc": "2026-01-31T19:48:08.348873Z",
+      "expires_at": "2026-01-31T21:58:08.348835+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 814
+  "total_signals": 3,
+  "active_signals": 3,
+  "generation_count": 815
 }
