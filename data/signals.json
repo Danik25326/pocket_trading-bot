@@ -1,24 +1,39 @@
 {
-  "last_update": "2026-01-31T04:41:23.777533+02:00",
+  "last_update": "2026-01-31T06:19:45.929440+02:00",
   "signals": [
     {
       "asset": "GBPJPY_otc",
       "direction": "DOWN",
       "confidence": 0.82,
-      "entry_time": "04:43",
+      "entry_time": "06:21",
       "duration": 3,
-      "reason": "Ціни останніх 8 хвилин демонструють послідовне зниження (більшість свічок – bearish), EMA 9 та EMA 21 розташовані вище поточної ціни, RSI, ймовірно, нижче 50, MACD у негативній зоні, Bollinger Bands показують, що ціна наближається до нижньої смуги, а стохастик перебуває в нижній половині. Свічкові патерни (низхідна свічка 05:08 після короткого підйому) підтверджують продовження низхідного тренду. Тому рекомендація – короткостроковий продаж.",
-      "timestamp": "2026-01-31 04:41:11",
-      "generated_at": "2026-01-31T04:41:13.699999+02:00",
-      "volatility": 0.3021,
-      "id": "GBPJPY_otc_20260131044113",
+      "reason": "Recent 1‑min candles show a clear downtrend from 208.22 to 207.58, EMA9 is below EMA21, RSI likely below 50, MACD histogram negative, price near lower Bollinger Band and no strong bullish reversal pattern. Trend and momentum indicators support a short‑term bearish move.",
+      "timestamp": "2026-01-31 06:19:34",
+      "generated_at": "2026-01-31T06:19:36.168218+02:00",
+      "volatility": 0.4203,
+      "id": "GBPJPY_otc_20260131061936",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T02:41:13.700038Z",
-      "expires_at": "2026-01-31T04:51:13.699999+02:00"
+      "generated_at_utc": "2026-01-31T04:19:36.168259Z",
+      "expires_at": "2026-01-31T06:29:36.168218+02:00"
+    },
+    {
+      "asset": "USDJPY_otc",
+      "direction": "DOWN",
+      "confidence": 0.81,
+      "entry_time": "06:21",
+      "duration": 3,
+      "reason": "EMA9 (≈149.64) is above EMA21 (≈149.60) indicating a short‑term uptrend, but RSI≈79 and Stochastic≈85 show overbought conditions. Recent candles (06:45‑06:47) turned bearish with a bearish engulfing pattern, and price is sliding back toward the middle of the Bollinger Bands. The convergence of overbought momentum and a bearish candlestick reversal suggests a likely pull‑back within the next 3 minutes.",
+      "timestamp": "2026-01-31 06:19:42",
+      "generated_at": "2026-01-31T06:19:43.928549+02:00",
+      "volatility": 0.0588,
+      "id": "USDJPY_otc_20260131061943",
+      "entry_delay": 2,
+      "generated_at_utc": "2026-01-31T04:19:43.928586Z",
+      "expires_at": "2026-01-31T06:29:43.928549+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 1,
-  "active_signals": 1,
-  "generation_count": 782
+  "total_signals": 2,
+  "active_signals": 2,
+  "generation_count": 783
 }
