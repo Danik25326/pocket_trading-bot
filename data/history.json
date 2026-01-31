@@ -1,23 +1,5 @@
 [
   {
-    "asset": "EURUSD_otc",
-    "direction": "DOWN",
-    "confidence": 0.84,
-    "entry_time": "22:36",
-    "duration": 3,
-    "reason": "Three consecutive down candles, EMA9 below EMA21, MACD histogram negative, RSI below 50, price near lower Bollinger Band, no bullish reversal candlestick pattern detected",
-    "timestamp": "2026-01-30 22:34:24",
-    "generated_at": "2026-01-30T22:34:25.660802+02:00",
-    "volatility": 0.0579,
-    "id": "EURUSD_otc_20260130223425",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-30T20:34:25.660844Z",
-    "expires_at": "2026-01-30T22:44:25.660802+02:00",
-    "saved_at": "2026-01-30T22:34:31.347223+02:00",
-    "history_id": "EURUSD_otc_20260130223431",
-    "status": "saved"
-  },
-  {
     "asset": "USDJPY_otc",
     "direction": "DOWN",
     "confidence": 0.86,
@@ -1797,6 +1779,24 @@
     "expires_at": "2026-01-31T22:38:37.049297+02:00",
     "saved_at": "2026-01-31T22:28:39.051895+02:00",
     "history_id": "USDJPY_otc_20260131222839",
+    "status": "saved"
+  },
+  {
+    "asset": "EURUSD_otc",
+    "direction": "DOWN",
+    "confidence": 0.78,
+    "entry_time": "22:51",
+    "duration": 3,
+    "reason": "EMA9 is below EMA21, RSI around 48 showing slight bearish pressure, MACD histogram is negative, price is near the lower Bollinger Band, Stochastic is below 50, recent candles exhibit lower highs and occasional bearish candlesticks – all pointing to a short‑term down move",
+    "timestamp": "2026-01-31 22:49:53",
+    "generated_at": "2026-01-31T22:49:55.186348+02:00",
+    "volatility": 0.0509,
+    "id": "EURUSD_otc_20260131224955",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-31T20:49:55.186387Z",
+    "expires_at": "2026-01-31T22:59:55.186348+02:00",
+    "saved_at": "2026-01-31T22:50:01.866236+02:00",
+    "history_id": "EURUSD_otc_20260131225001",
     "status": "saved"
   }
 ]
