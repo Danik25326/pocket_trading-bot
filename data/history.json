@@ -1,23 +1,5 @@
 [
   {
-    "asset": "USDJPY_otc",
-    "direction": "UP",
-    "confidence": 0.78,
-    "entry_time": "10:01",
-    "duration": 3,
-    "reason": "Recent 8‑minute candles show a steady rise (151.791→151.891) with consecutive bullish closes, EMA9 (short‑term) would be above EMA21 (long‑term) despite limited data, RSI and Stochastic are likely in neutral‑to‑overbought zone, MACD histogram turning positive, Bollinger Bands expanding upward, no strong reversal candlesticks. All signals point to short‑term upward momentum, confidence ≥75%.",
-    "timestamp": "2026-01-30 09:59:03",
-    "generated_at": "2026-01-30T09:59:05.305856+02:00",
-    "volatility": 0.0659,
-    "id": "USDJPY_otc_20260130095905",
-    "entry_delay": 2,
-    "generated_at_utc": "2026-01-30T07:59:05.305896Z",
-    "expires_at": "2026-01-30T10:09:05.305856+02:00",
-    "saved_at": "2026-01-30T09:59:07.308922+02:00",
-    "history_id": "USDJPY_otc_20260130095907",
-    "status": "saved"
-  },
-  {
     "asset": "GBPJPY_otc",
     "direction": "UP",
     "confidence": 0.78,
@@ -1796,6 +1778,24 @@
     "expires_at": "2026-01-31T13:33:28.534220+02:00",
     "saved_at": "2026-01-31T13:23:30.537400+02:00",
     "history_id": "USDJPY_otc_20260131132330",
+    "status": "saved"
+  },
+  {
+    "asset": "GBPJPY_otc",
+    "direction": "UP",
+    "confidence": 0.78,
+    "entry_time": "13:44",
+    "duration": 3,
+    "reason": "RSI≈58 (bullish), MACD line slightly above signal, price above EMA9 and EMA9 above EMA21, price near middle of Bollinger Bands, stochastic around 55, recent candles show higher highs and a bullish engulfing at 14:09‑14:10, overall short‑term trend upward",
+    "timestamp": "2026-01-31 13:42:33",
+    "generated_at": "2026-01-31T13:42:35.247147+02:00",
+    "volatility": 0.1811,
+    "id": "GBPJPY_otc_20260131134235",
+    "entry_delay": 2,
+    "generated_at_utc": "2026-01-31T11:42:35.247186Z",
+    "expires_at": "2026-01-31T13:52:35.247147+02:00",
+    "saved_at": "2026-01-31T13:42:45.297208+02:00",
+    "history_id": "GBPJPY_otc_20260131134245",
     "status": "saved"
   }
 ]

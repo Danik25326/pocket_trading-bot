@@ -1,39 +1,24 @@
 {
-  "last_update": "2026-01-31T13:23:30.535836+02:00",
+  "last_update": "2026-01-31T13:42:45.296088+02:00",
   "signals": [
     {
-      "asset": "EURUSD_otc",
-      "direction": "DOWN",
-      "confidence": 0.78,
-      "entry_time": "13:25",
-      "duration": 3,
-      "reason": "Останні 8 хвилинних свічок показують послідовність низхідних закриттів (C<O) з невеликим зниженням ціни від 1.18600 до 1.18528. EMA9 розташована нижче EMA21, що вказує на короткостроковий медвежий тренд. RSI, розрахований за цими даними, знаходиться близько 45‑50, що свідчить про нейтральну, але трохи перенасичену вниз позицію. Bollinger Bands охоплюють ціну, а Stochastic перебуває в діапазоні 40‑55, без явних сигналів перекупленості. Свічкові патерни (два останні – bearish) підтверджують можливий подальший спад. При заданій впевненості ≥75% рекомендується короткостроковий продаж.",
-      "timestamp": "2026-01-31 13:23:22",
-      "generated_at": "2026-01-31T13:23:24.181940+02:00",
-      "volatility": 0.0742,
-      "id": "EURUSD_otc_20260131132324",
-      "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T11:23:24.181978Z",
-      "expires_at": "2026-01-31T13:33:24.181940+02:00"
-    },
-    {
-      "asset": "USDJPY_otc",
+      "asset": "GBPJPY_otc",
       "direction": "UP",
-      "confidence": 0.82,
-      "entry_time": "13:25",
+      "confidence": 0.78,
+      "entry_time": "13:44",
       "duration": 3,
-      "reason": "RSI ~52 (neutral), MACD line crossing above signal, EMA9 recently crossed above EMA21, price touching upper Bollinger Band but still below resistance, Stochastic around 60 showing momentum, recent candlesticks form a bullish reversal (two consecutive bullish candles after a short downtrend). Combined signals give a bullish bias with >75% confidence for a 3‑minute trade.",
-      "timestamp": "2026-01-31 13:23:27",
-      "generated_at": "2026-01-31T13:23:28.534220+02:00",
-      "volatility": 0.1154,
-      "id": "USDJPY_otc_20260131132328",
+      "reason": "RSI≈58 (bullish), MACD line slightly above signal, price above EMA9 and EMA9 above EMA21, price near middle of Bollinger Bands, stochastic around 55, recent candles show higher highs and a bullish engulfing at 14:09‑14:10, overall short‑term trend upward",
+      "timestamp": "2026-01-31 13:42:33",
+      "generated_at": "2026-01-31T13:42:35.247147+02:00",
+      "volatility": 0.1811,
+      "id": "GBPJPY_otc_20260131134235",
       "entry_delay": 2,
-      "generated_at_utc": "2026-01-31T11:23:28.534268Z",
-      "expires_at": "2026-01-31T13:33:28.534220+02:00"
+      "generated_at_utc": "2026-01-31T11:42:35.247186Z",
+      "expires_at": "2026-01-31T13:52:35.247147+02:00"
     }
   ],
   "timezone": "Europe/Kiev (UTC+2)",
-  "total_signals": 2,
-  "active_signals": 2,
-  "generation_count": 797
+  "total_signals": 1,
+  "active_signals": 1,
+  "generation_count": 798
 }
